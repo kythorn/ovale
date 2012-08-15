@@ -1252,6 +1252,7 @@ OvaleCondition.conditions.debuffpresent = OvaleCondition.conditions.buffpresent
 OvaleCondition.conditions.debuffgain = OvaleCondition.conditions.buffgain
 OvaleCondition.conditions.debuffduration = OvaleCondition.conditions.buffduration
 OvaleCondition.conditions.debuffremains = OvaleCondition.conditions.buffremains
+OvaleCondition.conditions.rage = OvaleCondition.conditions.mana
 OvaleCondition.defaultTarget = "target"
 
 --</public-static-properties>

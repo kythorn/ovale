@@ -424,8 +424,15 @@ function OvaleBestAction:Compute(element)
 					
 		if Ovale.trace then Ovale:Print(element.type.." return "..nilstring(startB)..","..nilstring(endB)) end
 		return startB, endB, prioriteB, elementB
-	elseif (element.type == "or") then
-		if (Ovale.trace) then
+	elseif element.type == "not" then
+		local startA, endA = self:ComputeBool(element.a)
+		if startA then
+			return endA, nil
+		else
+			return 0, nil
+		end
+	elseif element.type == "or" then
+		if Ovale.trace then
 			Ovale:Print(element.type)
 		end
 		

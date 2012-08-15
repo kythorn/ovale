@@ -245,6 +245,11 @@ local function ParseAnd(a,b)
 	return AddNode(newNode)
 end
 
+local function ParseNot(a)
+	local newNode = {type="not", a=node[tonumber(a)]}
+	return AddNode(newNode)
+end
+
 local function ParseBefore(a,b)
 	local newNode = {type="before", time=node[tonumber(a)], a=node[tonumber(b)]}
 	return AddNode(newNode)
@@ -360,6 +365,7 @@ local function ParseCommands(text)
 		text = string.gsub(text, "(%d+%.?%d*)s", ParseTime)
 		text = string.gsub(text, "([^%w])(%d+%.?%d*)", ParseNumber)
 		text = string.gsub(text, "node(%d+)%s*([%*%+%-%/])%s*node(%d+)", ParseOp)
+		text = string.gsub(text, "not%s+node(%d+)", ParseNot)
 		if was == text then
 			break
 		end
