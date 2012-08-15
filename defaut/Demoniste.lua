@@ -241,7 +241,7 @@ AddIcon help=main mastery=2
 AddIcon help=cd mastery=2
 {
 	#/summon_felguard,if=cooldown.demon_soul.remains<5&cooldown.metamorphosis.remains<5&!pet.felguard.active
-	if CheckBoxOn(petswap) and {spell(DEMONSOUL)<5} and {spell(METAMORPHOSIS)<5} unless pet.CreatureFamily(Felguard) Spell(SUMMONFELGUARD)
+	if CheckBoxOn(petswap) and {spellCooldown(DEMONSOUL)<5} and {spellCooldown(METAMORPHOSIS)<5} unless pet.CreatureFamily(Felguard) Spell(SUMMONFELGUARD)
 	#/metamorphosis,if=pet.felguard.active
 	if pet.Present() and pet.CreatureFamily(Felguard) Spell(METAMORPHOSIS)
 	#/demon_soul,if=buff.metamorphosis.up
@@ -277,7 +277,7 @@ AddIcon help=main mastery=3
 	#/conflagrate
 	if 1s after TargetDebuffPresent(IMMOLATE mine=1) Spell(CONFLAGRATE)
 	#/immolate,if=buff.bloodlust.react&buff.bloodlust.remains>32&cooldown.conflagrate.remains<=3&remains<12
-	if BuffPresent(heroism 32) and {spell(CONFLAGRATE)<3} and TargetDebuffExpires(IMMOLATE 12 mine=1) Spell(IMMOLATE)
+	if BuffPresent(heroism 32) and {spellCooldown(CONFLAGRATE)<3} and TargetDebuffExpires(IMMOLATE 12 mine=1) Spell(IMMOLATE)
 	#/bane_of_doom,if=!ticking&target.time_to_die>=15&miss_react
 	if TargetDebuffExpires(BANEOFDOOM 0 mine=1) and TargetDebuffExpires(BANEOFAGONY 0 mine=1)
 	{

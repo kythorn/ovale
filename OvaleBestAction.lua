@@ -80,7 +80,7 @@ function OvaleBestAction:GetActionInfo(element)
 		target = OvaleCondition.defaultTarget
 	end
 
-	if (element.func == "Spell" ) then
+	if (element.func == "spell" ) then
 		action = OvaleActionBar:GetForSpell(spellId)
 		if not OvaleData.spellList[spellId] and not action then 
 			Ovale:Log("Spell "..spellId.." not learnt")
@@ -97,7 +97,7 @@ function OvaleBestAction:GetActionInfo(element)
 		actionInRange = IsSpellInRange(spellName, target)
 		actionUsable = IsUsableSpell(spellId)
 		actionShortcut = nil
-	elseif (element.func=="Macro") then
+	elseif (element.func=="macro") then
 		action = OvaleActionBar:GetForMacro(element.params[1])
 		if action then
 			actionTexture = GetActionTexture(action)
@@ -109,7 +109,7 @@ function OvaleBestAction:GetActionInfo(element)
 		else
 			Ovale:Log("Unknown macro "..element.params[1])
 		end
-	elseif (element.func=="Item") then
+	elseif (element.func=="item") then
 		local itemId
 		if (type(element.params[1]) == "number") then
 			itemId = element.params[1]
@@ -134,7 +134,7 @@ function OvaleBestAction:GetActionInfo(element)
 		actionCooldownStart, actionCooldownDuration, actionEnable = GetItemCooldown(itemId)
 		actionShortcut = nil
 		actionIsCurrent = nil
-	elseif element.func=="Texture" then
+	elseif element.func=="texture" then
 		actionTexture = "Interface\\Icons\\"..element.params[1]
 		actionCooldownStart = OvaleState.maintenant
 		actionCooldownDuration = 0
@@ -180,7 +180,7 @@ function OvaleBestAction:Compute(element)
 	
 	--TODO: créer un objet par type au lieu de ce if else if tout moche
 	if (element.type=="function")then
-		if (element.func == "Spell" or element.func=="Macro" or element.func=="Item" or element.func=="Texture") then
+		if (element.func == "spell" or element.func=="macro" or element.func=="item" or element.func=="texture") then
 			local action
 			local actionTexture, actionInRange, actionCooldownStart, actionCooldownDuration,
 				actionUsable, actionShortcut, actionIsCurrent, actionEnable, spellId = self:GetActionInfo(element)

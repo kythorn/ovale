@@ -141,7 +141,7 @@ AddIcon help=main mastery=2
 	#hammer_of_wrath
 	if TargetLifePercent(less 20) Spell(HAMMEROFWRATH)
 	#avengers_shield,if=cooldown.crusader_strike.remains>=0.2
-	if spell(CRUSADERSTRIKE)>0.2 Spell(AVENGERSSHIELD)
+	if spellCooldown(CRUSADERSTRIKE)>0.2 Spell(AVENGERSSHIELD)
 	#judgement
 	Spell(JUDGEMENT)
 	#consecration
@@ -202,7 +202,7 @@ AddIcon help=main mastery=3
 	#judgement,if=set_bonus.tier13_2pc_melee&buff.zealotry.up&holy_power<3
 	if ArmorSetParts(T13 more 1) and BuffPresent(ZEALOTRY) and HolyPower(less 3) Spell(JUDGEMENT)
 	#wait,sec=0.1,if=cooldown.crusader_strike.remains<0.5
-	if spell(CRUSADERSTRIKE) > 0.5
+	if spellCooldown(CRUSADERSTRIKE) > 0.5
 	{
 		#holy_wrath
 		Spell(HOLYWRATH)
@@ -226,9 +226,9 @@ AddIcon help=aoe mastery=3 checkboxon=aoe
 AddIcon help=cd mastery=3
 {
     #/guardian_of_ancient_kings,if=cooldown.zealotry.remains<10
-	if spell(ZEALOTRY)<10 Spell(GUARDIANOFANCIENTKINGS)
+	if spellCooldown(ZEALOTRY)<10 Spell(GUARDIANOFANCIENTKINGS)
 	#/zealotry,if=cooldown.guardian_of_ancient_kings.remains>0&cooldown.guardian_of_ancient_kings.remains<292
-	if {spell(GUARDIANOFANCIENTKINGS)>0} and {spell(GUARDIANOFANCIENTKINGS)<292} Spell(ZEALOTRY)
+	if {spellCooldown(GUARDIANOFANCIENTKINGS)>0} and {spellCooldown(GUARDIANOFANCIENTKINGS)<292} Spell(ZEALOTRY)
 	#/avenging_wrath,if=buff.zealotry.up
 	if BuffPresent(ZEALOTRY)
 		Spell(AVENGINGWRATH)

@@ -231,6 +231,27 @@ function OvaleAura:GetAura(unitId, spellId, mine)
 	return self:GetAuraByGUID(UnitGUID(unitId), spellId, mine, unitId)
 end
 
+function OvaleAura:GetStealable(unitId)
+	local auraTable = self.aura[UnitGUID(unitId)]
+	if not auraTable then
+		return nil
+	end
+	local starting,ending
+	
+	for spellId, ownerTable in pairs(auraTable) do
+		local aura = ownerTable.other
+		if aura and aura.stealable then
+			if not starting or aura.start < starting then
+				starting = aura.start
+			end
+			if not ending or aura.ending > ending then
+				ending = aura.ending
+			end
+		end
+	end
+	return starting, ending
+end
+
 -- Look for the last of my aura on any targt that will expires.
 -- Returns its expiration time
 function OvaleAura:GetExpirationTimeOnAnyTarget(spellId)

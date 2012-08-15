@@ -220,11 +220,11 @@ AddIcon help=offgcd mastery=2
 {
 	if target.IsInterruptible() Spell(MINDFREEZE)
     #blood_tap,if=death.cooldown_remains>2.0
-	if runes(death 1) > 2 Spell(BLOODTAP)
+	if runesCooldown(death 1) > 2 Spell(BLOODTAP)
 	#empower_rune_weapon,if=target.time_to_die<=45
 	if TargetDeadIn(less 45) Spell(EMPOWERRUNEWEAPON)
 	#empower_rune_weapon,if=(blood.cooldown_remains+frost.cooldown_remains+unholy.cooldown_remains)>8
-	if runes(blood 1) + runes(frost 1) + runes(unholy 1) > 8
+	if runesCooldown(blood 1) + runesCooldown(frost 1) + runesCooldown(unholy 1) > 8
 		Spell(EMPOWERRUNEWEAPON)
 }
 

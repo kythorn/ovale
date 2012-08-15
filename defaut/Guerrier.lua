@@ -177,7 +177,7 @@ AddIcon help=main mastery=1
 	if CheckBoxOn(dancing)
 	{
 		#/stance,choose=battle,if=target.health_pct>20&(buff.taste_for_blood.up|buff.overpower.up)&rage<=75&cooldown.mortal_strike.remains>=1.5,use_off_gcd=1
-		if TargetLifePercent(more 20) and BuffPresent(TASTEFORBLOOD) and Mana(less 76) and {spell(MORTALSTRIKE) > 1.5}
+		if TargetLifePercent(more 20) and BuffPresent(TASTEFORBLOOD) and Mana(less 76) and {spellCooldown(MORTALSTRIKE) > 1.5}
 			Spell(BATTLESTANCE)
 	}
 	#/overpower,if=buff.taste_for_blood.up|buff.overpower.up
@@ -203,11 +203,11 @@ AddIcon help=offgcd mastery=1
 	if CheckBoxOn(leap) and TargetDebuffPresent(COLOSSUSSMASH) Spell(HEROICLEAP)
 	
 	#/berserker_rage,if=buff.deadly_calm.down&cooldown.deadly_calm.remains>1.5&rage<=95,use_off_gcd=1
-	if Glyph(GLYPHOFBERSERKERRAGE) and BuffExpires(DEADLYCALM) and {spell(DEADLYCALM)>1.5} and Mana(less 96) Spell(BERSERKERRAGE)
+	if Glyph(GLYPHOFBERSERKERRAGE) and BuffExpires(DEADLYCALM) and {spellCooldown(DEADLYCALM)>1.5} and Mana(less 96) Spell(BERSERKERRAGE)
 	#/deadly_calm,use_off_gcd=1
 	Spell(DEADLYCALM)
 	#/inner_rage,if=buff.deadly_calm.down&cooldown.deadly_calm.remains>15,use_off_gcd=1
-	if BuffExpires(DEADLYCALM) and {spell(DEADLYCALM)>15} Spell(INNERRAGE)
+	if BuffExpires(DEADLYCALM) and {spellCooldown(DEADLYCALM)>15} Spell(INNERRAGE)
 	
 	#/heroic_strike,if=buff.deadly_calm.up,use_off_gcd=1
 	if BuffPresent(DEADLYCALM) Spell(HEROICSTRIKE)

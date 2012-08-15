@@ -121,8 +121,8 @@ AddIcon help=main mastery=1
 	#/earth_shock,if=buff.lightning_shield.stack=9
 	if BuffPresent(LIGHTNINGSHIELD stacks=9) Spell(EARTHSHOCK)
 	#/earth_shock,if=buff.lightning_shield.stack>6&dot.flame_shock.remains>cooldown&dot.flame_shock.remains<cooldown+action.flame_shock.tick_time
-	if BuffPresent(LIGHTNINGSHIELD stacks=7) and { target.debuffExpires(FLAMESHOCK mine=1) > spell(EARTHSHOCK) }
-			and { target.debuffExpires(FLAMESHOCK mine=1) < spell(EARTHSHOCK) + timeWithHaste(3) } Spell(EARTHSHOCK)
+	if BuffPresent(LIGHTNINGSHIELD stacks=7) and { target.debuffExpires(FLAMESHOCK mine=1) > spellCooldown(EARTHSHOCK) }
+			and { target.debuffExpires(FLAMESHOCK mine=1) < spellCooldown(EARTHSHOCK) + timeWithHaste(3) } Spell(EARTHSHOCK)
 	
 	if TotemExpires(fire) Spell(SEARINGTOTEM)
 	#/spiritwalkers_grace,moving=1

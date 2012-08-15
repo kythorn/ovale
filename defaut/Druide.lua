@@ -276,7 +276,7 @@ AddIcon help=main mastery=2
 		
 		#rip,if=buff.combo_points.stack>=5&target.time_to_die>=6&dot.rip.remains<2.0&(buff.berserk.up|dot.rip.remains<=cooldown.tigers_fury.remains)
 		if ComboPoints(more 4) and TargetDeadIn(more 6) and TargetDebuffExpires(RIP 2 mine=1) and 
-				{BuffPresent(BERSERK) or {target.debuffExpires(RIP mine=1)<spell(TIGERSFURY)}}
+				{BuffPresent(BERSERK) or {target.debuffExpires(RIP mine=1)<spellCooldown(TIGERSFURY)}}
 			Spell(RIP)
 			
 		#/ferocious_bite,if=buff.combo_points.stack>=5&dot.rip.remains>5.0&buff.savage_roar.remains>=3.0
@@ -288,7 +288,7 @@ AddIcon help=main mastery=2
 			Spell(RAKE)
 		#rake,if=target.time_to_die>=dot.rake.remains&dot.rake.remains<3.0&(buff.berserk.up|energy>=71|(cooldown.tigers_fury.remains+0.8)>=dot.rake.remains)
 		if {target.timeToDie()>target.debuffExpires(RAKE mine=1)} and TargetDebuffExpires(RAKE 3 mine=1) and {BuffPresent(BERSERK) or Mana(more 70) or
-				{{spell(TIGERSFURY)+0.8}>target.debuffExpires(RAKE mine=1)}}
+				{{spellCooldown(TIGERSFURY)+0.8}>target.debuffExpires(RAKE mine=1)}}
 			Spell(RAKE)
 		
 		#shred,if=buff.omen_of_clarity.react
@@ -309,7 +309,7 @@ AddIcon help=main mastery=2
 		#/shred,if=(buff.combo_points.stack<5&dot.rip.remains<3.0)|(buff.combo_points.stack=0&buff.savage_roar.remains<2
 		if {ComboPoints(less 5) and TargetDebuffExpires(RIP 3 mine=1)} or {ComboPoints(less 1) and BuffExpires(SAVAGEROAR 2)} AddCombo()
 		#/shred,if=cooldown.tigers_fury.remains<=3.0
-		if spell(TIGERSFURY) < 3 AddCombo()
+		if spellCooldown(TIGERSFURY) < 3 AddCombo()
 		#/shred,if=target.time_to_die<=8.5
 		if TargetDeadIn(less 8.5) AddCombo()
 		#/shred,if=time_to_max_energy<=1.0
