@@ -72,7 +72,7 @@ local function TestConditions(paramList)
 	if paramList.glyph and not HasGlyph(paramList.glyph) then
 		return false
 	end
-	if paramList.mastery and paramList.mastery~=GetPrimaryTalentTree() then
+	if paramList.mastery and paramList.mastery~=GetSpecialization() then
 		return false
 	end
 	if paramList.talent and not HasTalent(paramList.talent) then
@@ -150,6 +150,8 @@ local function ParseFunction(prefix, func, params)
 	if customFunctions[func] then
 		return customFunctions[func]
 	end
+	
+	func = string.lower(func)
 	
 	local newNode = { type="function", func=func, params=paramList}
 	return AddNode(newNode)
@@ -365,7 +367,7 @@ local function ParseCommands(text)
 	
 	while (1==1) do
 		local was = text
-		text = string.gsub(text, "node(%d+)%s*([%>%<])%s*node(%d+)", ParseOp)
+		text = string.gsub(text, "node(%d+)%s*([%>%<]=?|==)%s*node(%d+)", ParseOp)
 		text = string.gsub(text, "between%s+node(%d+)%s+and%s+node(%d+)", ParseBetween)
 		text = string.gsub(text, "from%s+node(%d+)%s+until%s+node(%d+)", ParseFromUntil)
 		text = string.gsub(text, "(more)%s+than%s+node(%d+)%s+node(%d+)", ParseCompare)
@@ -381,7 +383,7 @@ local function ParseCommands(text)
 
 	while (1==1) do
 		local was = text
-		text = string.gsub(text, "node(%d+)%s*([%*%+%-%/%>%<])%s*node(%d+)", ParseOp)
+		text = string.gsub(text, "node(%d+)%s*([%*%+%-%/%>%<]=?|==)%s*node(%d+)", ParseOp)
 		text = string.gsub(text, "node(%d+)%s+and%s+node(%d+)", ParseAnd)
 		text = string.gsub(text, "node(%d+)%s+or%s+node(%d+)", ParseOr)
 		text = string.gsub(text, "if%s+node(%d+)%s+node(%d+)",ParseIf)

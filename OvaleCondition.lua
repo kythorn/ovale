@@ -63,7 +63,9 @@ local function avecHate(temps, hate)
 end
 
 local function compare(a, comparison, b)
-	if (comparison == "more") then
+	if not comparison then
+		return 0, nil, a, 0, 0 -- this is not a compare, returns the value a
+	elseif comparison == "more" then
 		if (not b or (a~=nil and a>b)) then
 			return 0
 		else
@@ -75,12 +77,14 @@ local function compare(a, comparison, b)
 		else
 			return nil
 		end
-	else 
+	elseif comparison == "less" then
 		if (not a or (b~=nil and a<b)) then
 			return 0
 		else
 			return nil
 		end
+	else
+		Ovale:Error("unknown compare term "...comparison.." (should be more, equal, or less)")
 	end
 end
 
@@ -272,7 +276,7 @@ end
 
 -- Recherche un aura sur la cible et récupère sa durée et le nombre de stacks
 -- return start, ending, stacks
-local function GetTargetAura(condition, filter, target)
+local function GetTargetAura(condition, target)
 	if (not target) then
 		target=condition.target
 		if (not target) then
@@ -300,13 +304,12 @@ local function GetTargetAura(condition, filter, target)
 	elseif spellId == "Magic" or spellId == "Disease" or spellId=="Curse" or spellId=="Poison" then
 		aura = OvaleState:GetAura(target, spellId, mine)
 	else
-		Ovale:Print("ERROR: unknown buff "..spellId)
-		Ovale.bug = true
-		return 0,0
+		Ovale:Error("unknown buff "..spellId)
+		return 0,0,0
 	end
 	
 	if not aura then
-		return 0,0
+		return 0,0,0
 	end	
 	
 	if Ovale.trace then
@@ -324,9 +327,9 @@ local function GetTargetAura(condition, filter, target)
 		else
 			ending = aura.ending
 		end
-		return aura.start, ending
+		return aura.start, ending, aura.stacks
 	else
-		return 0,0
+		return 0,0,0
 	end
 end
 
@@ -388,33 +391,36 @@ OvaleCondition.conditions=
 			return 0.1
 		end 
 	end,]]
-	-- Test how many armor set parts are equiped by the player
-	-- 1 : set number
-	-- 2 : "more" or "less"
-	-- 3 : limit 
-	ArmorSetParts = function(condition)
+	-- Get how many armor set parts are equiped by the player
+	-- 1 : set name
+	-- returns : bool or number
+	armorsetparts = function(condition)
 		local nombre = 0
 		if OvaleEquipement.nombre[condition[1]] then
 			nombre = OvaleEquipement.nombre[condition[1]]
 		end
 		return compare(nombre, condition[2], condition[3])
 	end,
-	attackPower = function(condition)
+	-- Get the attack power
+	-- returns : bool or number
+	attackpower = function(condition)
 		local base, posBuff, negBuff = UnitAttackPower("player")
-		return base + posBuff + negBuff, 0, 0 
+		return compare(base + posBuff + negBuff, condition[1], condition[2])
 	end,
-	BuffDuration = function(condition)
-		--local name, rank, icon, count, debuffType, duration = UnitBuff("player", OvaleData:GetSpellInfoOrNil(condition[1]))
-		--if not name then
---			return nil
-	--	end
+	-- Get the aura total duration (not only the remaining time)
+	-- 1 : spell id
+	-- returns : bool or number
+	-- alias: debuffduration
+	buffduration = function(condition)
 		local start, ending = GetTargetAura(condition, "HELPFUL", getTarget(condition.target))
 		return compare(diffTime(start, ending), condition[2], condition[3])
 	end,
 	-- Test if a buff will expire on the player after a given time
-	-- 1 : buff spell id
+	-- 1 : aura spell id
 	-- 2 : expiration time 
-	BuffExpires = function(condition)
+	-- returns : bool
+	-- alias: debuffexpires
+	buffexpires = function(condition)
 		local start, ending = GetTargetAura(condition, "HELPFUL", getTarget(condition.target))
 		local timeBefore = avecHate(condition[2], condition.haste)
 		if Ovale.trace then
@@ -423,41 +429,55 @@ OvaleCondition.conditions=
 		end
 		return addTime(ending, -timeBefore)
 	end,
-	buffExpires = function(condition)
+	-- Get the aura remaining time
+	-- 1 : aura spell id
+	-- returns : number
+	-- alias: debuffremains
+	buffremains = function(condition)
 		local start, ending = GetTargetAura(condition, "HELPFUL", getTarget(condition.target))
 		if ending then
-			return ending - start, start, -1
+			return start, ending, ending - start, start, -1
 		else
 			return nil
 		end
 	end,
-	-- Test if a time has elapsed since the last buff gain
-	-- 1 : buff spell id
-	-- 2 : time since the buff gain
-	BuffGain = function(condition)
+	-- Returns the time elapsed since the last buff gain
+	-- TODO won't work because the aura is not kept in cache
+	-- 1 : aura spell id
+	-- returns : number
+	-- alias: debuffgain
+	buffgain = function(condition)
+		Ovale:Error("not implemented")
+		return nil
 		local spellId = condition[1]
+		if not spellId then Ovale:Error("buffgain parameter spellId is not optional"); return end
 		local target = getTarget(condition.target)
-		if spellId then
-			local aura = OvaleState:GetAura(target,spellId)
-			if not aura then
-				return 0
-			end
-			local timeGain = aura.gain
-			if not timeGain then
-				timeGain = 0
-			end
-			
-			return timeGain + condition[2]
+		local aura = OvaleState:GetAura(target,spellId)
+		if not aura then
+			return 0, nil, 0, 0, 1
 		end
-		return 0
+		local timeGain = aura.gain
+		if not timeGain then
+			return 0, nil, 0, 0, 1
+		end
+		return 0, nil, 0, timeGain, 1
 	end,
 	-- Test if a buff is active
 	-- 1 : the buff spell id
 	-- stacks : minimum number of stacks
-	BuffPresent = function(condition)
+	-- returns : bool
+	-- alias: debuffpresent
+	buffpresent = function(condition)
 		local start, ending = GetTargetAura(condition, "HELPFUL", getTarget(condition.target))
 		local timeBefore = avecHate(condition[2], condition.haste)
 		return start, addTime(ending, -timeBefore)
+	end,
+	-- Get a buff stack size
+	-- 1: the buff spell id
+	-- returns: number
+	-- alias: debuffstacks
+	buffstacks = function(condition)
+		local start, ending = GetTargetAura(condition, "HELPFUL", getTarget(condition.target))
 	end,
 	BuffStealable = function(condition)
 		local i = 1
@@ -609,30 +629,6 @@ OvaleCondition.conditions=
 	end,
 	deadIn = function(condition)
 		return getTargetDead(getTarget(condition.target)), 0, -1
-	end,
-	-- Test if a debuff will expire on the target after a given time, or if there is less than the
-	-- given number of stacks (if stackable)
-	-- 1 : buff spell id
-	-- 2 : expiration time 
-	-- stacks : how many stacks
-	-- mine : 1 means that if the debuff is not ours, the debuff is ignored
-	DebuffExpires = function(condition)
-		local start, ending = GetTargetAura(condition, "HARMFUL", getTarget(condition.target))
-		local tempsMax = avecHate(condition[2], condition.haste)
-		return addTime(ending, -tempsMax)
-	end,
-	debuffExpires = function(condition)
-		local start, ending = GetTargetAura(condition, "HARMFUL", getTarget(condition.target))
-		if ending then
-			return ending - start, start, -1
-		else
-			return nil
-		end
-	end,
-	DebuffPresent = function(condition)
-		local start, ending = GetTargetAura(condition, "HARMFUL", getTarget(condition.target))
-		local timeBefore = avecHate(condition[2], condition.haste)
-		return start, addTime(ending, -timeBefore)
 	end,
 	Distance = function(condition)
 		if LRC then
@@ -1169,6 +1165,11 @@ OvaleCondition.conditions.Health = OvaleCondition.conditions.Life
 OvaleCondition.conditions.healthPercent = OvaleCondition.conditions.lifePercent
 OvaleCondition.conditions.HealthPercent = OvaleCondition.conditions.LifePercent
 OvaleCondition.conditions.HealthMissing = OvaleCondition.conditions.LifeMissing
+OvaleCondition.conditions.debuffexpires = OvaleCondition.conditions.buffexpires
+OvaleCondition.conditions.debuffpresent = OvaleCondition.conditions.buffpresent
+OvaleCondition.conditions.debuffgain = OvaleCondition.conditions.buffgain
+OvaleCondition.conditions.debuffduration = OvaleCondition.conditions.buffduration
+OvaleCondition.conditions.debuffremains = OvaleCondition.conditions.buffremains
 OvaleCondition.defaultTarget = "target"
 
 --</public-static-properties>

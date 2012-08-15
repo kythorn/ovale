@@ -293,10 +293,10 @@ AddIcon help=main mastery=3
 	if TalentPoints(IMPROVEDSOULFIRE more 0)
 	{
 		#((buff.empowered_imp.react&buff.empowered_imp.remains<(buff.improved_soul_fire.remains+action.soul_fire.travel_time))
-		if BuffPresent(EMPOWEREDIMP) and {buffExpires(EMPOWEREDIMP) < {buffExpires(IMPROVEDSOULFIREBUFF) + 1}}
+		if BuffPresent(EMPOWEREDIMP) and {buffRemains(EMPOWEREDIMP) < {buffRemains(IMPROVEDSOULFIREBUFF) + 1}}
 			Spell(SOULFIRE)
 		#|buff.improved_soul_fire.remains<(cast_time+travel_time+action.incinerate.cast_time+gcd))
-		if buffExpires(IMPROVEDSOULFIREBUFF)< {castTime(SOULFIRE)+ 1 +castTime(INCINERATE)+timeWithHaste(1.5)} 
+		if buffRemains(IMPROVEDSOULFIREBUFF)< {castTime(SOULFIRE)+ 1 +castTime(INCINERATE)+timeWithHaste(1.5)} 
 			Spell(SOULFIRE)
 	}
 	#/shadowburn

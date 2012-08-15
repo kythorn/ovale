@@ -313,22 +313,23 @@ function OvaleData:FillSpellList()
 end
 
 function OvaleData:RemplirListeTalents()
-	local numTabs = GetNumTalentTabs();
-	for t=1, numTabs do
-		local numTalents = GetNumTalents(t);
-		for i=1, numTalents do
-			local nameTalent, icon, tier, column, currRank, maxRank = GetTalentInfo(t,i);
-			local link = GetTalentLink(t,i)
-			if link then
-				local a, b, talentId = string.find(link, "talent:(%d+)");
-				talentId = tonumber(talentId)
-				self.talentIdToName[talentId] = nameTalent
-				self.talentNameToId[nameTalent] = talentId
-				self.pointsTalent[talentId] = currRank
-				self.listeTalentsRemplie = true
-				Ovale.needCompile = true
-			end
+	local talentId = 1
+	while true do
+		local name, texture, tier, column, selected, available = GetTalentInfo(talentId)
+		if not name then
+			break
 		end
+		talentId = tonumber(talentId)
+		self.talentIdToName[talentId] = name
+		self.talentNameToId[name] = talentId
+		if selected then
+			self.pointsTalent[talentId] = 1
+		else
+			self.pointsTalent[talentId] = 0
+		end		
+		self.listeTalentsRemplie = true
+		Ovale.needCompile = true
+		talentId = talentId + 1
 	end
 end
 

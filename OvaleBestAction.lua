@@ -40,6 +40,23 @@ end
 local function isAfter(time1, time2)
 	return not time1 or (time2 and time1>time2)
 end
+
+local function minTime(time1, time2)
+	if isBefore(time1, time2) then
+		return time1
+	else
+		return time2
+	end
+end
+
+local function maxTime(time1, time2)
+	if isAfter(time1, time2) then
+		return time1
+	else
+		return time2
+	end
+end
+
 --</private-static-methods>
 
 --<public-static-methods>
@@ -140,6 +157,16 @@ function OvaleBestAction:GetActionInfo(element)
 	
 	return actionTexture, actionInRange, actionCooldownStart, actionCooldownDuration,
 					actionUsable, actionShortcut, actionIsCurrent, actionEnable, spellId, target, element.params.nored
+end
+
+function OvaleBestAction:ComputeBool(element)
+	local start, ending, priority, element = self:Compute(element)
+	--Special case of a value element: it must not be 0
+	if element and element.type == "value" and element.value == 0 and element.rate == 0 then
+		return nil
+	else
+		return start, ending, priority, element
+	end
 end
 
 function OvaleBestAction:Compute(element)
@@ -243,7 +270,7 @@ function OvaleBestAction:Compute(element)
 				Ovale:Print("Function "..element.func.." not found")
 				return nil
 			end
-			local start, ending, rate = classe(element.params)
+			local start, ending, value, origin, rate = classe(element.params)
 			
 			if (Ovale.trace) then
 				local parameterList = element.func.."("
@@ -253,15 +280,15 @@ function OvaleBestAction:Compute(element)
 				Ovale:Print("Function "..parameterList..") returned "..nilstring(start)..","..nilstring(ending)..","..nilstring(rate))
 			end
 			
-			if rate then
+			if value  then
 				if not element.result then
 					element.result = { type = "value" }
 				end
 				local result = element.result
-				result.value = start
-				result.origin = ending
+				result.value = value
+				result.origin = origin
 				result.rate = rate
-				return 0, nil, 3, result
+				return start, ending, 3, result
 			else
 				return start, ending
 			end
@@ -340,7 +367,7 @@ function OvaleBestAction:Compute(element)
 		if (Ovale.trace) then
 			Ovale:Print(element.type.." ["..element.nodeId.."]")
 		end
-		local startA, endA = self:Compute(element.a)
+		local startA, endA, prioriteA, elementA = self:ComputeBool(element.a)
 		if (startA==nil) then
 			if Ovale.trace then Ovale:Print(element.type.." return nil  ["..element.nodeId.."]") end
 			return nil
@@ -349,7 +376,13 @@ function OvaleBestAction:Compute(element)
 			if Ovale.trace then Ovale:Print(element.type.." return startA=endA  ["..element.nodeId.."]") end
 			return nil
 		end
-		local startB, endB, prioriteB, elementB = self:Compute(element.b)
+	
+		local startB, endB, prioriteB, elementB
+		if element.type == "if" then
+			startB, endB, prioriteB, elementB = self:Compute(element.b)
+		else
+			startB, endB, prioriteB, elementB = self:ComputeBool(element.b)
+		end
 		if isAfter(startB, endA) or isAfter(startA, endB) then
 			if Ovale.trace then Ovale:Print(element.type.." return nil ["..element.nodeId.."]") end
 			return nil
@@ -368,7 +401,7 @@ function OvaleBestAction:Compute(element)
 		if Ovale.trace then
 			Ovale:Print(element.type)
 		end
-		local startA, endA = self:Compute(element.a)
+		local startA, endA = self:ComputeBool(element.a)
 		local startB, endB, prioriteB, elementB = self:Compute(element.b)
 		
 		if isBeforeEqual(startA, startB) and isAfterEqual(endA, endB) then
@@ -396,8 +429,8 @@ function OvaleBestAction:Compute(element)
 			Ovale:Print(element.type)
 		end
 		
-		local startA, endA = self:Compute(element.a)
-		local startB, endB = self:Compute(element.b)
+		local startA, endA = self:ComputeBool(element.a)
+		local startB, endB = self:ComputeBool(element.b)
 		if isBefore(endA,OvaleState.currentTime) then
 			return startB,endB
 		elseif isBefore(endB,OvaleState.currentTime) then
@@ -424,6 +457,14 @@ function OvaleBestAction:Compute(element)
 			Ovale:Log("operator " .. element.operator .. ": elementA or elementB is nil")
 			return nil
 		end
+		
+		if isBefore(startA, startB) then
+			startA = startB
+		end
+		if isAfter(endA, endB) then
+			endA = endB
+		end
+		
 		local a = elementA.value
 		local b = elementA.origin
 		local c = elementA.rate
@@ -478,35 +519,53 @@ function OvaleBestAction:Compute(element)
 			-- t = (x-a + b*c - y*z)/(c-z)
 			if c == z then
 				if a-b*c < x-y*z then
-					return 0
+					return startA, endA
 				else
 					return nil
 				end
 			else
 				local t = (x-a + b*c - y*z)/(c-z)
 				if c > z then
-					return 0, t
+					return startA, minTime(endA, t)
 				else
-					return t, nil
+					return maxTime(startA, t), endA
 				end
 			end
+		elseif element.operator == '<=' then
+			if c == z then
+				if a - b*c <= x-y*z then return startA, endA else return nil
+			else
+				local t = (x-a + b*c - y*z)/(c-z)
+				if c > z then return startA, minTime(endA, t) else return maxTime(startA, t), endA
+			end		
 		elseif element.operator == '>' then
 			if c == z then
-				Ovale:Log("> with c==z")
 				if a-b*c > x-y*z then
-					Ovale:Log("a>x")
-					return 0
+					return startA, endA
 				else
 					return nil
 				end
 			else
 				local t = (x-a + b*c - y*z)/(c-z)
 				if c < z then
-					return 0, t
+					return startA, minTime(endA, t)
 				else
-					return t, nil
+					return maxTime(startA, t), endA
 				end
 			end
+		elseif element.operator == '==' then
+			if c == z then
+				if a - b*c == x-y*z then return startA,endA else return nil
+			else
+				return nil
+			end
+		elseif element.operator == '>=' then
+			if c == z then
+				if a - b*c >= x-y*z then return startA, endA else return nil
+			else
+				local t = (x-a + b*c - y*z)/(c-z)
+				if c < z then return startA, minTime(endA, t) else return maxTime(startA, t), endA
+			end		
 		end
 		if not element.result then
 			element.result = { type = "value" }
