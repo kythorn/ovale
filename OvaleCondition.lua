@@ -84,7 +84,7 @@ local function compare(a, comparison, b)
 			return nil
 		end
 	else
-		Ovale:Error("unknown compare term "...comparison.." (should be more, equal, or less)")
+		Ovale:Error("unknown compare term "..comparison.." (should be more, equal, or less)")
 	end
 end
 
@@ -372,10 +372,10 @@ local function getTargetDead(target)
 	end
 end
 
-local isSameSpell(spellIdA, spellIdB, spellNameB)
+local function isSameSpell(spellIdA, spellIdB, spellNameB)
 	if spellIdB then
 		return spellIdA == spellIdB
-	elseif spellIdA and spellNameB
+	elseif spellIdA and spellNameB then
 		return GetSpellInfo(spellIdA) == spellNameB
 	else
 		return false
@@ -458,7 +458,7 @@ OvaleCondition.conditions=
 	-- alias: debuffgain
 	buffgain = function(condition)
 		Ovale:Error("not implemented")
-		return nil
+		if true then return nil end
 		local spellId = condition[1]
 		if not spellId then Ovale:Error("buffgain parameter spellId is not optional"); return end
 		local target = getTarget(condition.target)

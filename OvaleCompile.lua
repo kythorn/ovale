@@ -20,7 +20,7 @@ local function ParseParameters(params)
 	if not params then
 		return paramList
 	end
-	for k,v in string.gmatch(params, "(%w+)=([-%w\\_%.]+)") do
+	for k,v in string.gmatch(params, "([%w_]+)=([-%w\\_%.]+)") do
 		if (string.match(v,"^%-?%d+%.?%d*$")) then
 			v = tonumber(v)
 		end	
@@ -29,7 +29,7 @@ local function ParseParameters(params)
 		end		
 		paramList[k] = v
 	end
-	params = string.gsub(params,"%w+=[-%w\\_%.]+","")
+	params = string.gsub(params,"[%w_]+=[-%w\\_%.]+","")
 	local n=0
 	for w in string.gmatch(params, "[-%w_\\%.]+") do
 		if (string.match(w,"^%-?%d+%.?%d*$")) then
@@ -365,7 +365,7 @@ local function ParseCommands(text)
 		text = string.gsub(text, "(%d+%.?%d*)s", ParseTime)
 		text = string.gsub(text, "([^%w])(%d+%.?%d*)", ParseNumber)
 		text = string.gsub(text, "node(%d+)%s*([%*%+%-%/])%s*node(%d+)", ParseOp)
-		text = string.gsub(text, "not%s+node(%d+)", ParseNot)
+		text = string.gsub(text, "{([node%d%s+]*)}", ParseGroup)
 		if was == text then
 			break
 		end
@@ -373,7 +373,17 @@ local function ParseCommands(text)
 	
 	while (1==1) do
 		local was = text
-		text = string.gsub(text, "node(%d+)%s*([%>%<]=?|==)%s*node(%d+)", ParseOp)
+		text = string.gsub(text, "node(%d+)%s*([%>%<]=?)%s*node(%d+)", ParseOp)
+		text = string.gsub(text, "node(%d+)%s*(==)%s*node(%d+)", ParseOp)
+		text = string.gsub(text, "{([node%d ]*)}", ParseGroup)
+		if was == text then
+			break
+		end
+	end
+		
+	while (1==1) do
+		local was = text
+		text = string.gsub(text, "not%s+node(%d+)", ParseNot)
 		text = string.gsub(text, "between%s+node(%d+)%s+and%s+node(%d+)", ParseBetween)
 		text = string.gsub(text, "from%s+node(%d+)%s+until%s+node(%d+)", ParseFromUntil)
 		text = string.gsub(text, "(more)%s+than%s+node(%d+)%s+node(%d+)", ParseCompare)
@@ -389,6 +399,7 @@ local function ParseCommands(text)
 
 	while (1==1) do
 		local was = text
+		text = string.gsub(text, "not%s+node(%d+)", ParseNot)
 		text = string.gsub(text, "node(%d+)%s*([%*%+%-%/%>%<]=?|==)%s*node(%d+)", ParseOp)
 		text = string.gsub(text, "node(%d+)%s+and%s+node(%d+)", ParseAnd)
 		text = string.gsub(text, "node(%d+)%s+or%s+node(%d+)", ParseOr)
@@ -423,6 +434,7 @@ end
 local function ParseAddIcon(params, text)
 	-- On convertit le numéro de node en node
 	local masterNode = ParseCommands(text)
+	if not masterNode then return nil end
 	masterNode = node[tonumber(masterNode)]
 	masterNode.params = ParseParameters(params)
 	if not TestConditions(masterNode.params) then
@@ -461,8 +473,8 @@ function OvaleCompile:CompileInputs(text)
 	Ovale.casesACocher = {}
 	Ovale.listes = {}
 	
-	text = string.gsub(text, "AddListItem%s*%(%s*(%w+)%s+(%w+)%s+\"(.-)\"%s*(.-)%s*%)", ParseAddListItem)
-	text = string.gsub(text, "AddCheckBox%s*%(%s*(%w+)%s+\"(.-)\"%s*(.-)%s*%)", ParseAddCheckBox)
+	text = string.gsub(text, "AddListItem%s*%(%s*([%w_]+)%s+([%w_]+)%s+\"(.-)\"%s*(.-)%s*%)", ParseAddListItem)
+	text = string.gsub(text, "AddCheckBox%s*%(%s*([%w_]+)%s+\"(.-)\"%s*(.-)%s*%)", ParseAddCheckBox)
 	return text
 end
 
@@ -477,11 +489,11 @@ function OvaleCompile:Compile(text)
 	text = string.gsub(text, "#.*$","")
 
 	-- Define(CONSTANTE valeur)
-	text = string.gsub(text, "Define%s*%(%s*(%w+)%s+(%w+)%s*%)", ParseDefine)
+	text = string.gsub(text, "Define%s*%(%s*([%w_]+)%s+(%w+)%s*%)", ParseDefine)
 	
 	-- On remplace les constantes par leur valeur
 	for k,v in pairs(defines) do
-		text = subtest(text, "([^%w])"..k.."([^%w])", "%1"..v.."%2")
+		text = subtest(text, "([^%w_])"..k.."([^%w_])", "%1"..v.."%2")
 	end
 	
 	-- Fonctions

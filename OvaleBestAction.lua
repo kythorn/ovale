@@ -540,10 +540,10 @@ function OvaleBestAction:Compute(element)
 			end
 		elseif element.operator == '<=' then
 			if c == z then
-				if a - b*c <= x-y*z then return startA, endA else return nil
+				if a - b*c <= x-y*z then return startA, endA else return nil end
 			else
 				local t = (x-a + b*c - y*z)/(c-z)
-				if c > z then return startA, minTime(endA, t) else return maxTime(startA, t), endA
+				if c > z then return startA, minTime(endA, t) else return maxTime(startA, t), endA end
 			end		
 		elseif element.operator == '>' then
 			if c == z then
@@ -562,16 +562,16 @@ function OvaleBestAction:Compute(element)
 			end
 		elseif element.operator == '==' then
 			if c == z then
-				if a - b*c == x-y*z then return startA,endA else return nil
+				if a - b*c == x-y*z then return startA,endA else return nil end
 			else
 				return nil
 			end
 		elseif element.operator == '>=' then
 			if c == z then
-				if a - b*c >= x-y*z then return startA, endA else return nil
+				if a - b*c >= x-y*z then return startA, endA else return nil end
 			else
 				local t = (x-a + b*c - y*z)/(c-z)
-				if c < z then return startA, minTime(endA, t) else return maxTime(startA, t), endA
+				if c < z then return startA, minTime(endA, t) else return maxTime(startA, t), endA end
 			end		
 		end
 		if not element.result then
