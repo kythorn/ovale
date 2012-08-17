@@ -226,53 +226,29 @@ end
 local lastEnergyValue = nil
 local lastEnergyTime
 
-local function GetManaAndRate(withBerserker)
-	local _,className = UnitClass("player")
-	local current = OvaleState.state.mana
-	if current~=lastEnergyValue then
-		lastEnergyValue = current
-		lastEnergyTime = OvaleState.currentTime
-	end
-	
-	local rate
-	
-	if className == "ROGUE" or (className == "DRUID" and GetShapeshiftForm(true) == 3) then
-		rate = 10 * OvaleAura.meleeHaste
-		if (className == "ROGUE") then
-			local rush = OvaleState:GetAura("player", 13750)
-			if rush and rush.stacks>0 then
-				rate = rate * 2
-			end
-		elseif withBerserker then
-			local berserk = OvaleState:GetAura("player", 50334)
-			if berserk and berserk.stacks>0 then
-				mana = mana/2
-			end
-		end
-	elseif className == "HUNTER" then
-		rate = 4 * OvaleAura.meleeHaste
+local function testValue(comparator, limit, value, atTime, rate)
+	if not value or not atTime then
+		return nil
+	elseif not comparator then
+		return 0, nil, value, atTime, rate
 	else
-		rate = 0
-	end
-	
-	return lastEnergyValue, lastEnergyTime, rate
-end
-
-local function GetManaTime(mana, withBerserker)
-	local lastEnergyValue, lastEnergyTime, rate = GetManaAndRate(withBerserker)
-	
-	if rate > 0 then
-		local limit = math.ceil((mana - lastEnergyValue) / rate + lastEnergyTime)
-		return limit
-	else
-		if OvaleState.state.mana>=mana then
-			return OvaleState.currentTime-1
+		if rate == 0 then
+			if comparator == "more" then
+				if value > limit then return 0 else return nil end
+			elseif comparator == "less" then
+				if value < limit then return 0 else return nil end
+			else
+				Ovale:Error("Unknown operator "..comparator)
+			end
+		elseif comparator == "more" then
+			return (limit-value)/rate + atTime
+		elseif comparator == "less" then
+			return 0, (limit-value)/rate + atTime
 		else
-			return nil
-		end	
+			Ovale:Error("Unknown operator "..comparator)
+		end
 	end
 end
-
 
 -- Recherche un aura sur la cible et récupère sa durée et le nombre de stacks
 -- return start, ending, stacks
@@ -495,6 +471,11 @@ OvaleCondition.conditions=
 	buffstealable = function(condition)
 		return OvaleAura:GetStealable(getTarget(condition.target))
 	end,
+	-- Get many burning embers count
+	-- returns: bool or number
+	burningembers = function(condition)
+		return testValue(condition[1], condition[2], OvaleState.state.burningembers, OvaleState.currentTime, OvaleState.powerRate.burningembers)
+	end,
 	-- Check if the player can cast (cooldown is down)
 	-- returns: bool
 	cancast = function(condition)
@@ -595,6 +576,10 @@ OvaleCondition.conditions=
 		end
 		return 0
 	end,
+	-- Get the chi
+	chi = function(condition)
+		return testValue(condition[1], condition[2], OvaleState.state.chi, OvaleState.currentTime, OvaleState.powerRate.chi)
+	end,
 	-- Check the class of the target
 	-- 1: the class to check
 	-- returns: bool
@@ -691,16 +676,12 @@ OvaleCondition.conditions=
 	-- Get the remaining time until the target is dead
 	-- returns: bool or number
 	deadin = function(condition)
-		local deadAt = getTargetDead(getTarget(condition.target))
-		if condition[2] then
-			if condition[1] == "more" then
-				return 0, addTime(deadAt, -condition[2])
-			else
-				return addTime(deadAt, -condition[2]), nil
-			end
-		else
-			return 0, nil, getTargetDead(getTarget(condition.target)), 0, -1
-		end
+		return testValue(condition[1], condition[2], 0, getTargetDead(getTarget(condition.target)), -1)
+	end,
+	-- Get the demonic fury
+	-- returns: bool or number
+	demonicfury = function(condition)
+		return testValue(condition[1], condition[2], OvaleState.state.demonicfury, OvaleState.currentTime, OvaleState.powerRate.demonicfury)
 	end,
 	-- Get the distance to the target
 	-- returns: bool or number
@@ -717,28 +698,30 @@ OvaleCondition.conditions=
 		return compare(OvaleState.state.eclipse, condition[1], condition[2])
 	end,
 	-- Get the effective mana (e.g. if spell cost is divided by two, will returns the mana multiplied by two)
+	-- TODO: not working
 	-- returns: bool or number
 	effectivemana = function(condition)
-		if condition[2] then
-			local limit = GetManaTime(condition[2], true)
-			if condition[1]=="more" then
-				return limit, nil
-			else
-				return 0,limit
-			end
-		else
-			return 0, nil, GetManaAndRate(true)
-		end
+		return testValue(condition[1], condition[2], OvaleState.state.mana, OvaleState.currentTime, OvaleState.powerRate.mana)
 	end,
 	-- Get the number of enemies
 	-- returns: bool or number
 	enemies = function(condition)
 		return compare(OvaleEnemies:GetNumberOfEnemies(), condition[1], condition[2])
 	end,
+	-- Get the energy
+	-- returns: bool or number
+	energy = function(condition)
+		return testValue(condition[1], condition[2], OvaleState.state.energy, OvaleState.currentTime, OvaleState.powerRate.energy)
+	end,
 	-- Checks if the target exists
 	-- returns: bool
 	exists = function(condition)
 		return testbool(UnitExists(getTarget(condition.target)) == 1, condition[1])
+	end,
+	-- Get the focus
+	-- returns: bool or number
+	focus = function(condition)
+		return testValue(condition[1], condition[2], OvaleState.state.focus, OvaleState.currentTime, OvaleState.powerRate.focus)
 	end,
 	-- Check if a glyph is active
 	-- 1: the glyph spell id
@@ -920,16 +903,7 @@ OvaleCondition.conditions=
 	mana = function(condition)
 		local target = getTarget(condition.target)
 		if target == "player" then
-			if condition[2] then
-				local limit = GetManaTime(condition[2], false)
-				if condition[1]=="more" then
-					return limit, nil
-				else
-					return 0,limit
-				end
-			else
-				return 0, nil, GetManaAndRate(false)
-			end
+			return testValue(condition[1], condition[2], OvaleState.state.mana, OvaleState.currentTime, OvaleState.powerRate.mana)
 		else
 			return compare(UnitPower(target), condition[1], condition[2])
 		end
@@ -938,22 +912,12 @@ OvaleCondition.conditions=
 	-- return: bool or number
 	manapercent = function(condition)
 		local target = getTarget(condition.target)
-		if UnitPowerMax(target) == 0 then
+		if UnitPowerMax(target, 0) == 0 then
 			return nil
 		end
 		if target == "player "then
-			if condition[2] then
-				local limit = GetManaTime(condition[2] * UnitPowerMax(target)/100, false)
-				if condition[1] == "more" then
-					return limit, nil
-				else
-					return 0, limit
-				end
-			else
-				local value, t, rate = GetManaAndRate(false)
-				local conversion = 100/UnitPowerMax(target)
-				return 0, nil, value * conversion, t, rate * conversion
-			end
+			local conversion = 100/UnitPowerMax(target, 0)
+			return testValue(condition[1], condition[2], OvaleState.state.mana * conversion, OvaleState.currentTime, OvaleState.powerRate.mana * conversion)
 		else
 			return compare(UnitPower(target)/UnitPowerMax(target), condition[1], condition[2]/100)
 		end
@@ -978,7 +942,7 @@ OvaleCondition.conditions=
 	-- Get the time until the next tick
 	-- 1: spell id
 	-- return: number
-	nextTick = function(condition)
+	nexttick = function(condition)
 		local start, ending = GetTargetAura(condition, getTarget(condition.target))
 		local si = OvaleData.spellInfo[condition[1]]
 		if not si or not si.duration then
@@ -1038,6 +1002,11 @@ OvaleCondition.conditions=
 		local present = UnitExists("pet") and not UnitIsDead("pet")
 		return testbool(present, condition[1])
 	end,
+	-- Get the rage
+	-- return: bool or number
+	rage = function(condition)
+		return testValue(condition[1], condition[2], OvaleState.state.rage, OvaleState.currentTime, OvaleState.powerRate.rage)
+	end,
 	-- Get [target level]-[player level]
 	-- return: number or bool
 	relativelevel = function(condition)
@@ -1083,10 +1052,20 @@ OvaleCondition.conditions=
 		end
 		return 0, ret, -1
 	end,
+	-- Get the runic power
+	-- returns: bool or number
+	runicpower = function(condition)
+		return testValue(condition[1], condition[2], OvaleState.state.runicpower, OvaleState.currentTime, OvaleState.powerRate.runicpower)
+	end,
+	-- Get the shadow orbs count
+	-- returns: bool or number
+	shadoworbs = function(condition)
+		return testValue(condition[1], condition[2], OvaleState.state.shadoworbs, OvaleState.currentTime, OvaleState.powerRate.shadoworbs)
+	end,
 	-- Get the number of soul shards
 	-- return: number or bool
 	soulshards = function(condition)
-		return compare(OvaleState.state.shard, condition[1], condition[2])
+		return compare(OvaleState.state.shards, condition[1], condition[2])
 	end,
 	-- Get the unit speed (100 is runing speed)
 	-- return: number or bool
@@ -1139,19 +1118,8 @@ OvaleCondition.conditions=
 	end,
 	-- Get the time in combat
 	-- return: number or bool
-	TimeInCombat = function(condition)
-		if not Ovale.combatStartTime then
-			return nil
-		end
-		if condition[2] then
-			if condition[1] == "more" then
-				return Ovale.combatStartTime + condition[2]
-			else
-				return 0, Ovale.combatStartTime + condition[2]
-			end
-		else
-			return 0, nil, 0, Ovale.combatStartTime, 1
-		end
+	timeincombat = function(condition)
+		return testValue(condition[1], condition[2], 0, Ovale.combatStartTime, 1)
 	end,
 	-- Get the time until the unit dies
 	-- return: number
@@ -1214,6 +1182,9 @@ OvaleCondition.conditions=
 		end
 		return testbool(present, condition[2])
 	end,
+	["true"] = function(condition)
+		return 0, nil
+	end,
 	-- Check if a weapon enchant is not present
 	-- 1: mainhand or offhand
 	-- [2]: the maximum time the weapon enchant should be present
@@ -1252,7 +1223,6 @@ OvaleCondition.conditions.debuffpresent = OvaleCondition.conditions.buffpresent
 OvaleCondition.conditions.debuffgain = OvaleCondition.conditions.buffgain
 OvaleCondition.conditions.debuffduration = OvaleCondition.conditions.buffduration
 OvaleCondition.conditions.debuffremains = OvaleCondition.conditions.buffremains
-OvaleCondition.conditions.rage = OvaleCondition.conditions.mana
 OvaleCondition.defaultTarget = "target"
 
 --</public-static-properties>

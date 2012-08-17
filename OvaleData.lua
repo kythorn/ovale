@@ -18,6 +18,23 @@ OvaleData.spellInfo = {}
 --spells that count for scoring
 OvaleData.scoreSpell = {}
 
+OvaleData.power =
+{
+	mana = {id=0, mini=0},
+	rage = {id=1, mini=0, maxi=100},
+	focus ={id=2, mini=0, maxi=100},
+	energy = {id=3, mini=0, maxi=100},
+	runicpower = {id=6, mini=0, maxi=100},
+	shards = {id=7, mini=0, maxi=3},
+	eclipse = {id=8, mini=-100, maxi=100},
+	holy = {id=9, mini=0, maxi=3},
+	chi = {id=12 }, 
+	shadoworbs = {id=13, mini=0, maxi=3},
+	burningembers = {id=14},
+	demonicfury = {id=15}
+}
+OvaleData.powerType = {}
+
 -- List haste buff that does not appear in the character sheet and that are not raid wide buffs
 OvaleData.selfHasteBuff =
 {
@@ -73,7 +90,7 @@ OvaleData.buffSpellList =
 	},
 	stamina =
 	{
-		79105, -- Power Word: Fortitude
+		21562, -- Power Word: Fortitude
 		469, -- Commanding Shout
 		6307, -- Blood Pact
 		90364 -- Qiraji Fortitude
@@ -207,6 +224,10 @@ local rootSpellList = nil
 
 --<public-static-methods>
 function OvaleData:OnEnable()
+	for k,v in pairs(self.power) do
+		self.powerType[v.id] = k
+	end
+	
 	self:FirstInit()
     self:RegisterEvent("PLAYER_TALENT_UPDATE")
     self:RegisterEvent("CHARACTER_POINTS_CHANGED")
@@ -289,6 +310,8 @@ function OvaleData:GetSpellInfoOrNil(spell)
 end
 
 function OvaleData:FillSpellList()
+	if true then return end
+	--TODO invalid spell slot in last patch
 	self.spellList = {}
 	local book=BOOKTYPE_SPELL
 	while true do

@@ -20,6 +20,7 @@ OvaleState.attenteFinCast = nil
 OvaleState.startCast = nil
 OvaleState.endCast = nil
 OvaleState.gcd = 1.5
+OvaleState.powerRate = {}
 --</public-static-properties>
 
 --<private-static-properties>
@@ -42,16 +43,32 @@ function OvaleState:StartNewFrame()
 	self.gcd = OvaleData:GetGCD()
 end
 
+function OvaleState:UpdatePowerRates()
+	for k,v in pairs(OvaleData.power) do
+		self.powerRate[k] = 0
+	end
+	
+	self.powerRate.energy = 10 * OvaleAura.meleeHaste
+	
+	if OvaleState:GetAura("player", 13750) then
+		self.powerRate.energy = self.powerRate.energy * 2
+	end
+	
+	self.powerRate.focus = 4 * OvaleAura.meleeHaste
+end
+
 function OvaleState:Reset()
 	self.serial = self.serial + 1
 	self.currentTime = self.maintenant
 	self.currentSpellId = nil
 	self.attenteFinCast = self.maintenant
 	self.state.combo = GetComboPoints("player")
-	self.state.mana = UnitPower("player")
-	self.state.shard = UnitPower("player", 7)
-	self.state.eclipse = UnitPower("player", 8)
-	self.state.holy = UnitPower("player", 9)
+	for k,v in pairs(OvaleData.power) do
+		self.state[k] = UnitPower("player", v.id)
+	end
+	
+	self:UpdatePowerRates()
+	
 	if OvaleData.className == "DEATHKNIGHT" then
 		for i=1,6 do
 			self.state.rune[i].type = GetRuneType(i)
@@ -126,15 +143,29 @@ function OvaleState:AddSpellToStack(spellId, startCast, endCast, nextCast, nocd,
 	--(donc si il est déjà lancé, on n'en tient pas compte)
 	if endCast >= self.maintenant then
 		--Mana
-		local _, _, _, cost = GetSpellInfo(spellId)
-		if cost then
-			self.state.mana = self.state.mana - cost
+		local _, _, _, cost, _, powerType = GetSpellInfo(spellId)
+		local power = OvaleData.powerType[powerType]
+		if cost and power and (not newSpellInfo or not newSpellInfo[power]) then
+			self.state[power] = self.state[power] - cost
 		end
 
 		if newSpellInfo then
-		
-			if newSpellInfo.mana then
-				self.state.mana = self.state.mana - newSpellInfo.mana
+			for k,v in pairs(OvaleData.power) do
+				-- eclipse cost is on hit
+				if newSpellInfo[k] and k ~= "eclipse" then
+					self.state[k] = self.state[k] - newSpellInfo[k]
+					if self.state[k] < v.mini then
+						self.state[k] = v.mini
+					end
+					if v.maxi and self.state[k] > v.maxi then
+						self.state[k] = v.maxi
+					else
+						local maxi = UnitPowerMax("player", v.id)
+						if maxi and self.state[k] > maxi then
+							self.state[k] = maxi
+						end
+					end
+				end
 			end
 			
 			--Points de combo
@@ -156,22 +187,6 @@ function OvaleState:AddSpellToStack(spellId, startCast, endCast, nextCast, nocd,
 			end
 			if newSpellInfo.unholy then
 				self:AddRune(startCast, 2, newSpellInfo.unholy)
-			end
-			if newSpellInfo.holy then
-				self.state.holy = self.state.holy + newSpellInfo.holy
-				if self.state.holy < 0 then
-					self.state.holy = 0
-				elseif self.state.holy > 3 then
-					self.state.holy = 3
-				end
-			end
-			if newSpellInfo.shard then
-				self.state.shard = self.state.shard + newSpellInfo.shard
-				if self.state.shard < 0 then
-					self.state.shard = 0
-				elseif self.state.shard > 3 then
-					self.state.shard = 3
-				end
 			end
 		end
 	end
@@ -401,4 +416,5 @@ function OvaleState:NewAura(guid, spellId)
 	myAura.gain = self.currentTime
 	return myAura
 end
+
 --</public-static-methods>
