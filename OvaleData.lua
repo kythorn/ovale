@@ -81,12 +81,12 @@ OvaleData.buffSpellList =
 		408, -- Kidney Shot
 		46968, -- Shockwave
 	},
-	strengthagility=
+	
+	stats_multiplier =
 	{
-		6673, -- Battle Shout
-		8076, -- Strength of Earth
-		57330, -- Horn of Winter
-		93435 --Roar of Courage (Cat, Spirit Beast)
+		20217, -- Blessing of Kings
+		1126, -- Mark of the Wild
+		-- Monk
 	},
 	stamina =
 	{
@@ -95,63 +95,59 @@ OvaleData.buffSpellList =
 		6307, -- Blood Pact
 		90364 -- Qiraji Fortitude
 	},
-	lowerarmor=
+	attack_power_multiplier=
 	{
-		58567, -- Sunder Armor (x3)
-		8647, -- Expose Armor
-		91565, -- Faerie Fire (x3)
-		35387, --Corrosive Spit (x3 Serpent)
-		50498 --Tear Armor (x3 Raptor)
+		6673, -- Battle Shout
+		57330, -- Horn of Winter
+		-- Hunter?
 	},
-	magicaldamagetaken=
+	spell_power_multiplier = 
 	{
-		65142, -- Ebon Plague
-		60433, -- Earth and Moon
-		93068, -- Master Poisoner 
-		1490, -- Curse of the Elements
-		85547, -- Jinx 1
-		86105, -- Jinx 2
-		34889, --Fire Breath (Dragonhawk)
-		24844 --Lightning Breath (Wind serpent)
+		109773,  -- Dark Intent
+		-- Shaman?
+		1459 -- Arcane Brillance
 	},
-	magicalcrittaken=
-    {
-        17800, -- Shadow and Flame
-        22959 -- Critical Mass
-    },
-	physicaldamagetaken=
+	melee_haste =
 	{
-		30069, -- Blood Frenzy (rank 1)
-		30070, -- Blood Frenzy (rank 2)
-		81327, -- Brittle Bones (rank 1)
-		81328, -- Brittle Bones (rank 2)
-		58684, -- Savage Combat (rank 1)
-		58683, -- Savage Combat (rank 2)
+	  -- Frost and Unholy death knights, any rogue, Enhancement shaman
+	},
+	spell_haste = 
+	{
+		24907, -- Moonkin aura
+		49868, -- Mind Quickening
+		-- Elemental  shaman
+	},
+	critical_strike =
+	{
+		--Guardian and Feral druids, any hunter, any mage
+	},
+	mastery =
+	{
+		93435, --Roar of Courage (Cat, Spirit Beast)
+		116956 -- Grace of Air
+	},
+	-- weakened_armor
+	physical_vulnerability=
+	{
+		55749, -- Physical Vulnaribility
 		55749, -- Acid Spit (Worm)
 		50518, -- Ravage (Ravager)
 	},
-	lowerphysicaldamage=
+	magic_vulnerability=
 	{
-		99, -- Demoralizing Roar
-		702, -- Curse of Weakness
-		1160, -- Demoralizing Shout
+		93068, -- Master Poisoner 
+		1490, -- Curse of the Elements
+		34889, --Fire Breath (Dragonhawk)
+		24844 --Lightning Breath (Wind serpent)
+	},
+	lower_physical_damage=
+	{
+		115798, -- Weakened blows
 		26017, -- Vindication
-		81130, -- Scarlet Fever
 		50256, --Demoralizing Roar (Bear)
 		24423, -- Demoralizing Screech (Carrion Bird)
 	},
-	meleeslow=
-	{
-		55095, --Icy Touch
-		58179, --Infected Wounds rank 1
-		58180, --Infected Wounds rank 2
-		68055, --Judgments of the just
-		6343, --Thunderclap
-		8042, --Earth Shock
-		54404, --Dust Cloud (Tallstrider)
-		90315, -- Tailspin (Fox)
-	},
-	castslow =
+	cast_slow =
 	{
 		1714, --Curse of Tongues
         58604, --Lava Breath (Core Hound)
@@ -160,15 +156,9 @@ OvaleData.buffSpellList =
         73975, --Necrotic Strike
         31589 --Slow
 	},
-	bleed=
+	healing_reduced =
 	{
-		33876, --Mangle cat
-		33878, --Mangle bear
-		46856, -- Trauma rank 1
-		46857, -- Trauma rank 2
-		16511, --Hemorrhage
-		50271, --Tendon Rip (Hyena)
-		35290 --Gore (Boar)
+		--Arms or Fury warrior, any rogue, any hunter
 	},
 	heroism=
 	{
@@ -177,20 +167,9 @@ OvaleData.buffSpellList =
 		80353, --Time warp
 		90355 -- Ancient Hysteria (Core Hound)
 	},
-	meleehaste =
-	{
-		8515, -- Windfury
-		55610, -- Improved Icy Talons
-		53290 -- Hunting Party
-	},
-	spellhaste = 
-	{
-		24907, -- Moonkin aura
-		2895, -- Wrath of Air Totem
-		49868 -- Mind Quickening
-	},
 	enrage =
 	{
+		--TODO update
 		49016, -- Unholy Frenzy
 		18499, -- Berserker Rage
 		12292, -- Death Wish
@@ -201,16 +180,9 @@ OvaleData.buffSpellList =
         52610, -- Savage Roar (Cat)
         76691, -- Vengeance (All Tank Specs)
 	},
-	criticalstrike =
+	ranged_vulnerability =
 	{
-		51740, -- Elemental Oath
-		51698, -- Honor Among Thieves (rank 1)
-		51700, -- Honor Among Thieves (rank 2)
-		51701, -- Honor Among Thieves (rank 3)
-		17007, -- Leader of the Pack
-		29801, -- Rampage
-		24604, -- Furious Howl (Wolf)
-		90309, -- Terrifying Roar (Devilsaur)
+		1130, -- Hunter's Mark
 	}
 }
 --</public-static-properties>

@@ -21,6 +21,7 @@ OvaleState.startCast = nil
 OvaleState.endCast = nil
 OvaleState.gcd = 1.5
 OvaleState.powerRate = {}
+OvaleState.lastSpellId = nil
 --</public-static-properties>
 
 --<private-static-properties>
@@ -58,6 +59,7 @@ function OvaleState:UpdatePowerRates()
 end
 
 function OvaleState:Reset()
+	self.lastSpellId = OvaleFuture:GetLastSpell().spellId
 	self.serial = self.serial + 1
 	self.currentTime = self.maintenant
 	self.currentSpellId = nil
@@ -108,6 +110,7 @@ function OvaleState:AddSpellToStack(spellId, startCast, endCast, nextCast, nocd,
 	
 	local newSpellInfo = OvaleData.spellInfo[spellId]
 	
+	self.lastSpellId = spellId
 	--On enregistre les infos sur le sort en cours
 	self.attenteFinCast = nextCast
 	self.currentSpellId = spellId

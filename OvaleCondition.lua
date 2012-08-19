@@ -718,6 +718,9 @@ OvaleCondition.conditions=
 	exists = function(condition)
 		return testbool(UnitExists(getTarget(condition.target)) == 1, condition[1])
 	end,
+	["false"] = function(condition)
+		return nil
+	end,
 	-- Get the focus
 	-- returns: bool or number
 	focus = function(condition)
@@ -982,8 +985,6 @@ OvaleCondition.conditions=
 		end
 		return nil
 	end,
-	otherauraexpires = otherdebuffexpires,
-	otheraurapresent = otherdebuffpresent,
 	-- Get the maximum aura remaining duration on any target
 	-- return: number
 	otherauraremains = function(condition)
@@ -995,6 +996,12 @@ OvaleCondition.conditions=
 	present = function(condition)
 		local present = UnitExists(getTarget(condition.target)) and not UnitIsDead(getTarget(condition.target))
 		return testbool(present, condition[1])
+	end,
+	-- Check what was the previous spell cast
+	-- 1: the spell to check
+	-- return: bool
+	previousspell = function(condition)
+		return testbool(condition[1] == OvaleState.lastSpellId, condition[2])
 	end,
 	-- Check if the pet is present and alive
 	-- return: bool
@@ -1116,6 +1123,28 @@ OvaleCondition.conditions=
 		local isTanking, status, threatpct = UnitDetailedThreatSituation("player", getTarget(condition.target))
 		return compare(threatpct, condition[1], condition[2])
 	end,
+	-- Get the remaining number of ticks
+	-- 1: spell Id
+	-- return: bool or number
+	ticksremain = function(condition)
+		local start, ending = GetTargetAura(condition, getTarget(condition.target))
+		local si = OvaleData.spellInfo[condition[1]]
+		if not si or not si.duration then
+			return nil
+		end
+		local ticks = floor(OvaleAura.spellHaste * (si.duration/(si.tick or 3)) + 0.5)
+		local tickLength = (ending - start) / ticks
+		local tickTime = start + tickLength
+		local remain = ticks - 1
+		for i=1,ticks do
+			if OvaleState.currentTime<=tickTime then
+				break
+			end
+			tickTime = tickTime + tickLength
+			remain = remain - 1
+		end
+		return start, ending, remain, tickTime, -1/tickLength
+	end,
 	-- Get the time in combat
 	-- return: number or bool
 	timeincombat = function(condition)
@@ -1223,6 +1252,8 @@ OvaleCondition.conditions.debuffpresent = OvaleCondition.conditions.buffpresent
 OvaleCondition.conditions.debuffgain = OvaleCondition.conditions.buffgain
 OvaleCondition.conditions.debuffduration = OvaleCondition.conditions.buffduration
 OvaleCondition.conditions.debuffremains = OvaleCondition.conditions.buffremains
+OvaleCondition.conditions.otherauraexpires = OvaleCondition.conditions.otherdebuffexpires
+OvaleCondition.conditions.otheraurapresent = OvaleCondition.conditions.otherdebuffpresent
 OvaleCondition.defaultTarget = "target"
 
 --</public-static-properties>

@@ -1,210 +1,165 @@
-Ovale.defaut["HUNTER"] =
-[[
-#Spells
-Define(AIMEDSHOT 19434)
-	SpellInfo(AIMEDSHOT resetcounter=ss mana=50)
-	SpellAddBuff(AIMEDSHOT FIRE=0)
-Define(ARCANESHOT 3044)
-	SpellInfo(ARCANESHOT resetcounter=ss mana=25)
-Define(ASPECTOFTHEFOX 82661)
-	SpellAddBuff(ASPECTOFTHEFOX ASPECTOFTHEFOX=1000)
-Define(ASPECTOFTHEHAWK 13165)
-	SpellAddBuff(ASPECTOFTHEHAWK ASPECTOFTHEHAWK=1000)
-Define(BESTIALWRATH 19574)
-	SpellInfo(BESTIALWRATH cd=120)
-	SpellAddBuff(BESTIALWRATH BESTIALWRATH=10)
-Define(BLACKARROW 3674)
-	SpellInfo(BLACKARROW cd=30 mana=35)
-	SpellAddTargetDebuff(BLACKARROW BLACKARROW=15)
-Define(CALLOFTHEWILD 53434)
-	SpellInfo(CALLOFTHEWILD cd=300)
-	SpellAddBuff(CALLOFTHEWILD CALLOFTHEWILD=20)
-Define(CHIMERASHOT 53209)
-	SpellInfo(CHIMERASHOT cd=10 resetcounter=ss mana=50)
-	SpellAddTargetDebuff(CHIMERASHOT SERPENTSTING=refresh)
-Define(COBRASHOT 77767)
-	SpellInfo(COBRASHOT mana=-9)
-	SpellAddTargetDebuff(COBRASHOT SERPENTSTING=refresh)
-Define(EXPLOSIVESHOT 53301)
-	SpellInfo(EXPLOSIVESHOT cd=6 mana=50 buffnocd=LOCKANDLOAD)
-	SpellAddTargetDebuff(EXPLOSIVESHOT EXPLOSIVESHOT=2)
-	SpellAddBuff(EXPLOSIVESHOT LOCKANDLOAD=-1)
-Define(FERVOR 82726)
-	SpellInfo(FERVOR mana=-50 cd=120)
-Define(FOCUSFIRE 82692)
-	SpellInfo(FOCUSFIRE cd=15)
-	SpellAddBuff(FOCUSFIRE FOCUSFIRE=15)
-Define(KILLCOMMAND 34026)
-	SpellInfo(KILLCOMMAND cd=6 mana=40 resetcounter=ss)
-Define(KILLSHOT 53351)
-	SpellInfo(KILLSHOT cd=10 resetcounter=ss)
-Define(HUNTERSMARK 1130)
-	SpellAddTargetDebuff(HUNTERSMARK HUNTERSMARK=300)
-Define(MULTISHOT 2643)
-	SpellInfo(MULTISHOT mana=40)
-Define(RAPIDFIRE 3045)
-	SpellAddBuff(RAPIDFIRE RAPIDFIRE=15)
-	SpellInfo(RAPIDFIRE cd=300 resetcounter=ss)
-Define(READINESS 23989)
-	SpellInfo(READINESS cd=180)
-Define(SERPENTSTING 1978)
-	SpellInfo(SERPENTSTING resetcounter=ss duration=15 mana=25)
-	SpellAddTargetDebuff(SERPENTSTING SERPENTSTING=15)
-Define(STEADYSHOT 56641)
-	SpellInfo(STEADYSHOT inccounter=ss mana=-9)
-Define(SILENCINGSHOT 34490)
-	SpellInfo(SILENCINGSHOT cd=20 resetcounter=ss)
-
-#Pet spells
-Define(GROWL 2649)
-	
-#Buffs
-Define(LOCKANDLOAD 56453)
-Define(FRENZYEFFECT 19615)
-Define(MARKEDFORDEATH 88691)
-Define(FIRE 82926)
-Define(BEASTWITHIN 34692)
-
-#Glyphs
-Define(GLYPHOFARCANESHOT 56841)
-
-AddCheckBox(multi SpellName(MULTISHOT))
-ScoreSpells(FOCUSFIRE KILLCOMMAND ARCANESHOT KILLSHOT STEADYSHOT SERPENTSTING
-			CHIMERASHOT AIMEDSHOT
-			BLACKARROW EXPLOSIVESHOT)
-
-AddIcon help=main mastery=1
+Ovale.defaut["HUNTER"] = [[Define(a_murder_of_crows 131894)
+  SpellInfo(a_murder_of_crows duration=30 cd=120 )
+  SpellAddBuff(a_murder_of_crows a_murder_of_crows=1)
+Define(aimed_shot 19434)
+Define(arcane_shot 3044)
+Define(aspect_of_the_fox 82661)
+  SpellAddBuff(aspect_of_the_fox aspect_of_the_fox=1)
+Define(aspect_of_the_hawk 13165)
+  SpellAddBuff(aspect_of_the_hawk aspect_of_the_hawk=1)
+Define(auto_shot 75)
+  SpellAddBuff(auto_shot auto_shot=1)
+Define(beast_within 34692)
+Define(bestial_wrath 19574)
+  SpellInfo(bestial_wrath duration=10 cd=60 )
+  SpellAddBuff(bestial_wrath bestial_wrath=1)
+Define(black_arrow 3674)
+  SpellInfo(black_arrow duration=20 cd=30 )
+  SpellAddTargetDebuff(black_arrow black_arrow=1)
+Define(blood_fury 20572)
+  SpellInfo(blood_fury duration=15 cd=120 )
+  SpellAddBuff(blood_fury blood_fury=1)
+Define(bloodlust 2825)
+  SpellInfo(bloodlust duration=40 cd=300 )
+  SpellAddBuff(bloodlust bloodlust=1)
+Define(call_pet_1 883)
+Define(chimera_shot 53209)
+  SpellInfo(chimera_shot cd=9 )
+Define(cobra_shot 77767)
+Define(explosive_shot 53301)
+  SpellInfo(explosive_shot duration=2 cd=6 )
+  SpellAddTargetDebuff(explosive_shot explosive_shot=1)
+Define(explosive_trap 13812)
+  SpellInfo(explosive_trap duration=20 )
+  SpellAddTargetDebuff(explosive_trap explosive_trap=1)
+Define(fervor 82726)
+  SpellInfo(fervor duration=10 focus=-50 cd=30 )
+  SpellAddBuff(fervor fervor=1)
+Define(focus_fire 82692)
+  SpellInfo(focus_fire duration=20 )
+  SpellAddBuff(focus_fire focus_fire=1)
+Define(glaive_toss 117050)
+  SpellInfo(glaive_toss duration=15 cd=15 )
+Define(hunters_mark 1130)
+  SpellInfo(hunters_mark duration=300 )
+  SpellAddTargetDebuff(hunters_mark hunters_mark=1)
+Define(kill_command 34026)
+  SpellInfo(kill_command cd=6 )
+  SpellAddBuff(kill_command kill_command=1)
+Define(kill_shot 53351)
+  SpellInfo(kill_shot cd=10 )
+Define(master_marksman_fire 82926)
+  SpellInfo(master_marksman_fire duration=10 )
+  SpellAddBuff(master_marksman_fire master_marksman_fire=1)
+Define(multi_shot 2643)
+Define(rapid_fire 3045)
+  SpellInfo(rapid_fire duration=15 cd=180 )
+  SpellAddBuff(rapid_fire rapid_fire=1)
+Define(readiness 23989)
+  SpellInfo(readiness cd=300 )
+Define(serpent_sting 1978)
+  SpellAddTargetDebuff(serpent_sting serpent_sting=1)
+Define(stampede 54864)
+Define(steady_focus 53220)
+  SpellInfo(steady_focus duration=10 )
+  SpellAddBuff(steady_focus steady_focus=1)
+Define(steady_shot 56641)
+Define(trueshot_aura 19506)
+  SpellAddBuff(trueshot_aura trueshot_aura=1)
+AddIcon mastery=1 help=main
 {
-	if CheckBoxOn(multi)
-	{
-		#/multi_shot,if=target.adds>5
-		if Mana(more 56) Spell(MULTISHOT)
-		#/cobra_shot,if=target.adds>5
-		Spell(COBRASHOT)
-		Spell(STEADYSHOT)
-	}
-	#/serpent_sting,if=!ticking
-	if Mana(more 24) and TargetDebuffExpires(SERPENTSTING 0 mine=1) and TargetDeadIn(more 8) Spell(SERPENTSTING)
-	#/kill_shot
-	if TargetLifePercent(less 20) Spell(KILLSHOT)
-	#/kill_command
-	if TargetInRange(GROWL) and Mana(more 39) Spell(KILLCOMMAND)
-	#/fervor,if=focus<=20
-	if Mana(less 20) Spell(FERVOR)
-	#/arcane_shot,if=focus>=90|buff.beast_within.up
-	if Mana(more 90) or BuffPresent(BEASTWITHIN) Spell(ARCANESHOT)
-	#/cobra_shot
-	Spell(COBRASHOT)
-	Spell(STEADYSHOT)
+	Spell(aspect_of_the_hawk)
+	Spell(aspect_of_the_fox)
+	Spell(focus_fire)
+	if not target.DebuffPresent(serpent_sting) Spell(serpent_sting)
+	Spell(glaive_toss)
+	if Enemies() >5 Spell(cobra_shot)
+	Spell(kill_shot)
+	Spell(kill_command)
+	if Focus() <=37 Spell(fervor)
+	if Focus() >=69 or BuffPresent(beast_within) Spell(arcane_shot)
+	Spell(cobra_shot)
 }
-
-AddIcon help=offgcd mastery=1
+AddIcon mastery=1 help=offgcd
 {
-	Spell(CALLOFTHEWILD usable=1)
-	#/focus_fire,five_stacks=1,if=!buff.beast_within.up
-	if pet.BuffPresent(FRENZYEFFECT stacks=5) and BuffExpires(BEASTWITHIN 0) Spell(FOCUSFIRE)
+	Spell(auto_shot)
+	if Focus() >60 Spell(bestial_wrath)
+	Spell(stampede)
 }
-
-AddIcon help=cd mastery=1
+AddIcon mastery=1 help=aoe
 {
-	unless BuffPresent(ASPECTOFTHEHAWK) or BuffPresent(ASPECTOFTHEFOX) Spell(ASPECTOFTHEHAWK)
-	if TargetDebuffExpires(HUNTERSMARK 2) and TargetDebuffExpires(MARKEDFORDEATH 0) and TargetDeadIn(more 20) Spell(HUNTERSMARK nored=1)
-	#/bestial_wrath,if=focus>60
-	if Mana(more 60) Spell(BESTIALWRATH usable=1)
-	#/rapid_fire,if=!buff.bloodlust.up&!buff.beast_within.up
-	if BuffExpires(heroism 0) and BuffExpires(BEASTWITHIN 0) Spell(RAPIDFIRE)
-	Item(Trinket0Slot usable=1)
-	Item(Trinket1Slot usable=1)
+	Spell(explosive_trap)
+	Spell(multi_shot)
 }
-
-AddIcon help=main mastery=2
+AddIcon mastery=1 help=cd
 {
-	if CheckBoxOn(multi)
-	{
-		#/multi_shot,if=target.adds>5
-		if Mana(more 56) Spell(MULTISHOT)
-		#/cobra_shot,if=target.adds>5
-		Spell(STEADYSHOT)
-	}
-	
-	#/serpent_sting,if=!ticking&target.health_pct<=90
-    if Mana(more 24) and TargetDebuffExpires(SERPENTSTING 0 mine=1) and TargetDeadIn(more 8) #and TargetLifePercent(less 90) 
-			Spell(SERPENTSTING)
-	#/chimera_shot,if=target.health_pct<=90
-	if Mana(more 49) #and TargetLifePercent(less 90) 
-		Spell(CHIMERASHOT)
-	#/steady_shot,if=buff.pre_improved_steady_shot.up&buff.improved_steady_shot.remains<3
-	if Mana(less 40) or Counter(ss equal 1) Spell(STEADYSHOT)
-	#/kill_shot
-	if TargetLifePercent(less 20) Spell(KILLSHOT)
-	#/aimed_shot,if=buff.master_marksman_fire.react
-	if BuffPresent(FIRE) Spell(AIMEDSHOT)
-	if Glyph(GLYPHOFARCANESHOT)
-	{
-		#/aimed_shot,if=target.health_pct>80|buff.rapid_fire.up|buff.bloodlust.up
-		if TargetLifePercent(more 90) or 
-			BuffPresent(RAPIDFIRE) or BuffPresent(heroism) if Mana(more 49) Spell(AIMEDSHOT)
-        #/arcane_shot,if=(focus>=66|cooldown.chimera_shot.remains>=5)&(target.health_pct<90&!buff.rapid_fire.up&!buff.bloodlust.up)
-		if {Mana(more 65) or spellCooldown(CHIMERASHOT)>5} and {TargetLifePercent(less 90) and 
-					BuffExpires(RAPIDFIRE) and BuffExpires(heroism)}
-			if Mana(more 24) Spell(ARCANESHOT)
-	}
-	unless Glyph(GLYPHOFARCANESHOT)
-	{
-		#/aimed_shot,if=cooldown.chimera_shot.remains>5|focus>=80|buff.rapid_fire.up|buff.bloodlust.up|target.health_pct>90
-		if {spellCooldown(CHIMERASHOT)>5} or Mana(more 79) or BuffPresent(RAPIDFIRE) or BuffPresent(heroism) #or TargetLifePercent(more 90)
-			if Mana(more 49) Spell(AIMEDSHOT)
-	}
-	#/steady_shot
-	Spell(STEADYSHOT)
+	Spell(blood_fury)
+	if not BuffPresent(bloodlust) and not BuffPresent(beast_within) Spell(rapid_fire)
+	if BuffPresent(beast_within) Spell(a_murder_of_crows)
+	Spell(readiness)
 }
-
-AddIcon help=cd mastery=2
+AddIcon mastery=2 help=main
 {
-	unless BuffPresent(ASPECTOFTHEHAWK) or BuffPresent(ASPECTOFTHEFOX) Spell(ASPECTOFTHEHAWK)
-	if TargetDebuffExpires(HUNTERSMARK 2) and TargetDebuffExpires(MARKEDFORDEATH 0) and TargetDeadIn(more 20) Spell(HUNTERSMARK nored=1)
-	#/rapid_fire,if=!buff.bloodlust.up|target.time_to_die<=30
-	unless BuffPresent(heroism) or BuffPresent(RAPIDFIRE) Spell(RAPIDFIRE)
-	#/readiness,wait_for_rapid_fire=1
-	if BuffPresent(RAPIDFIRE) Spell(READINESS)
-	Spell(CALLOFTHEWILD usable=1)
-	Item(Trinket0Slot usable=1)
-	Item(Trinket1Slot usable=1)
+	Spell(aspect_of_the_hawk)
+	Spell(aspect_of_the_fox)
+	Spell(glaive_toss)
+	if Enemies() >5 Spell(steady_shot)
+	if not target.DebuffPresent(serpent_sting) and target.HealthPercent() <=90 Spell(serpent_sting)
+	if target.HealthPercent() <=90 Spell(chimera_shot)
+	if PreviousSpell(steady_shot) and BuffRemains(steady_focus) <3 Spell(steady_shot)
+	Spell(kill_shot)
+	if BuffPresent(master_marksman_fire) Spell(aimed_shot)
+	if target.HealthPercent() >90 or BuffPresent(rapid_fire) or BuffPresent(bloodlust) Spell(aimed_shot)
+	if {Focus() >=66 or SpellCooldown(chimera_shot) >=5 } and {target.HealthPercent() <90 and not BuffPresent(rapid_fire) and not BuffPresent(bloodlust) } Spell(arcane_shot)
+	if Focus() <=20 Spell(fervor)
+	Spell(steady_shot)
 }
-
-AddIcon help=main mastery=3
+AddIcon mastery=2 help=offgcd
 {
- 	if CheckBoxOn(multi)
-	{
-		#/multi_shot,if=target.adds>5
-		if Mana(more 56) Spell(MULTISHOT)
-		#/cobra_shot,if=target.adds>5
-		Spell(STEADYSHOT)
-	}
-
-	#/serpent_sting,if=!ticking
-	if Mana(more 24) and TargetDebuffExpires(SERPENTSTING 0 mine=1) and TargetDeadIn(more 8) Spell(SERPENTSTING)
-	#/explosive_shot,if=!ticking&!in_flight
-    if TargetDebuffExpires(EXPLOSIVESHOT 0 mine=1) Spell(EXPLOSIVESHOT)
-	#/black_arrow,if=!ticking
-    if Mana(more 35) and TargetDebuffExpires(BLACKARROW 0 mine=1) Spell(BLACKARROW)
-	#/kill_shot
-    if TargetLifePercent(less 20) Spell(KILLSHOT)
-	#/arcane_shot,if=focus>=70&buff.lock_and_load.down
-    if Mana(more 69) and BuffExpires(LOCKANDLOAD) Spell(ARCANESHOT)
-	#/cobra_shot
-    Spell(COBRASHOT) 
-	Spell(STEADYSHOT)
+	Spell(auto_shot)
+	Spell(stampede)
 }
-
-
-AddIcon help=cd mastery=3
+AddIcon mastery=2 help=aoe
 {
-	unless BuffPresent(ASPECTOFTHEHAWK) or BuffPresent(ASPECTOFTHEFOX) Spell(ASPECTOFTHEHAWK)
-	if TargetDebuffExpires(HUNTERSMARK 2) and TargetDebuffExpires(MARKEDFORDEATH 0) and TargetDeadIn(more 20) Spell(HUNTERSMARK nored=1)
-	Spell(CALLOFTHEWILD usable=1)
-	unless BuffPresent(heroism) Spell(RAPIDFIRE)
-	Item(Trinket0Slot usable=1)
-	Item(Trinket1Slot usable=1)
+	Spell(explosive_trap)
+	Spell(multi_shot)
+}
+AddIcon mastery=2 help=cd
+{
+	Spell(blood_fury)
+	if not BuffPresent(bloodlust) or target.DeadIn() <=30 Spell(rapid_fire)
+	Spell(readiness)
+	Spell(a_murder_of_crows)
+}
+AddIcon mastery=3 help=main
+{
+	Spell(aspect_of_the_hawk)
+	Spell(aspect_of_the_fox)
+	Spell(glaive_toss)
+	if Enemies() >2 Spell(cobra_shot)
+	if not target.DebuffPresent(serpent_sting) and target.DeadIn() >=10 Spell(serpent_sting)
+	if {target.DebuffRemains(explosive_shot) <2.0 } Spell(explosive_shot)
+	Spell(kill_shot)
+	if target.DeadIn() >=8 Spell(black_arrow)
+	if Focus() >=67 Spell(arcane_shot)
+	if Focus() <=20 Spell(fervor)
+	Spell(cobra_shot)
+}
+AddIcon mastery=3 help=offgcd
+{
+	Spell(auto_shot)
+	Spell(stampede)
+}
+AddIcon mastery=3 help=aoe
+{
+	Spell(explosive_trap)
+	Spell(multi_shot)
+}
+AddIcon mastery=3 help=cd
+{
+	Spell(blood_fury)
+	Spell(a_murder_of_crows)
+	Spell(rapid_fire)
+	Spell(readiness)
 }
 ]]

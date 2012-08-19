@@ -303,4 +303,8 @@ function OvaleFuture:Apply()
 		end
 	end
 end
+
+function OvaleFuture:GetLastSpell)
+	return self.lastSpell[#self.lastSpell]
+end
 --</public-static-methods>
