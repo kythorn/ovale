@@ -85,18 +85,18 @@ AddIcon mastery=1 help=main
 	Spell(overpower usable=1)
 	if TalentPoints(storm_bolt) Spell(storm_bolt)
 	if not TalentPoints(storm_bolt) Spell(heroic_throw)
-	if {Rage() <70 } and not  target.DebuffPresent(colossus_smash) Spell(battle_shout)
+	if {Rage() <70 } and not target.DebuffPresent(colossus_smash) Spell(battle_shout)
 	if target.HealthPercent(less 20) Spell(execute)
 	Spell(slam)
 	if Rage() <70 Spell(battle_shout)
 }
 AddIcon mastery=1 help=offgcd
 {
-	if { target.DebuffRemains(colossus_smash) >=5 or SpellCooldown(colossus_smash) <=4 } and Rage() >=80 Spell(deadly_calm)
+	if {target.DebuffRemains(colossus_smash) >=5 or SpellCooldown(colossus_smash) <=4 } and Rage() >=80 Spell(deadly_calm)
 	if TalentPoints(bloodbath) and {{SpellCooldown(recklessness) >=60 or BuffPresent(recklessness) } or {target.HealthPercent() >=20 and {target.DeadIn() <=162 or {target.DeadIn() <=312 and not ArmorSetParts(T14 more 4) } } and target.DeadIn() >70 } } Spell(bloodbath)
 	if not {BuffPresent(enrage) or Rage() >=100 } Spell(berserker_rage)
-	if  target.DebuffPresent(colossus_smash) if CheckBoxOn(heroic_leap_check) Spell(heroic_leap)
-	if {{{ target.DebuffPresent(colossus_smash) and Rage() >=70 } or {Rage() >=100 } } and target.HealthPercent() >=20 } Spell(heroic_strike)
+	if target.DebuffPresent(colossus_smash) if CheckBoxOn(heroic_leap_check) Spell(heroic_leap)
+	if {{{target.DebuffPresent(colossus_smash) and Rage() >=70 } or {Rage() >=100 } } and target.HealthPercent() >=20 } Spell(heroic_strike)
 }
 AddIcon mastery=1 help=aoe
 {
@@ -107,7 +107,7 @@ AddIcon mastery=1 help=aoe
 AddIcon mastery=1 help=cd
 {
 	if {SpellCooldown(recklessness) >=60 or BuffPresent(recklessness) } or {target.HealthPercent() >=20 and {target.DeadIn() <=162 or {target.DeadIn() <=312 and not ArmorSetParts(T14 more 4) } } and target.DeadIn() >70 }  { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
-	if { target.DebuffRemains(colossus_smash) >=5 or SpellCooldown(colossus_smash) <=4 } and {{not TalentPoints(avatar) or not ArmorSetParts(T14 more 4) } and {{target.HealthPercent() <20 or target.DeadIn() >310 or {target.DeadIn() >160 and ArmorSetParts(T14 more 4) } } } or {TalentPoints(avatar) and ArmorSetParts(T14 more 4) and BuffPresent(avatar) } } Spell(recklessness)
+	if {target.DebuffRemains(colossus_smash) >=5 or SpellCooldown(colossus_smash) <=4 } and {{not TalentPoints(avatar) or not ArmorSetParts(T14 more 4) } and {{target.HealthPercent() <20 or target.DeadIn() >310 or {target.DeadIn() >160 and ArmorSetParts(T14 more 4) } } } or {TalentPoints(avatar) and ArmorSetParts(T14 more 4) and BuffPresent(avatar) } } Spell(recklessness)
 	if TalentPoints(avatar) and {{SpellCooldown(recklessness) >=180 or BuffPresent(recklessness) } or {target.HealthPercent() >=20 and target.DeadIn() >195 } or {target.HealthPercent() <20 and ArmorSetParts(T14 more 4) } } Spell(avatar)
 }
 AddIcon mastery=2 help=main
@@ -119,18 +119,18 @@ AddIcon mastery=2 help=main
 	if BuffStacks(raging_blow_aura) ==2 and target.HealthPercent() >=20 Spell(raging_blow)
 	if TalentPoints(storm_bolt) Spell(storm_bolt)
 	if not TalentPoints(storm_bolt) Spell(heroic_throw)
-	if {Rage() <70 } and not  target.DebuffPresent(colossus_smash) Spell(battle_shout)
+	if {Rage() <70 } and not target.DebuffPresent(colossus_smash) Spell(battle_shout)
 	if BuffPresent(raging_blow_aura) and target.HealthPercent() >=20 Spell(raging_blow)
 	if target.HealthPercent() >=20 and not {SpellCooldown(colossus_smash) <=6 and {Rage() <=60 } } Spell(wild_strike)
 	if Rage() <70 Spell(battle_shout)
 }
 AddIcon mastery=2 help=offgcd
 {
-	if { target.DebuffRemains(colossus_smash) >=5 or SpellCooldown(colossus_smash) <=4 } and Rage() >=80 Spell(deadly_calm)
+	if {target.DebuffRemains(colossus_smash) >=5 or SpellCooldown(colossus_smash) <=4 } and Rage() >=80 Spell(deadly_calm)
 	if TalentPoints(bloodbath) and {{SpellCooldown(recklessness) >=60 or BuffPresent(recklessness) } or {target.HealthPercent() >=20 and {target.DeadIn() <=162 or {target.DeadIn() <=312 and not ArmorSetParts(T14 more 4) } } and target.DeadIn() >70 } } Spell(bloodbath)
 	if not {BuffPresent(enrage) or {BuffStacks(raging_blow_aura) ==2 and target.HealthPercent() >=20 } or Rage() >=100 } Spell(berserker_rage)
-	if  target.DebuffPresent(colossus_smash) if CheckBoxOn(heroic_leap_check) Spell(heroic_leap)
-	if {{{ target.DebuffPresent(colossus_smash) and Rage() >=70 } or {Rage() >=100 } } and target.HealthPercent() >=20 } Spell(heroic_strike)
+	if target.DebuffPresent(colossus_smash) if CheckBoxOn(heroic_leap_check) Spell(heroic_leap)
+	if {{{target.DebuffPresent(colossus_smash) and Rage() >=70 } or {Rage() >=100 } } and target.HealthPercent() >=20 } Spell(heroic_strike)
 }
 AddIcon mastery=2 help=aoe
 {
@@ -141,7 +141,7 @@ AddIcon mastery=2 help=aoe
 AddIcon mastery=2 help=cd
 {
 	if {SpellCooldown(recklessness) >=60 or BuffPresent(recklessness) } or {target.HealthPercent() >=20 and {target.DeadIn() <=162 or {target.DeadIn() <=312 and not ArmorSetParts(T14 more 4) } } and target.DeadIn() >70 }  { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
-	if { target.DebuffRemains(colossus_smash) >=5 or SpellCooldown(colossus_smash) <=4 } and {{not TalentPoints(avatar) or not ArmorSetParts(T14 more 4) } and {{target.HealthPercent() <20 or target.DeadIn() >310 or {target.DeadIn() >160 and ArmorSetParts(T14 more 4) } } } or {TalentPoints(avatar) and ArmorSetParts(T14 more 4) and BuffPresent(avatar) } } Spell(recklessness)
+	if {target.DebuffRemains(colossus_smash) >=5 or SpellCooldown(colossus_smash) <=4 } and {{not TalentPoints(avatar) or not ArmorSetParts(T14 more 4) } and {{target.HealthPercent() <20 or target.DeadIn() >310 or {target.DeadIn() >160 and ArmorSetParts(T14 more 4) } } } or {TalentPoints(avatar) and ArmorSetParts(T14 more 4) and BuffPresent(avatar) } } Spell(recklessness)
 	if TalentPoints(avatar) and {{SpellCooldown(recklessness) >=180 or BuffPresent(recklessness) } or {target.HealthPercent() >=20 and target.DeadIn() >195 } or {target.HealthPercent() <20 and ArmorSetParts(T14 more 4) } } Spell(avatar)
 }
 AddIcon mastery=3 help=main

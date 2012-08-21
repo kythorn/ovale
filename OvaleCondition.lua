@@ -157,6 +157,32 @@ local function getOtherAura(spellId, suppTime)
 	return OvaleState:GetExpirationTimeOnAnyTarget(spellId)
 end
 
+local function GetRuneCount(type, death)
+	local ret = 0
+	local atTime = nil
+	local rate = nil
+	type = runeType[type]
+	for i=1,6 do
+		local rune = OvaleState.state.rune[i]
+		if rune and (rune.type == type or (rune.type == 4 and death==1)) then
+			if rune.cd > OvaleState.currentTime then
+				onCd = true
+				if not atTime or rune.cd < atTime then
+					atTime = rune.cd
+					rate = 1/rune.duration
+				end
+			else
+				ret = ret + 1
+			end
+		end
+	end
+	if atTime then
+		return ret + 1, atTime, rate
+	else
+		return ret, 0, 0
+	end
+end
+
 local function GetRune(condition)
 	local nombre = 0
 	local nombreCD = 0
@@ -322,7 +348,7 @@ local function getTargetDead(target)
 	end
 	if UnitHealthMax(target)==1 then
 		Ovale:Log("Dummy, return in the future")
-		return nil
+		return OvaleState.currentTime + 3600
 	end
 	if second~=lastSaved[target] and targetGUID[target] then
 		lastSaved[target] = second
@@ -697,6 +723,9 @@ OvaleCondition.conditions=
 	eclipse = function(condition)
 		return compare(OvaleState.state.eclipse, condition[1], condition[2])
 	end,
+	eclipsedir = function(condition)
+		return compare(OvaleState:GetEclipseDir(), condition[1], condition[2])
+	end,
 	-- Get the effective mana (e.g. if spell cost is divided by two, will returns the mana multiplied by two)
 	-- TODO: not working
 	-- returns: bool or number
@@ -725,6 +754,11 @@ OvaleCondition.conditions=
 	-- returns: bool or number
 	focus = function(condition)
 		return testValue(condition[1], condition[2], OvaleState.state.focus, OvaleState.currentTime, OvaleState.powerRate.focus)
+	end,
+	-- Get the global countdown
+	-- returns: bool or number
+	gcd = function(condition)
+		return compare(OvaleState.gcd, condition[1], condition[2])
 	end,
 	-- Check if a glyph is active
 	-- 1: the glyph spell id
@@ -766,6 +800,12 @@ OvaleCondition.conditions=
 	incombat = function(condition)
 		return testbool(Ovale.enCombat, condition[1])
 	end,
+	-- Check if the spell is flying to the target
+	-- 1: spell id
+	-- returns: bool
+	inflighttotarget = function(condition)
+		return testbool(OvaleFuture:InFlight(condition[1] or OvaleState.currentSpellId == condition[1]), condition[2])
+	end,
 	-- Check if the target is in the spell range
 	-- 1: spell id
 	-- returns: bool
@@ -779,15 +819,15 @@ OvaleCondition.conditions=
 		local actionCooldownStart, actionCooldownDuration, actionEnable = GetItemCooldown(condition[1])
 		return 0, nil, actionCooldownDuration, actionCooldownStart, -1
 	end,
-	-- Get an item count or charges
-	-- [charges]: if 1, then get the item charges
+	-- Get an item count
 	-- returns: bool or number
 	itemcount = function(condition)
-		if condition.charges == 1 then
-			return compare(GetItemCount(condition[1], false, true), condition[2], condition[3])
-		else
-			return compare(GetItemCount(condition[1]), condition[2], condition[3])
-		end
+		return compare(GetItemCount(condition[1]), condition[2], condition[3])
+	end,
+	-- Get an item charges
+	-- returns: bool or number
+	itemcharges = function(condition)
+		return compare(GetItemCount(condition[1], false, true), condition[2], condition[3])
 	end,
 	-- Check if the player is feared
 	-- returns: bool
@@ -915,14 +955,15 @@ OvaleCondition.conditions=
 	-- return: bool or number
 	manapercent = function(condition)
 		local target = getTarget(condition.target)
-		if UnitPowerMax(target, 0) == 0 then
+		local powerMax = UnitPowerMax(target, 0)
+		if not powerMax or powerMax == 0 then
 			return nil
 		end
 		if target == "player "then
-			local conversion = 100/UnitPowerMax(target, 0)
+			local conversion = 100/powerMax
 			return testValue(condition[1], condition[2], OvaleState.state.mana * conversion, OvaleState.currentTime, OvaleState.powerRate.mana * conversion)
 		else
-			return compare(UnitPower(target)/UnitPowerMax(target), condition[1], condition[2]/100)
+			return compare(UnitPower(target, 0)*100/powerMax, condition[1], condition[2])
 		end
 	end,
 	-- Get the target maximum health
@@ -1043,6 +1084,13 @@ OvaleCondition.conditions=
 	runes = function(condition)
 		return GetRune(condition)
 	end,
+	-- Get the number of runes
+	-- 1: frost, death, unholy, or blood
+	-- death: if 1, death runes are allowed
+	-- return: bool
+	runecount = function(condition)
+		return 0, nil, GetRuneCount(condition[1], condition.death)
+	end,
 	-- Get the remaining cooldown until the runes are ready
 	-- 1: frost, death, unholy, or blood
 	-- 2: rune number
@@ -1057,7 +1105,7 @@ OvaleCondition.conditions=
 		if ret < OvaleState.maintenant then
 			ret = OvaleState.maintenant
 		end
-		return 0, ret, -1
+		return 0, nil, 0, ret, -1
 	end,
 	-- Get the runic power
 	-- returns: bool or number
@@ -1084,7 +1132,14 @@ OvaleCondition.conditions=
 	-- return: number
 	spellcooldown = function(condition)
 		local actionCooldownStart, actionCooldownDuration, actionEnable = OvaleData:GetComputedSpellCD(condition[1])
-		return actionCooldownDuration, actionCooldownStart, -1
+		--if not actionCooldownDuration then
+			-- TODO: at this time it is not possible to know if a payer learnt the spell or not (IsUsableSpell does not work and
+			-- the spell book functions throw an error)
+			-- in this case it should return a time in the future
+			--return 0, nil, 0, OvaleState.currentTime + 3600, -1
+		--else
+			return 0, nil, actionCooldownDuration, actionCooldownStart, -1
+		--end
 	end,
 	-- Get the spell power
 	-- return: number or bool
@@ -1123,6 +1178,26 @@ OvaleCondition.conditions=
 		local isTanking, status, threatpct = UnitDetailedThreatSituation("player", getTarget(condition.target))
 		return compare(threatpct, condition[1], condition[2])
 	end,
+	-- Get the number of ticks of a DOT
+	-- 1: spell Id
+	-- return: bool or number
+	ticks = function(condition)
+		local si = OvaleData.spellInfo[condition[1]]
+		if not si or not si.duration then return nil end
+		local baseTickTime = si.tick or 3
+		local haste = OvaleAura.spellHaste
+		local d = si.duration
+		local t = floor(( base_tick_time * haste ) + 0.5 )
+		local n = d/t
+		local num
+		-- banker's rounding
+		if n - 0.5 == floor(n) and floor(n) % 2 == 0 then
+			num = ceil(n - 0.5)
+		else
+			num = floor(n + 0.5)
+		end
+		return compare(num, condition[2], condition[3])
+	end,
 	-- Get the remaining number of ticks
 	-- 1: spell Id
 	-- return: bool or number
@@ -1144,6 +1219,15 @@ OvaleCondition.conditions=
 			remain = remain - 1
 		end
 		return start, ending, remain, tickTime, -1/tickLength
+	end,
+	-- Get the duration of a tick
+	-- 1: spell id
+	-- return: number or bool
+	ticktime = function(condition)
+		--TODO not correct
+		local si = OvaleData.spellInfo[condition[1]]
+		if not si then return nil end
+		return compare(avecHate(si.tick or 3, "spell"), condition[2], condition[3])
 	end,
 	-- Get the time in combat
 	-- return: number or bool

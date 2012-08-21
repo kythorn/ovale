@@ -277,7 +277,7 @@ function OvaleBestAction:Compute(element)
 				for k,v in pairs(element.params) do
 					parameterList = parameterList..k.."="..v..","
 				end
-				Ovale:Print("Function "..parameterList..") returned "..nilstring(start)..","..nilstring(ending)..","..nilstring(rate))
+				Ovale:Print("Function "..parameterList..") returned "..nilstring(start)..","..nilstring(ending)..","..nilstring(value)..","..nilstring(origin)..","..nilstring(rate))
 			end
 			
 			if value  then
@@ -515,8 +515,14 @@ function OvaleBestAction:Compute(element)
 			if z == 0 then
 				l = a/x; m = b; n = c/x
 			else
-				Ovale:Print("ERROR: second operator of / must be constant")
+				Ovale:Print("ERROR: second value of / must be constant")
 				Ovale.bug = true
+			end
+		elseif element.operator == '%' then
+			if c == 0 and z == 0 then
+				l = c % z; m = 0; n = 0
+			else
+				Ovale:Error("Parameters of % must be constants")
 			end
 		elseif element.operator == '<' then
 			-- a + (t-b)*c = x + (t-y)*z

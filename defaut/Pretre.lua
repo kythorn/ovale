@@ -69,7 +69,6 @@ AddIcon mastery=3 help=aoe
 AddIcon mastery=3 help=cd
 {
 	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
-	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
 	Spell(berserking)
 	Spell(shadowfiend)
 	Spell(dispersion)

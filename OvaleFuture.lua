@@ -8,6 +8,7 @@ OvaleFuture.counter = {}
 --the spells that the player has casted but that did not reach their target
 --the result is computed by the simulator, allowing to ignore lag or missile travel time
 OvaleFuture.lastSpell = {}
+OvaleFuture.lastSpellId = nil
 --the attack power of the last spell
 OvaleFuture.lastSpellAP = {}
 OvaleFuture.lastSpellSP = {}
@@ -207,6 +208,7 @@ function OvaleFuture:AddSpellToList(spellId, lineId, startTime, endTime, channel
 		newSpell.target = UnitGUID("target")
 	end
 		
+	self.lastSpellId = spellId
 	self.lastSpellAP[spellId] = UnitAttackPower("player")
 	self.lastSpellSP[spellId] = GetSpellBonusDamage(2)
 	self.lastSpellDM[spellId] = OvaleAura.damageMultiplier
@@ -304,7 +306,13 @@ function OvaleFuture:Apply()
 	end
 end
 
-function OvaleFuture:GetLastSpell)
-	return self.lastSpell[#self.lastSpell]
+function OvaleFuture:InFlight(spellId)
+	for i,v in ipairs(self.lastSpell) do
+		if v.spellId == spellId then
+			return true
+		end
+	end
+	return false
 end
+
 --</public-static-methods>

@@ -149,9 +149,9 @@ function OvaleAura:UpdateAuras(unitId, unitGUID)
 			end
 			
 			if unitId == "player" then
-				if OvaleData.buffSpellList.spellhaste[spellId] then
+				if OvaleData.buffSpellList.spell_haste[spellId] then
 					hateSorts = 5
-				elseif OvaleData.buffSpellList.meleehaste[spellId] then 
+				elseif OvaleData.buffSpellList.melee_haste[spellId] then 
 					hateCaC = 10
 				elseif OvaleData.buffSpellList.heroism[spellId] then
 					hateHero = 30

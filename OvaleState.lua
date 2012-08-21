@@ -59,7 +59,7 @@ function OvaleState:UpdatePowerRates()
 end
 
 function OvaleState:Reset()
-	self.lastSpellId = OvaleFuture:GetLastSpell().spellId
+	self.lastSpellId = OvaleFuture.lastSpellId
 	self.serial = self.serial + 1
 	self.currentTime = self.maintenant
 	self.currentSpellId = nil
@@ -75,6 +75,7 @@ function OvaleState:Reset()
 		for i=1,6 do
 			self.state.rune[i].type = GetRuneType(i)
 			local start, duration, runeReady = GetRuneCooldown(i)
+			self.state.rune[i].duration = duration
 			if runeReady then
 				self.state.rune[i].cd = start
 			else
@@ -243,24 +244,8 @@ function OvaleState:AddSpellToStack(spellId, startCast, endCast, nextCast, nocd,
 				self:AddEclipse(endCast, 48517)
 			end
 		end
-		if newSpellInfo.starsurge then
-			local buffAura = self:GetAura("player", 48517) --Solar
-			if buffAura and buffAura.stacks>0 then
-				Ovale:Log("starsurge with solar buff = " .. (- newSpellInfo.starsurge))
-				self.state.eclipse = self.state.eclipse - newSpellInfo.starsurge
-			else
-				buffAura = self:GetAura("player", 48518) --Lunar
-				if buffAura and buffAura.stacks>0 then
-					Ovale:Log("starsurge with lunar buff = " .. newSpellInfo.starsurge)
-					self.state.eclipse = self.state.eclipse + newSpellInfo.starsurge
-				elseif self.state.eclipse < 0 then
-					Ovale:Log("starsurge with eclipse < 0 = " .. (- newSpellInfo.starsurge))
-					self.state.eclipse = self.state.eclipse - newSpellInfo.starsurge
-				else
-					Ovale:Log("starsurge with eclipse > 0 = " .. newSpellInfo.starsurge)
-					self.state.eclipse = self.state.eclipse + newSpellInfo.starsurge
-				end
-			end
+		if spellId == 78674 then -- starsurge
+			self.state.eclipse = self.state.eclipse + self:GetEclipseDir() * 20
 			if self.state.eclipse < -100 then
 				self.state.eclipse = -100
 				self:AddEclipse(endCast, 48518)
@@ -319,7 +304,7 @@ function OvaleState:AddSpellToStack(spellId, startCast, endCast, nextCast, nocd,
 						if Ovale.trace then
 							if auraSpellId then
 								Ovale:Print(spellId.." adding "..stacks.." aura "..auraSpellId.." to "..target.." "..filter.." "..newAura.start..","..newAura.ending)
-							else
+							else 
 								Ovale:Print("adding nil aura")
 							end
 						end
@@ -420,4 +405,22 @@ function OvaleState:NewAura(guid, spellId)
 	return myAura
 end
 
+
+function OvaleState:GetEclipseDir()
+	local value
+	local buffAura = self:GetAura("player", 48517) --Solar
+	if buffAura and buffAura.stacks>0 then
+		value = -1
+	else
+		buffAura = self:GetAura("player", 48518) --Lunar
+		if buffAura and buffAura.stacks>0 then
+			value =1
+		elseif self.state.eclipse < 0 then
+			value = -1
+		else
+			value = 1
+		end
+	end
+	return value
+end
 --</public-static-methods>

@@ -388,7 +388,7 @@ local options =
 					name = "List player spells",
 					type = "execute",
 					func = function()
-						local book=BOOKTYPE_SPELL
+						local book=BOOKTYPE_PET --BOOKTYPE_SPELL
 						while true do
 							local i=1
 							while true do

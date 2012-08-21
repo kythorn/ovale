@@ -82,7 +82,7 @@ OvaleData.buffSpellList =
 		46968, -- Shockwave
 	},
 	
-	stats_multiplier =
+	str_agi_int =
 	{
 		20217, -- Blessing of Kings
 		1126, -- Mark of the Wild
@@ -405,6 +405,7 @@ function OvaleData:GetComputedSpellCD(spellId)
 		actionCooldownStart, actionCooldownDuration, actionEnable = GetSpellCooldown(spellId)
 		-- Les chevaliers de la mort ont des infos fausses sur le CD quand ils n'ont plus les runes
 		-- On force à 1,5s ou 1s en présence impie
+		-- TODO: is it still the case in MoP?
 		if self.className=="DEATHKNIGHT" and actionCooldownDuration==10 and
 				(not self.spellInfo[spellId] or self.spellInfo[spellId].cd~=10) then
 			local impie = GetSpellInfo(48265)

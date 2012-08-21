@@ -364,7 +364,8 @@ local function ParseCommands(text)
 		text = string.gsub(text, "(%w+)%.?(%w*)%s*%((.-)%)", ParseFunction)
 		text = string.gsub(text, "(%d+%.?%d*)s", ParseTime)
 		text = string.gsub(text, "([^%w])(%d+%.?%d*)", ParseNumber)
-		text = string.gsub(text, "node(%d+)%s*([%*%+%-%/])%s*node(%d+)", ParseOp)
+		text = string.gsub(text, "node(%d+)%s*([%*%/%%])%s*node(%d+)", ParseOp)
+		text = string.gsub(text, "node(%d+)%s*([%+%-])%s*node(%d+)", ParseOp)
 		text = string.gsub(text, "{([node%d%s+]*)}", ParseGroup)
 		if was == text then
 			break

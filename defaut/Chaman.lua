@@ -80,7 +80,7 @@ AddIcon mastery=1 help=main
 		Spell(unleash_elements)
 		if TalentPoints(unleashed_fury) and not BuffPresent(ascendance) Spell(unleash_elements)
 		if not BuffPresent(ascendance) and {not target.DebuffPresent(flame_shock) or target.TicksRemain(flame_shock) <2 or {{BuffPresent(bloodlust) or BuffPresent(elemental_mastery) } and target.TicksRemain(flame_shock) <3 } } Spell(flame_shock)
-		if  target.DebuffRemains(flame_shock) >CastTime(lava_burst) and {BuffPresent(ascendance) or True() } Spell(lava_burst)
+		if target.DebuffRemains(flame_shock) >CastTime(lava_burst) and {BuffPresent(ascendance) or True() } Spell(lava_burst)
 		if BuffPresent(lightning_shield) ==0 or target.DeadIn() <10 Spell(earth_shock)
 		if not TotemPresent(fire) Spell(searing_totem)
 		Spell(lightning_bolt)
@@ -89,7 +89,7 @@ AddIcon mastery=1 help=main
 	{
 		if not TotemPresent(fire) Spell(searing_totem)
 		if not target.DebuffPresent(flame_shock) Spell(flame_shock)
-		if  target.DebuffRemains(flame_shock) >CastTime(lava_burst) Spell(lava_burst)
+		if target.DebuffRemains(flame_shock) >CastTime(lava_burst) Spell(lava_burst)
 		if Enemies() >4 Spell(earthquake)
 		Spell(lava_beam)
 		if ManaPercent() <80 Spell(thunderstorm)
@@ -119,7 +119,7 @@ AddIcon mastery=1 help=cd
 		Spell(blood_fury)
 		if TalentPoints(elemental_mastery) and TimeInCombat() >15 and {{not BuffPresent(bloodlust) and TimeInCombat() <120 } or {not BuffPresent(berserking) and not BuffPresent(bloodlust) and BuffPresent(ascendance) } or {TimeInCombat() >=200 and SpellCooldown(ascendance) >30 } } Spell(elemental_mastery)
 		if not TotemPresent(fire) Spell(fire_elemental_totem)
-		if  target.DebuffRemains(flame_shock) >0 and {target.DeadIn() <20 or BuffPresent(bloodlust) or TimeInCombat() >=180 } Spell(ascendance)
+		if target.DebuffRemains(flame_shock) >0 and {target.DeadIn() <20 or BuffPresent(bloodlust) or TimeInCombat() >=180 } Spell(ascendance)
 		if not Spell(earth_elemental_totem)
 	}
 }

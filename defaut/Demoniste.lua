@@ -1,345 +1,257 @@
-Ovale.defaut["WARLOCK"]=
-[[
-Define(BANEOFAGONY 980)
-	Spellinfo(BANEOFAGONY duration=24)
-	SpellAddTargetDebuff(BANEOFAGONY BANEOFAGONY=24)
-Define(BANEOFDOOM 603)
-	SpellInfo(BANEOFDOOM duration=60)
-	SpellAddTargetDebuff(BANEOFDOOM BANEOFDOOM=60)
-Define(BANEOFHAVOC 80240)
-	SpellAddTargetDebuff(BANEOFHAVOC BANEOFHAVOC=300)
-Define(CHAOSBOLT 50796)
-	SpellInfo(CHAOSBOLT cd=12)
-Define(CONFLAGRATE 17962)
-	SpellInfo(CONFLAGRATE cd=10)
-Define(CORRUPTION 172)
-	SpellAddTargetDebuff(CORRUPTION CORRUPTION=18)
-Define(CURSEELEMENTS 1490)
-	SpellAddTargetDebuff(CURSEELEMENTS CURSEELEMENTS=300)
-Define(CURSETONGUES 1714)
-	SpellAddTargetDebuff(CURSETONGUES CURSETONGUES=30)
-Define(CURSEWEAKNESS 702)
-	SpellAddTargetDebuff(CURSEWEAKNESS CURSEWEAKNESS=120)
-Define(DARKINTENT 80398)
-Define(DEATHCOIL 6789)
-	SpellInfo(DEATHCOIL cd=120)
-Define(DEMONARMOR 687)
-	SpellAddBuff(DEMONARMOR DEMONARMOR=1000)
-Define(DEMONICEMPOWERMENT 47193)
-	SpellInfo(DEMONICEMPOWERMENT cd=60)
-Define(DEMONSOUL 77801)
-	SpellInfo(DEMONSOUL cd=120)
-Define(DRAINLIFE 689)
-	SpellInfo(DRAINLIFE canStopChannelling=3)
-	SpellAddTargetDebuff(DRAINLIFE DRAINLIFE=3)
-	SpellAddBuff(DRAINLIFE SOULBURN=0)
-Define(DRAINSOUL 1120)
-	SpellInfo(DRAINSOUL canStopChannelling=5)
-	SpellAddTargetDebuff(DRAINSOUL DRAINSOUL=15)
-Define(FELARMOR 28176)
-	SpellAddBuff(FELARMOR FELARMOR=1000)
-Define(FELFLAME 77799)
-	SpellAddTargetDebuff(FELFLAME IMMOLATE=refresh UNSTABLEAFFLICTION=refresh)
-Define(HANDOFGULDAN 71521)
-	SpellInfo(HANDOFGULDAN cd=12)
-	SpellAddTargetDebuff(HANDOFGULDAN IMMOLATE=refresh)
-Define(HAUNT 48181)
-	SpellInfo(HAUNT cd=8)
-	SpellAddBuff(HAUNT HAUNT=12)
-Define(IMMOLATE 348)
-	SpellInfo(IMMOLATE duration=15)
-	SpellAddTargetDebuff(IMMOLATE IMMOLATE=15)
-	SpellAddBuff(IMMOLATE MOLTENCORE=-1)
-Define(IMMOLATIONAURA 50589)
-	SpellInfo(IMMOLATIONAURA cd=30)
-	SpellAddBuff(IMMOLATIONAURA IMMOLATIONAURA=15)
-Define(INCINERATE 29722)
-	SpellAddBuff(INCINERATE MOLTENCORE=-1)
-Define(LIFETAP 1454)
-	SpellInfo(LIFETAP cd=10) #fake
-Define(METAMORPHOSIS 47241)
-	SpellInfo(METAMORPHOSIS cd=180)
-	SpellAddBuff(METAMORPHOSIS METAMORPHOSIS=30)
-Define(SEARINGPAIN 5676)
-Define(SEEDOFCORRUPTION 27243)
-	SpellAddTargetDebuff(SEEDOFCORRUPTION SEEDOFCORRUPTION=18)
-Define(SHADOWBOLT 686)
-	SpellAddTargetDebuff(SHADOWBOLT SHADOWEMBRACE=12 SHADOWANDFLAMEDEBUFF=30)
-Define(SHADOWBURN 17877)
-	SpellInfo(SHADOWBURN cd=15)
-Define(SHADOWFLAME 47897)
-	SpellInfo(SHADOWFLAME cd=12)
-Define(SOULFIRE 6353)
-	SpellAddBuff(SOULFIRE IMPROVEDSOULFIREBUFF=15 SOULBURN=0)
-Define(SOULBURN 74434)
-	SpellInfo(SOULBURN cd=45)
-	SpellAddBuff(SOULBURN SOULBURN=15)
-Define(SUMMONINFERNAL 1122)
-	SpellInfo(SUMMONINFERNAL cd=600)
-Define(SUMMONDOOMGUARD 18540)
-	SpellInfo(SUMMONDOOMGUARD cd=600)
-Define(SUMMONFELGUARD 30146)
-	SpellInfo(SUMMONFELGUARD cd=600) #fake
-Define(SUMMONFELHUNTER 691)
-	SpellInfo(SUMMONFELHUNTER cd=600) #fake
-Define(SUMMONIMP 688)
-	SpellInfo(SUMMONIMP cd=600) #fake
-Define(SUMMONSUCCUBUS 712)
-	SpellInfo(SUMMONSUCCUBUS cd=600) #fake
-Define(UNSTABLEAFFLICTION 30108)
-	SpellInfo(UNSTABLEAFFLICTION duration=15)
-	SpellAddTargetDebuff(UNSTABLEAFFLICTION UNSTABLEAFFLICTION=15)
-
-#Pet spells
-Define(FELSTORM 89751)
-
-#Buff
-Define(DECIMATION 63167)
-Define(MOLTENCORE 71165)
-Define(EMPOWEREDIMP 47283)
-Define(IMPROVEDSOULFIREBUFF 85383)
-Define(SHADOWTRANCE 17941)
-Define(SHADOWANDFLAMEDEBUFF 17800)
-Define(DEMONSOULFELGUARD 79462)
-
-#Talent	
-Define(IMPROVEDSOULFIRE 10940)
-Define(SHADOWANDFLAMETALENT 10936)
-Define(BANETALENT 10938)
-Define(EMBERSTORMTALENT 11181)
-
-#Glyph
-Define(GLYPHOFLASHOFPAIN 70947)
-Define(GLYPHOFIMP 56248)
-Define(GLYPHOFCORRUPTION 56218)
-
-AddListItem(curse elements SpellName(CURSEELEMENTS))
-AddListItem(curse tongues SpellName(CURSETONGUES))
-AddListItem(curse weakness SpellName(CURSEWEAKNESS))
-AddListItem(curse none L(None) default)
-AddListItem(bane agony SpellName(BANEOFAGONY))
-AddListItem(bane doom SpellName(BANEOFDOOM) default)
-AddListItem(bane havoc SpellName(BANEOFHAVOC) mastery=3)
-AddCheckBox(shadowflame SpellName(SHADOWFLAME) default)
-AddCheckBox(petswap SpellName(SUMMONFELGUARD) mastery=2)
-
-ScoreSpells(CURSEELEMENTS SHADOWBOLT HAUNT UNSTABLEAFFLICTION IMMOLATE CONFLAGRATE CURSEWEAKNESS
-	BANEOFAGONY CORRUPTION SOULFIRE DRAINSOUL INCINERATE SHADOWBOLT CHAOSBOLT)
-
-AddIcon help=main mastery=1
+Ovale.defaut["WARLOCK"] = [[Define(agony 980)
+  SpellInfo(agony duration=24 )
+  SpellAddBuff(agony agony=1)
+Define(backdraft 117828)
+  SpellInfo(backdraft duration=15 )
+  SpellAddBuff(backdraft backdraft=1)
+Define(blood_fury 20572)
+  SpellInfo(blood_fury duration=15 cd=120 )
+  SpellAddBuff(blood_fury blood_fury=1)
+Define(chaos_bolt 116858)
+  SpellInfo(chaos_bolt burningembers=10 )
+Define(conflagrate 17962)
+  SpellInfo(conflagrate duration=5 )
+  SpellAddBuff(conflagrate conflagrate=1)
+Define(corruption 172)
+  SpellInfo(corruption duration=18 )
+  SpellAddBuff(corruption corruption=1)
+Define(curse_of_the_elements 1490)
+  SpellInfo(curse_of_the_elements duration=300 )
+  SpellAddBuff(curse_of_the_elements curse_of_the_elements=1)
+Define(dark_intent 109773)
+  SpellInfo(dark_intent duration=3600 )
+  SpellAddBuff(dark_intent dark_intent=1)
+Define(dark_soul 56291)
+Define(doom 603)
+  SpellInfo(doom duration=60 demonicfury=60 )
+  SpellAddBuff(doom doom=1)
+Define(drain_soul 1120)
+  SpellInfo(drain_soul duration=12 )
+  SpellAddBuff(drain_soul drain_soul=1)
+Define(fel_flame 77799)
+Define(felguard_felstorm 103134)
+Define(fire_and_brimstone 108683)
+  SpellInfo(fire_and_brimstone burningembers=10 cd=1 )
+  SpellAddBuff(fire_and_brimstone fire_and_brimstone=1)
+Define(grimoire_of_sacrifice 108503)
+  SpellInfo(grimoire_of_sacrifice duration=1200 cd=120 )
+  SpellAddBuff(grimoire_of_sacrifice grimoire_of_sacrifice=1)
+Define(hand_of_guldan 56268)
+Define(harvest_life 108371)
+  SpellInfo(harvest_life duration=6 demonicfury=30 )
+  SpellAddBuff(harvest_life harvest_life=1)
+Define(haunt 48181)
+  SpellInfo(haunt duration=8 shards=1 )
+  SpellAddBuff(haunt haunt=1)
+Define(havoc 80240)
+  SpellInfo(havoc duration=15 cd=45 )
+  SpellAddBuff(havoc havoc=1)
+Define(hellfire 1949)
+  SpellInfo(hellfire duration=14 )
+  SpellAddBuff(hellfire hellfire=1)
+Define(immolate 348)
+  SpellInfo(immolate duration=15 )
+  SpellAddBuff(immolate immolate=1)
+Define(immolation_aura 104025)
+  SpellInfo(immolation_aura duration=10 demonicfury=0 )
+  SpellAddBuff(immolation_aura immolation_aura=1)
+Define(imp_swarm 56292)
+Define(incinerate 29722)
+Define(life_tap 1454)
+  SpellInfo(life_tap mana=-15 )
+  SpellAddBuff(life_tap life_tap=1)
+Define(malefic_grasp 103103)
+  SpellInfo(malefic_grasp duration=4 )
+  SpellAddBuff(malefic_grasp malefic_grasp=1)
+Define(melee 103988)
+Define(metamorphosis 54817)
+  SpellInfo(metamorphosis cd=180 )
+Define(molten_core 122351)
+Define(rain_of_fire 5740)
+  SpellInfo(rain_of_fire duration=6 )
+  SpellAddBuff(rain_of_fire rain_of_fire=1)
+Define(seed_of_corruption 27243)
+  SpellInfo(seed_of_corruption duration=18 )
+  SpellAddBuff(seed_of_corruption seed_of_corruption=1)
+Define(service_felguard 111898)
+  SpellInfo(service_felguard cd=120 )
+Define(service_felhunter 111897)
+  SpellInfo(service_felhunter cd=120 )
+Define(shadow_bolt 686)
+  SpellInfo(shadow_bolt demonicfury=40 )
+Define(shadowburn 17877)
+  SpellInfo(shadowburn burningembers=10 )
+Define(shadowflame 47960)
+  SpellInfo(shadowflame duration=6 )
+  SpellAddBuff(shadowflame shadowflame=1)
+Define(soul_fire 6353)
+Define(soul_swap 56293)
+Define(soulburn 74434)
+  SpellInfo(soulburn duration=30 shards=1 cd=1 )
+  SpellAddBuff(soulburn soulburn=1)
+Define(soulburn_seed_of_corruption 86664)
+Define(summon_doomguard 18540)
+  SpellInfo(summon_doomguard cd=600 )
+Define(summon_felguard 30146)
+  SpellInfo(summon_felguard demonicfury=0 )
+Define(summon_felhunter 691)
+  SpellInfo(summon_felhunter demonicfury=0 )
+Define(summon_infernal 1122)
+  SpellInfo(summon_infernal cd=600 )
+Define(touch_of_chaos 103964)
+  SpellInfo(touch_of_chaos demonicfury=40 )
+Define(unstable_affliction 30108)
+  SpellInfo(unstable_affliction duration=14 )
+  SpellAddBuff(unstable_affliction unstable_affliction=1)
+Define(void_ray 115422)
+  SpellInfo(void_ray demonicfury=40 )
+Define(grimoire_of_sacrifice 15)
+Define(grimoire_of_service 14)
+Define(harvest_life 3)
+AddIcon mastery=1 help=main
 {
-	if InCombat(no) and BuffExpires(FELARMOR 400) Spell(FELARMOR)
-
-	if List(curse elements) and TargetDebuffExpires(magicaldamagetaken 0) and TargetDeadIn(more 8) Spell(CURSEELEMENTS)
-	if List(curse weakness) and TargetDebuffExpires(CURSEWEAKNESS 2) and TargetDeadIn(more 8) Spell(CURSEWEAKNESS)
-
-	#unless Glyph(GLYPHOFLASHOFPAIN) Spell(DEMONSOUL)
-	#/corruption,if=(!ticking|remains<tick_time)&miss_reac
-	if TargetDebuffExpires(CORRUPTION 3 haste=spell mine=1) and TargetDebuffExpires(SEEDOFCORRUPTION 0 mine=1) Spell(CORRUPTION)
-	#/unstable_affliction,if=(!ticking|remains<(cast_time+tick_time))&target.time_to_die>=5&miss_react
-	if TargetDebuffExpires(UNSTABLEAFFLICTION 4.5 mine=1 haste=spell) and TargetDeadIn(more 5) Spell(UNSTABLEAFFLICTION)
-	#/bane_of_doom,if=target.time_to_die>15&!ticking&miss_react
-	if TargetDebuffExpires(BANEOFDOOM 0 mine=1) and TargetDebuffExpires(BANEOFAGONY 0 mine=1)
+	if target.DebuffExpires(magic_vulnerability) Spell(curse_of_the_elements)
+	if TalentPoints(grimoire_of_service) Spell(service_felhunter)
+	if TalentPoints(grimoire_of_sacrifice) and BuffExpires(grimoire_of_sacrifice) Spell(summon_felhunter)
+	if Enemies() >3 
 	{
-		if List(bane doom) and TargetDeadIn(more 15) Spell(BANEOFDOOM)
-		if TargetDeadIn(more 10) Spell(BANEOFAGONY)
+		if {BuffExpires(soulburn) and not InFlightToTarget(seed_of_corruption) and not target.DebuffPresent(seed_of_corruption) } or {BuffPresent(soulburn) and not target.DebuffPresent(soulburn_seed_of_corruption) and not InFlightToTarget(soulburn_seed_of_corruption) } Spell(seed_of_corruption)
+		if not InFlightToTarget(haunt) and target.DebuffRemains(haunt) <CastTime(haunt) +1 Spell(haunt)
+		if ManaPercent() <70 Spell(life_tap)
+		if not InFlightToTarget(fel_flame) Spell(fel_flame)
 	}
-	#/haunt
-	Spell(HAUNT)
-	#/fel_flame,if=buff.tier11_4pc_caster.react&dot.unstable_affliction.remains<8
-	if ArmorSetParts(T11 more 3) and TargetDebuffExpires(UNSTABLEAFFLICTION 8) Spell(FELFLAME)
-	#/drain_soul,interrupt=1,if=target.health_pct<=25
-	if TargetLifePercent(less 25) Spell(DRAINSOUL)
-	#/shadowflame
-	if CheckBoxOn(shadowflame) Spell(SHADOWFLAME)
-	
-	if TalentPoints(BANETALENT more 2)
+	if not InFlightToTarget(haunt) and target.DebuffRemains(haunt) <target.NextTick(haunt) +1 +CastTime(haunt) Spell(haunt)
+	if not InFlightToTarget(haunt) and target.DebuffRemains(haunt) <target.NextTick(haunt) +1 +CastTime(haunt) and SoulShards() >1 Spell(haunt)
+	if {not target.DebuffPresent(agony) or target.DebuffRemains(agony) <=TickTime(drain_soul) *2 } and target.DeadIn() >=8 Spell(agony)
+	if {not target.DebuffPresent(corruption) or target.DebuffRemains(corruption) <target.NextTick(corruption) } and target.DeadIn() >=6 Spell(corruption)
+	if {not target.DebuffPresent(unstable_affliction) or target.DebuffRemains(unstable_affliction) <{CastTime(unstable_affliction) +target.NextTick(unstable_affliction) } } and target.DeadIn() >=5 Spell(unstable_affliction)
+	if target.TicksRemain(agony) <Ticks(agony) /2 and target.DeadIn() >=8 Spell(agony)
+	if target.TicksRemain(corruption) <Ticks(corruption) /2 and target.DeadIn() >=6 Spell(corruption)
+	if target.TicksRemain(unstable_affliction) <Ticks(unstable_affliction) /2 +1 and target.DeadIn() >=5 Spell(unstable_affliction)
+	if target.HealthPercent() <=20 Spell(drain_soul)
+	if ManaPercent() <35 Spell(life_tap)
+	Spell(malefic_grasp)
+	if ManaPercent() <80 and ManaPercent() <target.HealthPercent() Spell(life_tap)
+	Spell(fel_flame)
+	Spell(life_tap)
+}
+AddIcon mastery=1 help=offgcd
+{
+	Spell(dark_soul)
+	if Enemies() >3 
 	{
-		#/life_tap,mana_percentage<=35
-		if ManaPercent(less 35) and LifePercent(more 75) Spell(LIFETAP)
-		if TalentPoints(EMBERSTORMTALENT more 0) and TalentPoints(IMPROVEDSOULFIRE more 0)
-		{
-			#/soul_fire,if=buff.improved_soul_fire.cooldown_remains<(cast_time+travel_time)&buff.bloodlust.down&!in_flight
-			if BuffExpires(IMPROVEDSOULFIREBUFF 4) and BuffExpires(heroism) Spell(SOULFIRE)
-		}
-		if TalentPoints(EMBERSTORMTALENT less 1) or TalentPoints(IMPROVEDSOULFIRE less 1)
-		{
-			#/soul_fire,if=buff.soulburn.up
-			if BuffPresent(SOULBURN) Spell(SOULFIRE)
-		}
-		#if Glyph(GLYPHOFLASHOFPAIN) Spell(DEMONSOUL)
-		Spell(SHADOWBOLT)
+		if BuffExpires(soulburn) and not target.DebuffPresent(soulburn_seed_of_corruption) and not InFlightToTarget(soulburn_seed_of_corruption) Spell(soulburn)
 	}
-	if TalentPoints(BANETALENT less 3)
+	if BuffPresent(dark_soul) and {BuffRemains(dark_soul) >=18.5 or BuffRemains(dark_soul) <=1.5 } Spell(soulburn)
+	if BuffPresent(soulburn) Spell(soul_swap)
+	if Enemies() >1 and TimeInCombat() <10 Spell(soul_swap)
+}
+AddIcon mastery=1 help=cd
+{
+	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
+	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
+	Spell(blood_fury)
+	if TalentPoints(grimoire_of_sacrifice) Spell(grimoire_of_sacrifice)
+	if Enemies() >3 
 	{
-		#/demon_soul,if=buff.shadow_trance.react
-		#if BuffPresent(SHADOWTRANCE) Spell(DEMONSOUL)
-		#/shadow_bolt,if=buff.shadow_trance.react
-		if BuffPresent(SHADOWTRANCE) Spell(SHADOWBOLT)
-		#/life_tap,mana_percentage<=5
-		if ManaPercent(less 5) and LifePercent(more 75) Spell(LIFETAP)
-		if TalentPoints(IMPROVEDSOULFIRE more 0)
-		{
-			#/soul_fire,if=buff.improved_soul_fire.cooldown_remains<(cast_time+travel_time)&buff.bloodlust.down&!in_flight
-			if TalentPoints(EMBERSTORMTALENT more 0) if BuffExpires(IMPROVEDSOULFIREBUFF 4) and BuffExpires(heroism) Spell(SOULFIRE)
-			#/soul_fire,if=buff.soulburn.up
-			if TalentPoints(EMBERSTORMTALENT less 1) if BuffPresent(SOULBURN) Spell(SOULFIRE)
-		}
-		#/drain_life,interrupt=1
-		Spell(DRAINLIFE)
+		Spell(summon_doomguard)
+		if Enemies() >=7 Spell(summon_infernal)
 	}
+	Spell(summon_doomguard)
 }
-
-AddIcon help=cd mastery=1
+AddIcon mastery=2 help=main
 {
-	#/summon_infernal
-	Spell(DEMONSOUL)
-	Spell(SUMMONDOOMGUARD)
-	Item(Trinket0Slot usable=1)
-	Item(Trinket1Slot usable=1)
-}
-
-AddIcon help=main mastery=2
-{	
-	if InCombat(no) and BuffExpires(FELARMOR 400) Spell(FELARMOR)
-
-	if List(curse elements) and TargetDebuffExpires(magicaldamagetaken 2) and TargetDeadIn(more 8) Spell(CURSEELEMENTS)
-	if List(curse weakness) and TargetDebuffExpires(CURSEWEAKNESS 2) and TargetDeadIn(more 8) Spell(CURSEWEAKNESS)
-
-	
-	#/immolate,if=!ticking&target.time_to_die>=4&miss_react
-	if TargetDebuffExpires(IMMOLATE 2 mine=1 haste=spell) and TargetDeadIn(more 4) Spell(IMMOLATE)
-	
-	#/bane_of_doom,if=(!ticking|(buff.metamorphosis.up&remains<45))&target.time_to_die>=15&miss_react
-	if {TargetDebuffExpires(BANEOFDOOM 0 mine=1) or {BuffPresent(METAMORPHOSIS) and TargetDebuffExpires(BANEOFDOOM 45 mine=1)}} and TargetDebuffExpires(BANEOFAGONY 0 mine=1)
+	if target.DebuffExpires(magic_vulnerability) Spell(curse_of_the_elements)
+	if TalentPoints(grimoire_of_service) Spell(service_felguard)
+	if TalentPoints(grimoire_of_sacrifice) and BuffExpires(grimoire_of_sacrifice) Spell(summon_felguard)
+	if Enemies() >5 
 	{
-		if List(bane doom) and TargetDeadIn(more 15) Spell(BANEOFDOOM)
-		if TargetDeadIn(more 10) Spell(BANEOFAGONY)
+		if {not target.DebuffPresent(corruption) or target.DebuffRemains(corruption) <target.NextTick(corruption) } and target.DeadIn() >=6 Spell(corruption)
+		Spell(immolation_aura)
+		if target.DebuffRemains(corruption) <10 Spell(void_ray)
+		if {not target.DebuffPresent(doom) or target.DebuffRemains(doom) <40 } and target.DeadIn() >30 Spell(doom)
+		Spell(void_ray)
+		if TalentPoints(harvest_life) Spell(harvest_life)
+		if not TalentPoints(harvest_life) Spell(hellfire)
+		Spell(life_tap)
 	}
-	#/corruption,if=(remains<tick_time|!ticking)&target.time_to_die>=6&miss_react
-	if TargetDebuffExpires(CORRUPTION 2 mine=1 haste=spell) and TargetDebuffExpires(SEEDOFCORRUPTION 0 mine=1) and TargetDeadIn(more 6) Spell(CORRUPTION)
-	#/fel_flame,if=buff.tier11_4pc_caster.react
-	if ArmorSetParts(T11 more 3) Spell(FELFLAME)
-	#/shadowflame
-	if CheckBoxOn(shadowflame) and TargetInRange(DEATHCOIL) Spell(SHADOWFLAME)
-	#/hand_of_guldan
-	if TargetDebuffPresent(IMMOLATE) Spell(HANDOFGULDAN)
-	#/immolation,if=buff.metamorphosis.remains>10
-	if BuffPresent(METAMORPHOSIS 10) and TargetInRange(DEATHCOIL) Spell(IMMOLATIONAURA)
-	#if ( glyphs.corruption -> ok() ) action_list_str += "/shadow_bolt,if=buff.shadow_trance.react";
-	if Glyph(GLYPHOFCORRUPTION) and BuffPresent(SHADOWTRANCE) Spell(SHADOWBOLT)
-	#/incinerate,if=buff.molten_core.react
-	if BuffPresent(MOLTENCORE) Spell(INCINERATE)
-	#/soul_fire,if=buff.decimation.up
-	if BuffPresent(DECIMATION) Spell(SOULFIRE)
-	#/life_tap,if=mana_pct<=30&buff.bloodlust.down&buff.metamorphosis.down&buff.demon_soul_felguard.down
-	if ManaPercent(less 30) and BuffExpires(heroism) and BuffExpires(METAMORPHOSIS) and BuffExpires(DEMONSOULFELGUARD) and LifePercent(more 75) Spell(LIFETAP)
-	if TalentPoints(BANETALENT more 0) Spell(SHADOWBOLT)
-	Spell(INCINERATE)
+	if {not target.DebuffPresent(corruption) or target.DebuffRemains(corruption) <target.NextTick(corruption) } and target.DeadIn() >=6 Spell(corruption)
+	if {not target.DebuffPresent(doom) or target.DebuffRemains(doom) <target.NextTick(doom) or {target.TicksRemain(doom) +1 <{target.TicksRemain(doom) + Ticks(doom) } and BuffPresent(dark_soul) } } and target.DeadIn() >=30 Spell(doom)
+	if target.DebuffRemains(corruption) >15 and BuffExpires(dark_soul) and DemonicFury() <=750 and target.DeadIn() >30 cancel.Texture(Spell_shadow_demonform)
+	if BuffPresent(molten_core) and {BuffExpires(metamorphosis) or target.HealthPercent() <25 } Spell(soul_fire)
+	Spell(touch_of_chaos)
+	if ManaPercent() <50 Spell(life_tap)
+	Spell(shadow_bolt)
+	Spell(fel_flame)
+	Spell(life_tap)
 }
-
-AddIcon help=cd mastery=2
+AddIcon mastery=2 help=offgcd
 {
-	#/summon_felguard,if=cooldown.demon_soul.remains<5&cooldown.metamorphosis.remains<5&!pet.felguard.active
-	if CheckBoxOn(petswap) and {spellCooldown(DEMONSOUL)<5} and {spellCooldown(METAMORPHOSIS)<5} unless pet.CreatureFamily(Felguard) Spell(SUMMONFELGUARD)
-	#/metamorphosis,if=pet.felguard.active
-	if pet.Present() and pet.CreatureFamily(Felguard) Spell(METAMORPHOSIS)
-	#/demon_soul,if=buff.metamorphosis.up
-	if BuffPresent(METAMORPHOSIS) Spell(DEMONSOUL)
-	#/summon_doomguard,if=time>10
-	if TimeInCombat(more 10) Spell(SUMMONDOOMGUARD)
-	#/felguard:felstorm
-	if pet.Present() and pet.CreatureFamily(Felguard) Spell(FELSTORM)
-	if CheckBoxOn(petswap)
+	Spell(dark_soul)
+	Spell(melee)
+	Spell(felguard_felstorm)
+	if Enemies() >5 
 	{
-		#/soulburn,if=pet.felguard.active&!pet.felguard.dot.felstorm.ticking
-		if pet.CreatureFamily(Felguard) and pet.BuffExpires(FELSTORM) Spell(SOULBURN)
-		#/summon_felhunter,if=!pet.felguard.dot.felstorm.ticking&pet.felguard.active
-		if pet.BuffExpires(FELSTORM) and pet.CreatureFamily(Felguard) Spell(SUMMONFELHUNTER)
+		if BuffExpires(metamorphosis) Spell(imp_swarm)
+		Spell(hand_of_guldan)
 	}
-	Item(Trinket0Slot usable=1)
-	Item(Trinket1Slot usable=1)
+	Spell(imp_swarm)
+	if not InFlightToTarget(hand_of_guldan) and target.DebuffRemains(shadowflame) <1 +CastTime(shadow_bolt) Spell(hand_of_guldan)
 }
-	
-AddIcon help=main mastery=3
+AddIcon mastery=2 help=cd
 {
-	if InCombat(no) and BuffExpires(FELARMOR 400) Spell(FELARMOR)
-	
-	if List(curse elements) and TargetDebuffExpires(magicaldamagetaken 2) and TargetDeadIn(more 8) Spell(CURSEELEMENTS)
-	if List(curse weakness) and TargetDebuffExpires(CURSEWEAKNESS 2) and TargetDeadIn(more 8) Spell(CURSEWEAKNESS)
-
-	#/soul_fire,if=buff.soulburn.up
-	if BuffPresent(SOULBURN) Spell(SOULFIRE)
-	#/fel_flame,if=buff.tier11_4pc_caster.react&dot.immolate.remains<8
-	if ArmorSetParts(T11 more 3) and TargetDebuffExpires(IMMOLATE 8 mine=1) Spell(FELFLAME)
-	#/immolate,if=(remains<cast_time+gcd|!ticking)&target.time_to_die>=4&miss_react
-	if TargetDebuffExpires(IMMOLATE 2 mine=1 haste=spell) and TargetDeadIn(more 4) Spell(IMMOLATE)
-	#/conflagrate
-	if 1s after TargetDebuffPresent(IMMOLATE mine=1) Spell(CONFLAGRATE)
-	#/immolate,if=buff.bloodlust.react&buff.bloodlust.remains>32&cooldown.conflagrate.remains<=3&remains<12
-	if BuffPresent(heroism 32) and {spellCooldown(CONFLAGRATE)<3} and TargetDebuffExpires(IMMOLATE 12 mine=1) Spell(IMMOLATE)
-	#/bane_of_doom,if=!ticking&target.time_to_die>=15&miss_react
-	if TargetDebuffExpires(BANEOFDOOM 0 mine=1) and TargetDebuffExpires(BANEOFAGONY 0 mine=1)
+	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
+	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
+	Spell(blood_fury)
+	if TalentPoints(grimoire_of_sacrifice) Spell(grimoire_of_sacrifice)
+	if Enemies() >5 
 	{
-		if List(bane doom) and TargetDeadIn(more 15) Spell(BANEOFDOOM)
-		if TargetDeadIn(more 10) unless List(bane havoc) Spell(BANEOFAGONY)
+		Spell(summon_doomguard)
+		if Enemies() >=7 Spell(summon_infernal)
+		if DemonicFury() >=1000 or DemonicFury() >=31 *target.DeadIn() Spell(metamorphosis)
 	}
-	#/corruption,if=(!ticking|dot.corruption.remains<tick_time)&miss_react
-	if TargetDebuffExpires(CORRUPTION 2 mine=1 haste=spell) and TargetDebuffExpires(SEEDOFCORRUPTION 0 mine=1) and TargetDeadIn(more 9) Spell(CORRUPTION)
-	#/shadowflame
-	if CheckBoxOn(shadowflame) Spell(SHADOWFLAME)
-	#/chaos_bolt,if=cast_time>0.9
-	if {castTime(CHAOSBOLT) > 0.9} Spell(CHAOSBOLT)
-	if TalentPoints(IMPROVEDSOULFIRE more 0)
+	Spell(summon_doomguard)
+	if BuffPresent(dark_soul) or target.DebuffRemains(corruption) <5 or DemonicFury() >=900 or DemonicFury() >=target.DeadIn() *30 Spell(metamorphosis)
+}
+AddIcon mastery=3 help=main
+{
+	if target.DebuffExpires(magic_vulnerability) Spell(curse_of_the_elements)
+	if TalentPoints(grimoire_of_service) Spell(service_felhunter)
+	if TalentPoints(grimoire_of_sacrifice) and BuffExpires(grimoire_of_sacrifice) Spell(summon_felhunter)
+	if Enemies() >2 
 	{
-		#((buff.empowered_imp.react&buff.empowered_imp.remains<(buff.improved_soul_fire.remains+action.soul_fire.travel_time))
-		if BuffPresent(EMPOWEREDIMP) and {buffRemains(EMPOWEREDIMP) < {buffRemains(IMPROVEDSOULFIREBUFF) + 1}}
-			Spell(SOULFIRE)
-		#|buff.improved_soul_fire.remains<(cast_time+travel_time+action.incinerate.cast_time+gcd))
-		if buffRemains(IMPROVEDSOULFIREBUFF)< {castTime(SOULFIRE)+ 1 +castTime(INCINERATE)+timeWithHaste(1.5)} 
-			Spell(SOULFIRE)
+		if not target.DebuffPresent(rain_of_fire) and not InFlightToTarget(rain_of_fire) Spell(rain_of_fire)
+		if BuffPresent(fire_and_brimstone) and not target.DebuffPresent(immolate) Spell(immolate)
+		if BurningEmbers() and BuffPresent(fire_and_brimstone) Spell(conflagrate)
+		if BuffPresent(fire_and_brimstone) Spell(incinerate)
+		if not target.DebuffPresent(immolate) Spell(immolate)
 	}
-	#/shadowburn
-	Spell(SHADOWBURN usable=1)
-    Spell(INCINERATE)
+	if Enemies() >1 Spell(havoc)
+	if BurningEmbers() if target.HealthPercent(less 20) Spell(shadowburn)
+	if BurningEmbers() and BuffStacks(backdraft) <3 Spell(chaos_bolt)
+	if BuffExpires(backdraft) Spell(conflagrate)
+	if target.TicksRemain(immolate) <Ticks(immolate) /2 and target.DeadIn() >=5 Spell(immolate)
+	Spell(incinerate)
 }
-
-AddIcon help=cd mastery=3
+AddIcon mastery=3 help=offgcd
 {
-	Spell(DEMONSOUL)
-	if BuffPresent(heroism) Spell(SUMMONDOOMGUARD)
-	Item(Trinket0Slot usable=1)
-	Item(Trinket1Slot usable=1)
-}
-
-AddIcon size=small
-{
-	if SoulShards(more 0) Spell(SOULBURN usable=1)
-}
-
-AddIcon size=small mastery=1
-{
-    unless PetPresent()
-    {
-        if Glyph(GLYPHOFLASHOFPAIN) Spell(SUMMONSUCCUBUS)
-        if Glyph(GLYPHOFIMP) Spell(SUMMONIMP)
-		Spell(SUMMONFELHUNTER)
-    }
-}
-
-AddIcon size=small mastery=2
-{
-    unless PetPresent()
+	Spell(dark_soul)
+	if Enemies() >2 
 	{
-		if Glyph(GLYPHOFLASHOFPAIN) Spell(SUMMONSUCCUBUS)
-        if Glyph(GLYPHOFIMP) Spell(SUMMONIMP)
-		Spell(SUMMONFELGUARD)
+		if BurningEmbers() and BuffExpires(fire_and_brimstone) Spell(fire_and_brimstone)
 	}
 }
-
-AddIcon size=small mastery=3
+AddIcon mastery=3 help=cd
 {
-    unless PetPresent() Spell(SUMMONIMP)
+	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
+	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
+	Spell(blood_fury)
+	if TalentPoints(grimoire_of_sacrifice) Spell(grimoire_of_sacrifice)
+	if Enemies() >2 
+	{
+		Spell(summon_doomguard)
+		if Enemies() >=7 Spell(summon_infernal)
+	}
+	Spell(summon_doomguard)
 }
-
 ]]
