@@ -52,4 +52,5 @@ defaut\Mage.lua
 defaut\Paladin.lua
 defaut\Pretre.lua
 defaut\Voleur.lua
+defaut\Moine.lua
 defaut\Chevalier.lua

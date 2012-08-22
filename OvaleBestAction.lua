@@ -89,6 +89,31 @@ function OvaleBestAction:GetActionInfo(element)
 		
 		actionCooldownStart, actionCooldownDuration, actionEnable = OvaleData:GetComputedSpellCD(spellId)
 		
+		local si = OvaleData:GetSpellInfo(spellId)
+		if si then
+			if si.combo and si.combo == 0 and OvaleState.state.combo == 0 then
+				actionCooldownStart = nil
+			end
+			for k,v in pairs(OvaleData.secondaryPower) do
+				if si[v] and si[v] > OvaleState.state[v] then
+					actionCooldownStart = OvaleState.currentTime + 1000
+				end
+			end
+			if (si.blood and si.blood > OvaleState.state.blood) or
+				(si.frost and si.frost > OvaleState.state.frost) or
+				(si.unholy and si.unholy > OvaleState.state.unholy) then
+				local lacking = (si.blood or 0) - OvaleState.state.blood +
+					(si.frost or 0) - OvaleState.state.frost +
+					(si.unholy or 0) - OvaleState.state.unholy
+				if lacking > OvaleState.state.death then
+					local runecd = OvaleState:GetRunes(si.blood, si.frost, si.unholy, si.death, false)
+					if runecd > actionCooldownStart + actionCooldownDuration then
+						actionCooldownDuration = runecd - actionCooldownStart
+					end
+				end
+			end
+		end
+		
 		spellName = OvaleData.spellList[spellId]
 		if not spellName then
 			spellName = GetSpellInfo(spellId)
@@ -460,10 +485,10 @@ function OvaleBestAction:Compute(element)
 	elseif element.type == "operator" then
 		local startA, endA, prioA, elementA = self:Compute(element.a)
 		local startB, endB, prioB, elementB = self:Compute(element.b)
-		if not elementA or not elementB then
-			Ovale:Log("operator " .. element.operator .. ": elementA or elementB is nil")
-			return nil
-		end
+		--if not elementA or not elementB then
+		--	Ovale:Log("operator " .. element.operator .. ": elementA or elementB is nil")
+		--	return nil
+		--end
 		
 		if isBefore(startA, startB) then
 			startA = startB
@@ -472,12 +497,27 @@ function OvaleBestAction:Compute(element)
 			endA = endB
 		end
 		
-		local a = elementA.value
-		local b = elementA.origin
-		local c = elementA.rate
-		local x = elementB.value
-		local y = elementB.origin
-		local z = elementB.rate
+		local a,b,c,x,y,z
+		
+		if elementA then
+			a = elementA.value
+			b = elementA.origin
+			c = elementA.rate
+		else
+			-- A boolean used in a number context has the value 1
+			a = 1
+			b = 0
+			c = 0
+		end
+		if element B then
+			x = elementB.value
+			y = elementB.origin
+			z = elementB.rate
+		else
+			x = 1
+			y = 0
+			z = 0
+		end
 		
 		if not a or not x or not b or not y then
 			Ovale:Log("operator " .. element.operator .. ": a or x is nil")

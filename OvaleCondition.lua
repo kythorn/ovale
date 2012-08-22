@@ -153,8 +153,11 @@ end
 -- that can be on any unit except the target
 -- Returns the first to expires, the last to expires
 -- Returns nil if the debuff is not present
-local function getOtherAura(spellId, suppTime)
-	return OvaleState:GetExpirationTimeOnAnyTarget(spellId)
+local function getOtherAura(spellId, suppTime, excludingTarget)
+	if excludingTarget then
+		excludingTarget = UnitGUID(excludingTarget)
+	end
+	return OvaleState:GetExpirationTimeOnAnyTarget(spellId, excludingTarget)
 end
 
 local function GetRuneCount(type, death)
@@ -418,6 +421,9 @@ OvaleCondition.conditions=
 	attackpower = function(condition)
 		local base, posBuff, negBuff = UnitAttackPower("player")
 		return compare(base + posBuff + negBuff, condition[1], condition[2])
+	end,
+	buffcount = function(condition)
+		return OvaleState:GetExpirationTimeOnAnyTarget(condition[1]), 0, 0
 	end,
 	-- Get the aura total duration (not only the remaining time)
 	-- 1 : spell id
@@ -697,7 +703,14 @@ OvaleCondition.conditions=
 	-- TODO: use OvaleState
 	-- returns: number
 	damagemultiplier = function(condition)
-		return 0, nil, OvaleAura.damageMultiplier, 0, 0
+		local ret = OvaleAura.damageMultiplier
+		if condition[1] then
+			local si = OvaleData:GetSpellInfo(condition[1])
+			if si and si.combo == 0 then
+				ret = ret * OvaleState.state.combo
+			end
+		end
+		return 0, nil, ret, 0, 0
 	end,
 	-- Get the remaining time until the target is dead
 	-- returns: bool or number
@@ -1008,7 +1021,7 @@ OvaleCondition.conditions=
 	-- return: bool
 	-- alias: otherauraexpires
 	otherdebuffexpires = function(condition)
-		local minTime, maxTime = getOtherAura(condition[1], condition[3])
+		local minTime, maxTime = getOtherAura(condition[1], condition[3], "target")
 		if minTime then
 			local timeBefore = condition[2] or 0
 			return minTime - timeBefore, nil
@@ -1019,7 +1032,7 @@ OvaleCondition.conditions=
 	-- return: bool
 	-- alias: otheraurapresent
 	otherdebuffpresent = function(condition)
-		local minTime, maxTime = getOtherAura(condition[1], condition[3])
+		local minTime, maxTime = getOtherAura(condition[1], condition[3], "target")
 		if maxTime and maxTime>0 then
 			local timeBefore = condition[2] or 0
 			return 0, addTime(maxTime, -timeBefore)
@@ -1239,6 +1252,13 @@ OvaleCondition.conditions=
 	timetodie = function(condition)
 		return 0, nil, 0, getTargetDead(getTarget(condition.target)), -1
 	end,
+	-- Get the energy
+	-- returns: bool or number
+	-- TODO: temp, need to allow function calls in functions call to do things link TimeTo(Energy() == 100) which would be TimeTo(Equal(Energy(), 100))
+	timetomaxenergy = function(condition)
+		local t = OvaleState.currentTime + OvaleState.powerRate.energy * (100 - OvaleState.state.energy)
+		return 0, nil, 0, t, -1
+	end,
 	-- Multiply a time by the current spell haste
 	-- 1: the time
 	-- return: number
@@ -1331,6 +1351,7 @@ OvaleCondition.conditions=
 OvaleCondition.conditions.health = OvaleCondition.conditions.life
 OvaleCondition.conditions.healthpercent = OvaleCondition.conditions.lifepercent
 OvaleCondition.conditions.healthmissing = OvaleCondition.conditions.lifemissing
+OvaleCondition.conditions.debuffcount = OvaleCondition.conditions.buffcount
 OvaleCondition.conditions.debuffexpires = OvaleCondition.conditions.buffexpires
 OvaleCondition.conditions.debuffpresent = OvaleCondition.conditions.buffpresent
 OvaleCondition.conditions.debuffgain = OvaleCondition.conditions.buffgain

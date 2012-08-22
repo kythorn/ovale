@@ -183,7 +183,7 @@ function OvaleFuture:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 						table.remove(self.lastSpell, i)
 						Ovale.refreshNeeded["player"] = true
 						--Ovale:Print("LOG_EVENT on supprime "..spellId.." a "..GetTime())
-					end
+					end 
 					--Ovale:Print(UnitDebuff("target", "Etreinte de l'ombre"))
 					break
 				end
@@ -208,15 +208,23 @@ function OvaleFuture:AddSpellToList(spellId, lineId, startTime, endTime, channel
 		newSpell.target = UnitGUID("target")
 	end
 		
+	local si = OvaleData.spellInfo[spellId]
+		
 	self.lastSpellId = spellId
 	self.lastSpellAP[spellId] = UnitAttackPower("player")
 	self.lastSpellSP[spellId] = GetSpellBonusDamage(2)
 	self.lastSpellDM[spellId] = OvaleAura.damageMultiplier
 	self.lastSpell[#self.lastSpell+1] = newSpell
-	--Ovale:Print("on ajoute "..spellId..": ".. newSpell.start.." to "..newSpell.stop.." ("..OvaleState.maintenant..")" ..#self.lastSpell .. " " ..newSpell.target)
+	Ovale:Print("on ajoute "..spellId..": ".. newSpell.start.." to "..newSpell.stop.." ("..OvaleState.maintenant..")" ..#self.lastSpell .. " " ..tostring(newSpell.target))
 	
-	if OvaleData.spellInfo[spellId] then
-		local si = OvaleData.spellInfo[spellId]
+	if si then
+		if si.combo == 0 then
+			local comboPoints = GetComboPoints("player")
+			Ovale:Print("combo point " .. comboPoints)
+			if comboPoints > 0 then
+				self.lastSpellDM[spellId] = self.lastSpellDM[spellId] * comboPoints
+			end
+		end
 		
 		if si.aura then
 			for target, targetInfo in pairs(si.aura) do

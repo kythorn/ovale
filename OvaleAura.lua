@@ -254,26 +254,30 @@ end
 
 -- Look for the last of my aura on any targt that will expires.
 -- Returns its expiration time
-function OvaleAura:GetExpirationTimeOnAnyTarget(spellId)
+function OvaleAura:GetExpirationTimeOnAnyTarget(spellId, excludingTarget)
 	local ending = nil
 	local starting = nil
+	local count = 0
 	
 	for unitId,auraTable in pairs(self.aura) do
-		if auraTable[spellId] then
-			local aura = auraTable[spellId].mine
-			if aura then
-				local newEnding = aura.ending
-				local newStarting = aura.start
-				if newStarting and (not staring or newStarting < starting) then
-					starting = newStarting
+		if unitId ~= excludingTarget then
+			if auraTable[spellId] then
+				local aura = auraTable[spellId].mine
+				if aura then
+					local newEnding = aura.ending
+					local newStarting = aura.start
+					if newStarting and (not staring or newStarting < starting) then
+						starting = newStarting
+					end
+					if newEnding and (not ending or newEnding > ending) then
+						ending = newEnding
+					end
+					count = count + 1
 				end
-				if newEnding and (not ending or newEnding > ending) then
-					ending = newEnding
-				end
-			end
-		end		
+			end		
+		end
 	end
-	return starting, ending
+	return starting, ending, count
 end
 
 function OvaleAura:Debug()

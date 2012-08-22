@@ -157,7 +157,11 @@ function OvaleState:AddSpellToStack(spellId, startCast, endCast, nextCast, nocd,
 			for k,v in pairs(OvaleData.power) do
 				-- eclipse cost is on hit
 				if newSpellInfo[k] and k ~= "eclipse" then
-					self.state[k] = self.state[k] - newSpellInfo[k]
+					if newSpellInfo[k] == 0 then
+						self.state[k] = 0
+					else
+						self.state[k] = self.state[k] - newSpellInfo[k]
+					end
 					if self.state[k] < v.mini then
 						self.state[k] = v.mini
 					end
@@ -174,7 +178,11 @@ function OvaleState:AddSpellToStack(spellId, startCast, endCast, nextCast, nocd,
 			
 			--Points de combo
 			if newSpellInfo.combo then
-				self.state.combo = self.state.combo + newSpellInfo.combo
+				if newSpellInfo.combo == 0 then
+					self.state.combo = 0
+				else
+					self.state.combo = self.state.combo + newSpellInfo.combo
+				end
 				if self.state.combo<0 then
 					self.state.combo = 0
 				end
@@ -373,22 +381,25 @@ function OvaleState:GetAura(target, spellId, mine)
 	end
 end
 
-function OvaleState:GetExpirationTimeOnAnyTarget(spellId)
-	local starting, ending = OvaleAura:GetExpirationTimeOnAnyTarget(spellId)
+function OvaleState:GetExpirationTimeOnAnyTarget(spellId, excludingTarget)
+	local starting, ending, count = OvaleAura:GetExpirationTimeOnAnyTarget(spellId, excludingTarget)
 	for unitId,auraTable in pairs(self.aura) do
-		local aura = auraTable[spellId]
-		if aura and aura.serial == self.serial then
-			local newEnding = aura.ending
-			local newStarting = aura.start
-			if newStarting and (not staring or newStarting < starting) then
-				starting = newStarting
-			end
-			if newEnding and (not ending or newEnding > ending) then
-				ending = newEnding
+		if unitId ~= excludingTarget then
+			local aura = auraTable[spellId]
+			if aura and aura.serial == self.serial then
+				local newEnding = aura.ending
+				local newStarting = aura.start
+				if newStarting and (not staring or newStarting < starting) then
+					starting = newStarting
+				end
+				if newEnding and (not ending or newEnding > ending) then
+					ending = newEnding
+				end
+				count = count + 1
 			end
 		end
 	end
-	return starting, ending
+	return starting, ending, count
 end
 
 function OvaleState:NewAura(guid, spellId)
@@ -422,5 +433,67 @@ function OvaleState:GetEclipseDir()
 		end
 	end
 	return value
+end
+
+local runes = {}
+local runesCD = {}
+
+function OvaleState:GetRunes(blood, frost, unholy, death, nodeath)
+	local nombre = 0
+	local nombreCD = 0
+	local maxCD = nil
+	
+	for i=1,4 do
+		runesCD[i] = 0
+	end
+	
+	runes[1] = blood or 0
+	runes[2] = frost or 0
+	runes[3] = unholy or 0
+	runes[4] = death or 0
+		
+	for i=1,6 do
+		local rune = self.state.rune[i]
+		if rune then
+			if runes[rune.type] > 0 then
+				runes[rune.type] = runes[rune.type] - 1
+				if rune.cd > runesCD[rune.type] then
+					runesCD[rune.type] = rune.cd
+				end
+			elseif rune.cd < runesCD[rune.type] then
+				runesCD[rune.type] = rune.cd
+			end
+		end
+	end
+	
+	if not nodeath then
+		for i=1,6 do
+			local rune = self.state.rune[i]
+			if rune and rune.type == 4 then
+				for j=1,3 do
+					if runes[j]>0 then
+						runes[j] = runes[j] - 1
+						if rune.cd > runesCD[j] then
+							runesCD[j] = rune.cd
+						end
+						break
+					elseif rune.cd < runesCD[j] then
+						runesCD[j] = rune.cd
+						break
+					end
+				end
+			end
+		end
+	end
+	
+	for i=1,4 do
+		if runes[i]> 0 then
+			return nil
+		end
+		if not maxCD or runesCD[i]>maxCD then
+			maxCD = runesCD[i]
+		end
+	end
+	return maxCD
 end
 --</public-static-methods>

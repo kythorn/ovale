@@ -28,11 +28,12 @@ OvaleData.power =
 	shards = {id=7, mini=0, maxi=3},
 	eclipse = {id=8, mini=-100, maxi=100},
 	holy = {id=9, mini=0, maxi=3},
-	chi = {id=12 }, 
+	chi = {id=12, mini=0, maxi=4 }, 
 	shadoworbs = {id=13, mini=0, maxi=3},
 	burningembers = {id=14},
 	demonicfury = {id=15}
 }
+OvaleData.secondaryPower = {"shards", "holy", "chi", "shadoworbs", "burningembers", "demonicfury"}
 OvaleData.powerType = {}
 
 -- List haste buff that does not appear in the character sheet and that are not raid wide buffs
@@ -120,11 +121,13 @@ OvaleData.buffSpellList =
 	critical_strike =
 	{
 		--Guardian and Feral druids, any hunter, any mage
+		1459 -- Arcane Brillance
 	},
 	mastery =
 	{
 		93435, --Roar of Courage (Cat, Spirit Beast)
-		116956 -- Grace of Air
+		116956, -- Grace of Air
+		19740 -- Blessing of Might
 	},
 	-- weakened_armor
 	physical_vulnerability=
@@ -183,8 +186,19 @@ OvaleData.buffSpellList =
 	ranged_vulnerability =
 	{
 		1130, -- Hunter's Mark
+	},
+	-- Class specific
+	seal =
+	{
+		--Seal of Righteousness
+		--Seal of Justice
+		20165, --Seal of Insight
+		31801, --Seal of Truth
+		--Seal of Blood
+		--Seal of Command
 	}
 }
+OvaleData.buffSpellList.bloodlust = OvaleData.buffSpellList.heroism
 --</public-static-properties>
 
 --<private-static-properties>

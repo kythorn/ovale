@@ -12,24 +12,23 @@ Define(divine_insight_shadow 124430)
   SpellAddBuff(divine_insight_shadow divine_insight_shadow=1)
 Define(halo_damage 120517)
   SpellInfo(halo_damage cd=40 )
-Define(inner_fire 588)
-  SpellAddBuff(inner_fire inner_fire=1)
+Define(inner_fire 56168)
 Define(inner_will 73413)
   SpellAddBuff(inner_will inner_will=1)
-Define(mind_blast 8092)
-  SpellInfo(mind_blast shadoworbs=-1 cd=8 test)
-Define(mind_flay 15407)
+Define(mind_blast 56180)
+Define(mind_flay 52586)
   SpellInfo(mind_flay duration=3 )
   SpellAddTargetDebuff(mind_flay mind_flay=1)
 Define(mind_sear 48045)
   SpellInfo(mind_sear duration=5 )
   SpellAddBuff(mind_sear mind_sear=1)
-Define(mind_spike 63876)
+Define(mind_spike 87178)
+  SpellInfo(mind_spike duration=12 )
+  SpellAddBuff(mind_spike mind_spike=1)
 Define(power_word_fortitude 21562)
   SpellInfo(power_word_fortitude duration=3600 )
   SpellAddBuff(power_word_fortitude power_word_fortitude=1)
-Define(shadow_word_death 32379)
-  SpellInfo(shadow_word_death cd=8 )
+Define(shadow_word_death 112636)
 Define(shadow_word_pain 589)
   SpellInfo(shadow_word_pain duration=18 )
   SpellAddTargetDebuff(shadow_word_pain shadow_word_pain=1)
@@ -48,19 +47,19 @@ AddIcon mastery=3 help=main
 {
 	Spell(shadowform)
 	if ShadowOrbs() ==3 Spell(devouring_plague)
-	Spell(mind_blast)
 	if {not target.DebuffPresent(shadow_word_pain) or target.DebuffRemains(shadow_word_pain) <target.NextTick(shadow_word_pain) } Spell(shadow_word_pain)
-	if target.HealthPercent(less 20) Spell(shadow_word_death)
 	if {not target.DebuffPresent(vampiric_touch) or target.DebuffRemains(vampiric_touch) <CastTime(vampiric_touch) +target.NextTick(vampiric_touch) } Spell(vampiric_touch)
 	Spell(halo_damage)
-	Spell(mind_flay)
-	if target.HealthPercent(less 20) Spell(shadow_word_death)
-	if BuffPresent(divine_insight_shadow) Spell(mind_blast)
 	Spell(shadow_word_pain)
 }
 AddIcon mastery=3 help=offgcd
 {
+	if SpellCooldown(mind_blast) Spell(mind_blast)
 	if BuffPresent(surge_of_darkness) Spell(mind_spike)
+	Spell(shadow_word_death)
+	Spell(mind_flay)
+	Spell(shadow_word_death)
+	if BuffPresent(divine_insight_shadow) and SpellCooldown(mind_blast) Spell(mind_blast)
 }
 AddIcon mastery=3 help=aoe
 {
@@ -70,7 +69,7 @@ AddIcon mastery=3 help=cd
 {
 	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
 	Spell(berserking)
-	Spell(shadowfiend)
+	if SpellCooldown(shadowfiend) Spell(shadowfiend)
 	Spell(dispersion)
 }
 ]]
