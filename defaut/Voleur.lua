@@ -1,7 +1,8 @@
 Ovale.defaut["ROGUE"] = [[Define(adrenaline_rush 13750)
   SpellInfo(adrenaline_rush duration=15 cd=180 )
   SpellAddBuff(adrenaline_rush adrenaline_rush=1)
-Define(ambush 57140)
+Define(ambush 8676)
+  SpellInfo(ambush combo=2 )
 Define(anticipation 114015)
 Define(backstab 53)
   SpellInfo(backstab combo=1 )
@@ -30,8 +31,7 @@ Define(killing_spree 51690)
   SpellInfo(killing_spree duration=3 cd=120 )
   SpellAddBuff(killing_spree killing_spree=1)
 Define(master_of_subtlety 31223)
-Define(mutilate 1329)
-  SpellInfo(mutilate combo=2 )
+Define(mutilate 5374)
 Define(premeditation 14183)
   SpellInfo(premeditation duration=20 combo=2 cd=20 )
 Define(preparation 14185)
@@ -69,21 +69,21 @@ Define(vendetta 79140)
 Define(preparation_talent 10)
 AddIcon mastery=1 help=main
 {
+	Spell(ambush usable=1)
 	if BuffExpires(slice_and_dice) Spell(slice_and_dice)
 	if target.TicksRemain(rupture) <2 and Energy() >90 Spell(dispatch)
-	if target.TicksRemain(rupture) <2 and Energy() >90 Spell(mutilate)
 	if TicksRemain(rupture) <2 or {ComboPoints() ==5 and TicksRemain(rupture) <3 } Spell(rupture)
 	if ComboPoints() >=4 and TicksRemain(envenom) <2 Spell(envenom)
 	if ComboPoints() >4 Spell(envenom)
 	if ComboPoints() >=2 and BuffRemains(slice_and_dice) <3 Spell(envenom)
 	if ComboPoints() <5 Spell(dispatch)
-	Spell(mutilate)
 }
 AddIcon mastery=1 help=offgcd
 {
 	if target.IsInterruptible() Spell(kick)
-	Spell(ambush usable=1)
 	if ArmorSetParts(T13 more 2) Spell(tricks_of_the_trade)
+	if target.TicksRemain(rupture) <2 and Energy() >90 Spell(mutilate)
+	Spell(mutilate)
 }
 AddIcon mastery=1 help=cd
 {
@@ -96,6 +96,7 @@ AddIcon mastery=1 help=cd
 }
 AddIcon mastery=2 help=main
 {
+	Spell(ambush usable=1)
 	if BuffRemains(slice_and_dice) <2 Spell(slice_and_dice)
 	if TicksRemain(rupture) <2 and ComboPoints() ==5 and BuffPresent(deep_insight) and target.DeadIn() >10 Spell(rupture)
 	if ComboPoints() ==5 and BuffPresent(deep_insight) Spell(eviscerate)
@@ -107,7 +108,6 @@ AddIcon mastery=2 help=main
 AddIcon mastery=2 help=offgcd
 {
 	if target.IsInterruptible() Spell(kick)
-	Spell(ambush usable=1)
 	if ArmorSetParts(T13 more 2) Spell(tricks_of_the_trade)
 }
 AddIcon mastery=2 help=cd
@@ -122,6 +122,7 @@ AddIcon mastery=2 help=cd
 }
 AddIcon mastery=3 help=main
 {
+	if ComboPoints() <=5 and BuffStacks(anticipation) ==0 Spell(ambush usable=1)
 	if BuffRemains(slice_and_dice) <3 and ComboPoints() ==5 Spell(slice_and_dice)
 	if ComboPoints() ==5 and target.DebuffRemains(rupture) <5 Spell(rupture)
 	if ComboPoints() ==5 Spell(eviscerate)
@@ -136,7 +137,6 @@ AddIcon mastery=3 help=offgcd
 	if ArmorSetParts(T13 more 2) Spell(tricks_of_the_trade)
 	if Energy() >=75 and BuffExpires(stealthed) and not target.DebuffPresent(find_weakness) Spell(shadow_dance)
 	if {ComboPoints() <=3 and SpellCooldown(honor_among_thieves) >1.75 } or ComboPoints() <=2 Spell(premeditation)
-	if ComboPoints() <=5 and BuffStacks(anticipation) ==0 Spell(ambush usable=1)
 }
 AddIcon mastery=3 help=cd
 {

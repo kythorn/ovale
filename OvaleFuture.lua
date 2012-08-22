@@ -215,12 +215,12 @@ function OvaleFuture:AddSpellToList(spellId, lineId, startTime, endTime, channel
 	self.lastSpellSP[spellId] = GetSpellBonusDamage(2)
 	self.lastSpellDM[spellId] = OvaleAura.damageMultiplier
 	self.lastSpell[#self.lastSpell+1] = newSpell
-	Ovale:Print("on ajoute "..spellId..": ".. newSpell.start.." to "..newSpell.stop.." ("..OvaleState.maintenant..")" ..#self.lastSpell .. " " ..tostring(newSpell.target))
+	--Ovale:Print("on ajoute "..spellId..": ".. newSpell.start.." to "..newSpell.stop.." ("..tostring(OvaleState.maintenant)..")" ..#self.lastSpell .. " " ..tostring(newSpell.target))
 	
 	if si then
 		if si.combo == 0 then
 			local comboPoints = GetComboPoints("player")
-			Ovale:Print("combo point " .. comboPoints)
+			--Ovale:Print("combo point " .. comboPoints)
 			if comboPoints > 0 then
 				self.lastSpellDM[spellId] = self.lastSpellDM[spellId] * comboPoints
 			end

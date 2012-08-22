@@ -1,7 +1,8 @@
 Ovale.defaut["MONK"] = [[Define(berserking 26297)
   SpellInfo(berserking duration=10 cd=180 )
   SpellAddBuff(berserking berserking=1)
-Define(blackout_kick 132006)
+Define(blackout_kick 100784)
+  SpellInfo(blackout_kick chi=2 )
 Define(chi_burst 123986)
   SpellInfo(chi_burst chi=2 )
 Define(chi_sphere 121286)
@@ -15,21 +16,19 @@ Define(combo_breaker_tp 118864)
 Define(energizing_brew 115288)
   SpellInfo(energizing_brew duration=6 cd=60 )
   SpellAddBuff(energizing_brew energizing_brew=1)
-Define(fists_of_fury 113656)
-  SpellInfo(fists_of_fury duration=4 chi=3 cd=25 )
+Define(fists_of_fury 117418)
   SpellAddBuff(fists_of_fury fists_of_fury=1)
 Define(invoke_xuen 123904)
   SpellInfo(invoke_xuen duration=45 cd=180 )
-Define(jab 125661)
+Define(jab 100780)
+  SpellInfo(jab chi=-1 )
 Define(power_strikes 121817)
 Define(rising_sun_kick 107428)
   SpellInfo(rising_sun_kick chi=2 cd=8 )
-Define(rushing_jade_wind 123664)
-  SpellInfo(rushing_jade_wind duration=12 )
+Define(rushing_jade_wind 116847)
+  SpellInfo(rushing_jade_wind duration=8 chi=2 cd=30 )
   SpellAddBuff(rushing_jade_wind rushing_jade_wind=1)
-Define(spinning_crane_kick 101546)
-  SpellInfo(spinning_crane_kick duration=3 )
-  SpellAddBuff(spinning_crane_kick spinning_crane_kick=1)
+Define(spinning_crane_kick 117640)
 Define(tiger_palm 100787)
   SpellInfo(tiger_palm chi=1 )
 Define(tiger_power 125359)
@@ -49,15 +48,17 @@ AddIcon mastery=3 help=main
 	if not target.DebuffRemains(rising_sun_kick) or target.DebuffRemains(rising_sun_kick) <=3 Spell(rising_sun_kick)
 	if Enemies() >5 
 	{
+		if TalentPoints(rushing_jade_wind_talent) Spell(rushing_jade_wind)
 		if Chi() ==4 Spell(chi_burst)
-		Spell(spinning_crane_kick)
 	}
 	
 	{
 		if BuffStacks(tiger_power) <3 or BuffRemains(tiger_power) <=3 Spell(tiger_palm)
 		Spell(rising_sun_kick)
-		if not BuffPresent(energizing_brew) and Energy() <=65 Spell(fists_of_fury)
+		if BuffPresent(combo_breaker_bok) Spell(blackout_kick)
+		if {Chi() <=2 and SpellCooldown(power_strikes) } or {Chi() <=1 and not SpellCooldown(power_strikes) } Spell(jab)
 		if BuffPresent(combo_breaker_tp) Spell(tiger_palm)
+		Spell(blackout_kick)
 	}
 }
 AddIcon mastery=3 help=offgcd
@@ -68,16 +69,14 @@ AddIcon mastery=3 help=offgcd
 		if not BuffPresent(tigereye_brew_use) and BuffPresent(tigereye_brew) ==10 Spell(tigereye_brew_use)
 		if not BuffPresent(tigereye_brew_use) and {BuffPresent(tigereye_brew) >=7 and {SpellCooldown(energizing_brew) <=2 or BuffPresent(energizing_brew) } } Spell(tigereye_brew_use)
 		if Energy() <=35 Spell(energizing_brew)
-		if TalentPoints(rushing_jade_wind_talent) Spell(rushing_jade_wind)
+		Spell(spinning_crane_kick)
 	}
 	
 	{
 		if not BuffPresent(tigereye_brew_use) and BuffPresent(tigereye_brew) ==10 Spell(tigereye_brew_use)
 		if not BuffPresent(tigereye_brew_use) and {BuffPresent(tigereye_brew) >=7 and {SpellCooldown(energizing_brew) <=2 or BuffPresent(energizing_brew) } } Spell(tigereye_brew_use)
 		if Energy() <=35 Spell(energizing_brew)
-		if BuffPresent(combo_breaker_bok) Spell(blackout_kick)
-		if {Chi() <=2 and SpellCooldown(power_strikes) } or {Chi() <=1 and not SpellCooldown(power_strikes) } Spell(jab)
-		Spell(blackout_kick)
+		if not BuffPresent(energizing_brew) and Energy() <=65 Spell(fists_of_fury)
 	}
 }
 AddIcon mastery=3 help=cd

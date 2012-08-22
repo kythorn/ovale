@@ -1144,15 +1144,12 @@ OvaleCondition.conditions=
 	-- 1: spell ID
 	-- return: number
 	spellcooldown = function(condition)
-		local actionCooldownStart, actionCooldownDuration, actionEnable = OvaleData:GetComputedSpellCD(condition[1])
-		--if not actionCooldownDuration then
-			-- TODO: at this time it is not possible to know if a payer learnt the spell or not (IsUsableSpell does not work and
-			-- the spell book functions throw an error)
-			-- in this case it should return a time in the future
-			--return 0, nil, 0, OvaleState.currentTime + 3600, -1
-		--else
+		if not OvaleData.spellList[condition[1]] then
+			return 0, nil, 0, OvaleState.currentTime + 3600, -1
+		else
+			local actionCooldownStart, actionCooldownDuration, actionEnable = OvaleData:GetComputedSpellCD(condition[1])
 			return 0, nil, actionCooldownDuration, actionCooldownStart, -1
-		--end
+		end
 	end,
 	-- Get the spell power
 	-- return: number or bool
@@ -1163,7 +1160,7 @@ OvaleCondition.conditions=
 	-- 1 : the stance
 	-- return: bool
 	stance = function(condition)
-		if (GetShapeshiftForm(true) == condition[1]) then
+		if (GetShapeshiftForm() == condition[1]) then
 			return 0
 		else
 			return nil
@@ -1357,6 +1354,7 @@ OvaleCondition.conditions.debuffpresent = OvaleCondition.conditions.buffpresent
 OvaleCondition.conditions.debuffgain = OvaleCondition.conditions.buffgain
 OvaleCondition.conditions.debuffduration = OvaleCondition.conditions.buffduration
 OvaleCondition.conditions.debuffremains = OvaleCondition.conditions.buffremains
+OvaleCondition.conditions.debuffstacks = OvaleCondition.conditions.buffstacks
 OvaleCondition.conditions.otherauraexpires = OvaleCondition.conditions.otherdebuffexpires
 OvaleCondition.conditions.otheraurapresent = OvaleCondition.conditions.otherdebuffpresent
 OvaleCondition.defaultTarget = "target"

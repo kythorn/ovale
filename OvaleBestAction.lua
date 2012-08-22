@@ -91,12 +91,12 @@ function OvaleBestAction:GetActionInfo(element)
 		
 		local si = OvaleData:GetSpellInfo(spellId)
 		if si then
-			if si.combo and si.combo == 0 and OvaleState.state.combo == 0 then
-				actionCooldownStart = nil
+			if si.combo == 0 and OvaleState.state.combo == 0 then
+				return nil
 			end
 			for k,v in pairs(OvaleData.secondaryPower) do
 				if si[v] and si[v] > OvaleState.state[v] then
-					actionCooldownStart = OvaleState.currentTime + 1000
+					return nil
 				end
 			end
 			if (si.blood and si.blood > OvaleState.state.blood) or
@@ -490,13 +490,6 @@ function OvaleBestAction:Compute(element)
 		--	return nil
 		--end
 		
-		if isBefore(startA, startB) then
-			startA = startB
-		end
-		if isAfter(endA, endB) then
-			endA = endB
-		end
-		
 		local a,b,c,x,y,z
 		
 		if elementA then
@@ -509,7 +502,7 @@ function OvaleBestAction:Compute(element)
 			b = 0
 			c = 0
 		end
-		if element B then
+		if elementB then
 			x = elementB.value
 			y = elementB.origin
 			z = elementB.rate
@@ -517,6 +510,20 @@ function OvaleBestAction:Compute(element)
 			x = 1
 			y = 0
 			z = 0
+		end
+		
+		if startA == endA then
+			startA = 0; endA = nil;	a = 0; b = 0; c= 0
+		end
+		if startB == endB then
+			startB = 0; endB = nil; x =0; y =0; z =0
+		end
+		
+		if isBefore(startA, startB) then
+			startA = startB
+		end
+		if isAfter(endA, endB) then
+			endA = endB
 		end
 		
 		if not a or not x or not b or not y then

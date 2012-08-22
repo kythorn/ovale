@@ -187,16 +187,6 @@ OvaleData.buffSpellList =
 	{
 		1130, -- Hunter's Mark
 	},
-	-- Class specific
-	seal =
-	{
-		--Seal of Righteousness
-		--Seal of Justice
-		20165, --Seal of Insight
-		31801, --Seal of Truth
-		--Seal of Blood
-		--Seal of Command
-	}
 }
 OvaleData.buffSpellList.bloodlust = OvaleData.buffSpellList.heroism
 --</public-static-properties>
@@ -218,9 +208,11 @@ function OvaleData:OnEnable()
     self:RegisterEvent("PLAYER_TALENT_UPDATE")
     self:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	self:RegisterEvent("SPELLS_CHANGED")
+	self:RegisterEvent("UNIT_PET")
 end
 
 function OvaleData:OnDisable()
+	self:UnregisterEvent("UNIT_PET")
     self:UnregisterEvent("SPELLS_CHANGED")
     self:UnregisterEvent("PLAYER_TALENT_UPDATE")
     self:UnregisterEvent("CHARACTER_POINTS_CHANGED")
@@ -234,6 +226,10 @@ end
 function OvaleData:PLAYER_TALENT_UPDATE()
 	self:RemplirListeTalents()
 --	Ovale:Print("PLAYER_TALENT_UPDATE")
+end
+
+function OvaleData:UNIT_PET()
+	self:FillPetSpellList()
 end
 
 --The user learnt a new spell
@@ -295,30 +291,41 @@ function OvaleData:GetSpellInfoOrNil(spell)
 	end
 end
 
-function OvaleData:FillSpellList()
-	if true then return end
-	--TODO invalid spell slot in last patch
-	self.spellList = {}
-	local book=BOOKTYPE_SPELL
-	while true do
-		local i=1
-		while true do
-			local skillType, spellId = GetSpellBookItemInfo(i, book)
-			if not spellId then
-				break
-			end
-			if skillType~="FUTURESPELL" then
-				local spellName = GetSpellBookItemName(i, book)
-				self.spellList[spellId] = spellName
-			end
-			i = i + 1
+function OvaleData:FillPetSpellList()
+	--TODO pas moyen d'avoir le nombre de skills pour le pet
+	local book=BOOKTYPE_PET
+	local numSpells, _ = HasPetSpells()
+	local i=1
+	while i <= numSpells do
+		local skillType, spellId = GetSpellBookItemInfo(i, book)
+		if skillType~="FUTURESPELL" and spellId then
+			local spellName = GetSpellBookItemName(i, book)
+			self.spellList[spellId] = spellName
 		end
-		if book==BOOKTYPE_SPELL then
-			book = BOOKTYPE_PET
-		else
-			break
-		end
+		i = i + 1
 	end
+end
+
+function OvaleData:FillSpellList()
+	self.spellList = {}
+	
+	--TODO pas moyen d'avoir le nombre de skills pour le pet
+	local book=BOOKTYPE_SPELL
+	local name, texture, offset, numSpells, isGuild = GetSpellTabInfo(2)
+	
+	numSpells = numSpells + offset
+	
+	local i=1
+	while i <= numSpells do
+		local skillType, spellId = GetSpellBookItemInfo(i, book)
+		if skillType~="FUTURESPELL" and spellId then
+			local spellName = GetSpellBookItemName(i, book)
+			self.spellList[spellId] = spellName
+			Ovale:Print(spellName)
+		end
+		i = i + 1
+	end
+	self:FillPetSpellList()
 end
 
 function OvaleData:RemplirListeTalents()

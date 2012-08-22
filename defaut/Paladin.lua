@@ -10,8 +10,9 @@ Define(blessing_of_might 19740)
 Define(crusader_strike 35395)
   SpellInfo(crusader_strike holy=-1 cd=4.5 )
 Define(divine_purpose 86172)
-Define(execution_sentence 114157)
-  SpellInfo(execution_sentence cd=60 )
+Define(execution_sentence 114916)
+  SpellInfo(execution_sentence duration=10 tick=1 )
+  SpellAddTargetDebuff(execution_sentence execution_sentence=1)
 Define(exorcism 879)
   SpellInfo(exorcism holy=-1 cd=15 )
 Define(guardian_of_ancient_kings 86659)
@@ -30,23 +31,24 @@ Define(seal_of_insight 20165)
   SpellAddBuff(seal_of_insight seal_of_insight=1)
 Define(seal_of_truth 31801)
   SpellAddBuff(seal_of_truth seal_of_truth=1)
-Define(templars_verdict 55112)
+Define(templars_verdict 85256)
+  SpellInfo(templars_verdict holy=3 )
 AddIcon mastery=3 help=main
 {
-	if ManaPercent() >=90 or BuffExpires(seal) Spell(seal_of_truth)
-	if ManaPercent() <=20 Spell(seal_of_insight)
+	if ManaPercent() >=90 or Stance(0) unless Stance(1) Spell(seal_of_truth)
+	if ManaPercent() <=20 unless Stance(4) Spell(seal_of_insight)
 	if {BuffExpires(inquisition) or BuffRemains(inquisition) <=2 } and {HolyPower() >=3 or BuffPresent(divine_purpose) } Spell(inquisition)
-	if BuffPresent(inquisition) and TimeInCombat() >=15 Spell(execution_sentence)
-	Spell(hammer_of_wrath)
+	if HolyPower() ==5 or BuffPresent(divine_purpose) Spell(templars_verdict)
+	Spell(hammer_of_wrath usable=1)
 	Spell(exorcism)
 	Spell(crusader_strike)
 	Spell(judgment)
+	if HolyPower() >=3 Spell(templars_verdict)
 }
 AddIcon mastery=3 help=offgcd
 {
 	if target.IsInterruptible() Spell(rebuke)
-	if HolyPower() ==5 or BuffPresent(divine_purpose) Spell(templars_verdict)
-	if HolyPower() >=3 Spell(templars_verdict)
+	if BuffPresent(inquisition) and TimeInCombat() >=15 Spell(execution_sentence)
 }
 AddIcon mastery=3 help=cd
 {
