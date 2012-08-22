@@ -295,6 +295,7 @@ function OvaleData:FillPetSpellList()
 	--TODO pas moyen d'avoir le nombre de skills pour le pet
 	local book=BOOKTYPE_PET
 	local numSpells, _ = HasPetSpells()
+	if not numSpells then return end
 	local i=1
 	while i <= numSpells do
 		local skillType, spellId = GetSpellBookItemInfo(i, book)
@@ -321,7 +322,6 @@ function OvaleData:FillSpellList()
 		if skillType~="FUTURESPELL" and spellId then
 			local spellName = GetSpellBookItemName(i, book)
 			self.spellList[spellId] = spellName
-			Ovale:Print(spellName)
 		end
 		i = i + 1
 	end
