@@ -104,7 +104,7 @@ AddIcon mastery=3 help=main
 	if BuffPresent(sudden_doom) Spell(death_coil)
 	Spell(scourge_strike)
 	Spell(festering_strike)
-	Spell(death_coil)
+	if SpellCooldown(summon_gargoyle) >8 Spell(death_coil)
 	Spell(horn_of_winter)
 }
 AddIcon mastery=3 help=offgcd
@@ -118,7 +118,7 @@ AddIcon mastery=3 help=cd
 	if TimeInCombat() >=4 Spell(unholy_frenzy)
 	if TimeInCombat() >=4  { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
 	Spell(summon_gargoyle)
-	if BuffPresent(mogu_power_potion_aura) and target.DeadIn() <=60 Spell(empower_rune_weapon)
+	if target.DeadIn() <=60 and BuffPresent(mogu_power_potion_aura) Spell(empower_rune_weapon)
 	Spell(empower_rune_weapon)
 }
 ]]

@@ -1144,7 +1144,14 @@ OvaleCondition.conditions=
 	-- 1: spell ID
 	-- return: number
 	spellcooldown = function(condition)
-		if not OvaleData.spellList[condition[1]] then
+		if type(condition[1]) == "string" then
+			local sharedCd = OvaleState.state.cd[condition[1]]
+			if sharedCd then
+				return 0, nil, sharedCD.duration, sharedCD.start, -1
+			else
+				return nil
+			end
+		elseif not OvaleData.spellList[condition[1]] then
 			return 0, nil, 0, OvaleState.currentTime + 3600, -1
 		else
 			local actionCooldownStart, actionCooldownDuration, actionEnable = OvaleData:GetComputedSpellCD(condition[1])

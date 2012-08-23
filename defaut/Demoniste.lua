@@ -54,8 +54,6 @@ Define(immolate 348)
   SpellInfo(immolate duration=15 tick=3 )
   SpellAddTargetDebuff(immolate immolate=1)
 Define(immolation_aura 129476)
-Define(imp_swarm 104316)
-  SpellInfo(imp_swarm cd=120 )
 Define(incinerate 29722)
 Define(life_tap 1454)
   SpellInfo(life_tap mana=-15 )
@@ -77,8 +75,8 @@ Define(seed_of_corruption 27243)
   SpellAddTargetDebuff(seed_of_corruption seed_of_corruption=1)
 Define(service_felguard 111898)
   SpellInfo(service_felguard cd=120 )
-Define(service_felhunter 111897)
-  SpellInfo(service_felhunter cd=120 )
+Define(service_succubus 111896)
+  SpellInfo(service_succubus cd=120 )
 Define(shadow_bolt 686)
   SpellInfo(shadow_bolt demonicfury=40 )
 Define(shadowburn 17877)
@@ -97,10 +95,10 @@ Define(summon_doomguard 18540)
   SpellInfo(summon_doomguard cd=600 )
 Define(summon_felguard 30146)
   SpellInfo(summon_felguard demonicfury=0 )
-Define(summon_felhunter 691)
-  SpellInfo(summon_felhunter demonicfury=0 )
 Define(summon_infernal 1122)
   SpellInfo(summon_infernal cd=600 )
+Define(summon_succubus 712)
+  SpellInfo(summon_succubus demonicfury=0 )
 Define(touch_of_chaos 103964)
   SpellInfo(touch_of_chaos demonicfury=40 stance=1)
 Define(unstable_affliction 30108)
@@ -108,23 +106,26 @@ Define(unstable_affliction 30108)
   SpellAddTargetDebuff(unstable_affliction unstable_affliction=1)
 Define(void_ray 115422)
   SpellInfo(void_ray demonicfury=40 )
+Define(wrathstorm 115831)
+  SpellInfo(wrathstorm duration=6 energy=60 cd=45 )
+  SpellAddBuff(wrathstorm wrathstorm=1)
 Define(grimoire_of_sacrifice_talent 15)
 Define(grimoire_of_service_talent 14)
 Define(harvest_life_talent 3)
 AddIcon mastery=1 help=main
 {
 	if target.DebuffExpires(magic_vulnerability) Spell(curse_of_the_elements)
-	if TalentPoints(grimoire_of_service_talent) Spell(service_felhunter)
-	if TalentPoints(grimoire_of_sacrifice_talent) and BuffExpires(grimoire_of_sacrifice) Spell(summon_felhunter)
+	if TalentPoints(grimoire_of_service_talent) Spell(service_succubus)
+	if TalentPoints(grimoire_of_sacrifice_talent) and BuffExpires(grimoire_of_sacrifice) Spell(summon_succubus)
 	if Enemies() >3 
 	{
 		if {BuffExpires(soulburn) and not InFlightToTarget(seed_of_corruption) and not target.DebuffPresent(seed_of_corruption) } or {BuffPresent(soulburn) and not target.DebuffPresent(soulburn_seed_of_corruption) and not InFlightToTarget(soulburn_seed_of_corruption) } Spell(seed_of_corruption)
-		if not InFlightToTarget(haunt) and target.DebuffRemains(haunt) <CastTime(haunt) +1 Spell(haunt)
+		if not InFlightToTarget(haunt) and target.DebuffRemains(haunt) <CastTime(haunt) +1 and SoulShards() Spell(haunt)
 		if ManaPercent() <70 Spell(life_tap)
 		if not InFlightToTarget(fel_flame) Spell(fel_flame)
 	}
 	if BuffPresent(soulburn) Spell(soul_swap)
-	if not InFlightToTarget(haunt) and target.DebuffRemains(haunt) <target.NextTick(haunt) +1 +CastTime(haunt) Spell(haunt)
+	if not InFlightToTarget(haunt) and target.DebuffRemains(haunt) <target.NextTick(haunt) +1 +CastTime(haunt) and SoulShards() Spell(haunt)
 	if Enemies() >1 and TimeInCombat() <10 Spell(soul_swap)
 	if not InFlightToTarget(haunt) and target.DebuffRemains(haunt) <target.NextTick(haunt) +1 +CastTime(haunt) and SoulShards() >1 Spell(haunt)
 	if {not target.DebuffPresent(agony) or target.DebuffRemains(agony) <=TickTime(drain_soul) *2 } and target.DeadIn() >=8 Spell(agony)
@@ -142,14 +143,21 @@ AddIcon mastery=1 help=offgcd
 {
 	if Enemies() >3 
 	{
-		if BuffExpires(soulburn) and not target.DebuffPresent(soulburn_seed_of_corruption) and not InFlightToTarget(soulburn_seed_of_corruption) Spell(soulburn)
+		if BuffExpires(soulburn) and not target.DebuffPresent(soulburn_seed_of_corruption) and not InFlightToTarget(soulburn_seed_of_corruption) and SoulShards() Spell(soulburn)
 	}
-	if BuffPresent(dark_soul) and {BuffRemains(dark_soul) >=18.5 or BuffRemains(dark_soul) <=1.5 } Spell(soulburn)
+	if BuffPresent(dark_soul) and {BuffRemains(dark_soul) >=18.5 or BuffRemains(dark_soul) <=1.5 } and SoulShards() Spell(soulburn)
 }
 AddIcon mastery=1 help=moving
 {
 	if ManaPercent() <80 and ManaPercent() <target.HealthPercent() Spell(life_tap)
 	Spell(fel_flame)
+}
+AddIcon mastery=1 help=aoe
+{
+	
+	{
+		Spell(summon_infernal)
+	}
 }
 AddIcon mastery=1 help=cd
 {
@@ -157,10 +165,9 @@ AddIcon mastery=1 help=cd
 	Spell(blood_fury)
 	Spell(dark_soul)
 	if TalentPoints(grimoire_of_sacrifice_talent) Spell(grimoire_of_sacrifice)
-	if Enemies() >3 
+	
 	{
 		Spell(summon_doomguard)
-		if Enemies() >=7 Spell(summon_infernal)
 	}
 	Spell(summon_doomguard)
 }
@@ -173,17 +180,15 @@ AddIcon mastery=2 help=main
 	{
 		if {not target.DebuffPresent(corruption) or target.DebuffRemains(corruption) <target.NextTick(corruption) } and target.DeadIn() >=6 Spell(corruption)
 		Spell(hand_of_guldan)
-		if target.DebuffRemains(corruption) <10 Spell(void_ray)
 		if {not target.DebuffPresent(doom) or target.DebuffRemains(doom) <40 } and target.DeadIn() >30 Spell(doom)
-		Spell(void_ray)
 		if TalentPoints(harvest_life_talent) Spell(harvest_life)
-		if not TalentPoints(harvest_life_talent) Spell(hellfire)
 		Spell(life_tap)
 	}
 	if {not target.DebuffPresent(corruption) or target.DebuffRemains(corruption) <target.NextTick(corruption) } and target.DeadIn() >=6 Spell(corruption)
 	if {not target.DebuffPresent(doom) or target.DebuffRemains(doom) <target.NextTick(doom) or {TicksRemain(doom) +1 <{target.TicksRemain(doom) + Ticks(doom) } and BuffPresent(dark_soul) } } and target.DeadIn() >=30 Spell(doom)
-	if target.DebuffRemains(corruption) >15 and BuffExpires(dark_soul) and DemonicFury() <=750 and target.DeadIn() >30 if Stance(1) cancel.Texture(Spell_shadow_demonform)
+	if target.DebuffRemains(corruption) >20 and BuffExpires(dark_soul) and DemonicFury() <=750 and target.DeadIn() >30 if Stance(1) cancel.Texture(Spell_shadow_demonform)
 	if not InFlightToTarget(hand_of_guldan) and target.DebuffRemains(shadowflame) <1 +CastTime(shadow_bolt) Spell(hand_of_guldan)
+	if target.DebuffRemains(corruption) <20 Spell(touch_of_chaos)
 	if BuffPresent(molten_core) and {BuffExpires(metamorphosis) or target.HealthPercent() <25 } Spell(soul_fire)
 	Spell(touch_of_chaos)
 	if ManaPercent() <50 Spell(life_tap)
@@ -194,10 +199,10 @@ AddIcon mastery=2 help=offgcd
 {
 	Spell(melee)
 	Spell(felstorm)
+	Spell(wrathstorm)
 	if Enemies() >5 
 	{
 		if DemonicFury() >=1000 or DemonicFury() >=31 *target.DeadIn() unless Stance(1) Spell(metamorphosis)
-		Spell(immolation_aura)
 	}
 	if BuffPresent(dark_soul) or target.DebuffRemains(corruption) <5 or DemonicFury() >=900 or DemonicFury() >=target.DeadIn() *30 unless Stance(1) Spell(metamorphosis)
 }
@@ -205,26 +210,34 @@ AddIcon mastery=2 help=moving
 {
 	Spell(fel_flame)
 }
+AddIcon mastery=2 help=aoe
+{
+	
+	{
+		Spell(summon_infernal)
+		Spell(immolation_aura)
+		if target.DebuffRemains(corruption) <10 Spell(void_ray)
+		Spell(void_ray)
+		if not TalentPoints(harvest_life_talent) Spell(hellfire)
+	}
+}
 AddIcon mastery=2 help=cd
 {
 	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
 	Spell(blood_fury)
 	Spell(dark_soul)
 	if TalentPoints(grimoire_of_sacrifice_talent) Spell(grimoire_of_sacrifice)
-	if Enemies() >5 
+	
 	{
 		Spell(summon_doomguard)
-		if Enemies() >=7 Spell(summon_infernal)
-		if BuffExpires(metamorphosis) Spell(imp_swarm)
 	}
 	Spell(summon_doomguard)
-	Spell(imp_swarm)
 }
 AddIcon mastery=3 help=main
 {
 	if target.DebuffExpires(magic_vulnerability) Spell(curse_of_the_elements)
-	if TalentPoints(grimoire_of_service_talent) Spell(service_felhunter)
-	if TalentPoints(grimoire_of_sacrifice_talent) and BuffExpires(grimoire_of_sacrifice) Spell(summon_felhunter)
+	if TalentPoints(grimoire_of_service_talent) Spell(service_succubus)
+	if TalentPoints(grimoire_of_sacrifice_talent) and BuffExpires(grimoire_of_sacrifice) Spell(summon_succubus)
 	if Enemies() >2 
 	{
 		if BuffPresent(fire_and_brimstone) and not target.DebuffPresent(immolate) Spell(immolate)
@@ -234,7 +247,7 @@ AddIcon mastery=3 help=main
 	}
 	if Enemies() >1 Spell(havoc)
 	if BurningEmbers() if target.HealthPercent(less 20) Spell(shadowburn)
-	if BurningEmbers() and BuffStacks(backdraft) <3 Spell(chaos_bolt)
+	if BurningEmbers() and {BuffStacks(backdraft) <3 or Level() <86 } Spell(chaos_bolt)
 	if BuffExpires(backdraft) Spell(conflagrate)
 	if TicksRemain(immolate) <Ticks(immolate) /2 and target.DeadIn() >=5 Spell(immolate)
 	Spell(incinerate)
@@ -247,16 +260,22 @@ AddIcon mastery=3 help=offgcd
 		if BurningEmbers() and BuffExpires(fire_and_brimstone) Spell(fire_and_brimstone)
 	}
 }
+AddIcon mastery=3 help=aoe
+{
+	
+	{
+		Spell(summon_infernal)
+	}
+}
 AddIcon mastery=3 help=cd
 {
 	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
 	Spell(blood_fury)
 	Spell(dark_soul)
 	if TalentPoints(grimoire_of_sacrifice_talent) Spell(grimoire_of_sacrifice)
-	if Enemies() >2 
+	
 	{
 		Spell(summon_doomguard)
-		if Enemies() >=7 Spell(summon_infernal)
 	}
 	Spell(summon_doomguard)
 }

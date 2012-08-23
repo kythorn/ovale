@@ -46,6 +46,7 @@ Define(vampiric_touch 34914)
 AddIcon mastery=3 help=main
 {
 	Spell(shadowform)
+	if BuffPresent(surge_of_darkness) and PreviousSpell(mind_blast) >=1 Spell(mind_spike)
 	if ShadowOrbs() ==3 Spell(devouring_plague)
 	if SpellCooldown(mind_blast) Spell(mind_blast)
 	if BuffPresent(surge_of_darkness) Spell(mind_spike)

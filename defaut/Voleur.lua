@@ -84,7 +84,7 @@ AddIcon mastery=1 help=main
 AddIcon mastery=1 help=offgcd
 {
 	if target.IsInterruptible() Spell(kick)
-	if ArmorSetParts(T13 more 2) Spell(tricks_of_the_trade)
+	Spell(tricks_of_the_trade)
 }
 AddIcon mastery=1 help=cd
 {
@@ -109,7 +109,7 @@ AddIcon mastery=2 help=main
 AddIcon mastery=2 help=offgcd
 {
 	if target.IsInterruptible() Spell(kick)
-	if ArmorSetParts(T13 more 2) Spell(tricks_of_the_trade)
+	Spell(tricks_of_the_trade)
 }
 AddIcon mastery=2 help=cd
 {
@@ -126,6 +126,7 @@ AddIcon mastery=3 help=main
 	if ComboPoints() <=5 and BuffStacks(anticipation) ==0 Spell(ambush usable=1)
 	if BuffRemains(slice_and_dice) <3 and ComboPoints() ==5 Spell(slice_and_dice)
 	if ComboPoints() ==5 and target.DebuffRemains(rupture) <5 Spell(rupture)
+	if BuffStacks(anticipation) <3 and BuffRemains(shadow_dance) <=2 Spell(ambush usable=1)
 	if ComboPoints() ==5 Spell(eviscerate)
 	if ComboPoints() <4 and {target.DebuffRemains(hemorrhage) <4 or target.TargetIsPlayer() } Spell(hemorrhage)
 	if ComboPoints() <5 and Energy() >80 and {target.DebuffRemains(hemorrhage) <4 or target.TargetIsPlayer() } Spell(hemorrhage)
@@ -135,9 +136,9 @@ AddIcon mastery=3 help=main
 AddIcon mastery=3 help=offgcd
 {
 	if target.IsInterruptible() Spell(kick)
-	if ArmorSetParts(T13 more 2) Spell(tricks_of_the_trade)
 	if Energy() >=75 and BuffExpires(stealthed) and not target.DebuffPresent(find_weakness) Spell(shadow_dance)
 	if {ComboPoints() <=3 and SpellCooldown(honor_among_thieves) >1.75 } or ComboPoints() <=2 Spell(premeditation)
+	Spell(tricks_of_the_trade)
 }
 AddIcon mastery=3 help=cd
 {
