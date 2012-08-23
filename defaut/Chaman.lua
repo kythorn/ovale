@@ -79,7 +79,6 @@ AddIcon mastery=1 help=main
 	
 	{
 		if TalentPoints(elemental_blast_talent) and not BuffPresent(ascendance) Spell(elemental_blast)
-		Spell(unleash_elements)
 		if TalentPoints(unleashed_fury_talent) and not BuffPresent(ascendance) Spell(unleash_elements)
 		if not BuffPresent(ascendance) and {not target.DebuffPresent(flame_shock) or TicksRemain(flame_shock) <2 or {{BuffPresent(bloodlust) or BuffPresent(elemental_mastery) } and TicksRemain(flame_shock) <3 } } Spell(flame_shock)
 		if target.DebuffRemains(flame_shock) >CastTime(lava_burst) and {BuffPresent(ascendance) or SpellCooldown(lava_burst) } Spell(lava_burst)
@@ -109,6 +108,13 @@ AddIcon mastery=1 help=offgcd
 	{
 		if Enemies() >2 and not TotemPresent(fire) Spell(magma_totem)
 		if Enemies() >4 Spell(earthquake)
+	}
+}
+AddIcon mastery=1 help=moving
+{
+	
+	{
+		Spell(unleash_elements)
 	}
 }
 AddIcon mastery=1 help=cd

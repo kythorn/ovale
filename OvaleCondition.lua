@@ -1197,7 +1197,7 @@ OvaleCondition.conditions=
 		local baseTickTime = si.tick or 3
 		local haste = OvaleAura.spellHaste
 		local d = si.duration
-		local t = floor(( base_tick_time * haste ) + 0.5 )
+		local t = floor(( baseTickTime * haste ) + 0.5 )
 		local n = d/t
 		local num
 		-- banker's rounding

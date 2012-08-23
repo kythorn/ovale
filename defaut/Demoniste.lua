@@ -22,13 +22,15 @@ Define(dark_intent 109773)
 Define(dark_soul 77801)
   SpellInfo(dark_soul cd=120 )
 Define(doom 603)
-  SpellInfo(doom duration=60 demonicfury=60 tick=15 )
+  SpellInfo(doom duration=60 demonicfury=60 tick=15 stance=1)
   SpellAddTargetDebuff(doom doom=1)
 Define(drain_soul 1120)
   SpellInfo(drain_soul duration=12 tick=2 )
   SpellAddTargetDebuff(drain_soul drain_soul=1)
 Define(fel_flame 77799)
-Define(felguard_felstorm 103134)
+Define(felstorm 89751)
+  SpellInfo(felstorm duration=6 energy=60 cd=45 )
+  SpellAddBuff(felstorm felstorm=1)
 Define(fire_and_brimstone 108683)
   SpellInfo(fire_and_brimstone burningembers=10 cd=1 )
   SpellAddBuff(fire_and_brimstone fire_and_brimstone=1)
@@ -62,10 +64,13 @@ Define(malefic_grasp 103103)
   SpellInfo(malefic_grasp duration=4 tick=1 )
   SpellAddTargetDebuff(malefic_grasp malefic_grasp=1)
 Define(melee 103988)
+  SpellInfo(melee stance=1)
 Define(metamorphosis 103958)
   SpellInfo(metamorphosis demonicfury=0 cd=10 )
   SpellAddBuff(metamorphosis metamorphosis=1)
-Define(molten_core 122351)
+Define(molten_core 122355)
+  SpellInfo(molten_core duration=30 )
+  SpellAddBuff(molten_core molten_core=1)
 Define(rain_of_fire 42223)
 Define(seed_of_corruption 27243)
   SpellInfo(seed_of_corruption duration=18 tick=3 )
@@ -82,6 +87,7 @@ Define(shadowflame 47960)
   SpellInfo(shadowflame duration=6 tick=1 )
   SpellAddTargetDebuff(shadowflame shadowflame=1)
 Define(soul_fire 6353)
+  SpellAddBuff(soul_fire molten_core=-1)
 Define(soul_swap 86121)
 Define(soulburn 74434)
   SpellInfo(soulburn duration=30 shards=1 cd=1 )
@@ -96,7 +102,7 @@ Define(summon_felhunter 691)
 Define(summon_infernal 1122)
   SpellInfo(summon_infernal cd=600 )
 Define(touch_of_chaos 103964)
-  SpellInfo(touch_of_chaos demonicfury=40 )
+  SpellInfo(touch_of_chaos demonicfury=40 stance=1)
 Define(unstable_affliction 30108)
   SpellInfo(unstable_affliction duration=14 tick=2 )
   SpellAddTargetDebuff(unstable_affliction unstable_affliction=1)
@@ -130,8 +136,6 @@ AddIcon mastery=1 help=main
 	if target.HealthPercent() <=20 Spell(drain_soul)
 	if ManaPercent() <35 Spell(life_tap)
 	Spell(malefic_grasp)
-	if ManaPercent() <80 and ManaPercent() <target.HealthPercent() Spell(life_tap)
-	Spell(fel_flame)
 	Spell(life_tap)
 }
 AddIcon mastery=1 help=offgcd
@@ -141,6 +145,11 @@ AddIcon mastery=1 help=offgcd
 		if BuffExpires(soulburn) and not target.DebuffPresent(soulburn_seed_of_corruption) and not InFlightToTarget(soulburn_seed_of_corruption) Spell(soulburn)
 	}
 	if BuffPresent(dark_soul) and {BuffRemains(dark_soul) >=18.5 or BuffRemains(dark_soul) <=1.5 } Spell(soulburn)
+}
+AddIcon mastery=1 help=moving
+{
+	if ManaPercent() <80 and ManaPercent() <target.HealthPercent() Spell(life_tap)
+	Spell(fel_flame)
 }
 AddIcon mastery=1 help=cd
 {
@@ -173,25 +182,28 @@ AddIcon mastery=2 help=main
 	}
 	if {not target.DebuffPresent(corruption) or target.DebuffRemains(corruption) <target.NextTick(corruption) } and target.DeadIn() >=6 Spell(corruption)
 	if {not target.DebuffPresent(doom) or target.DebuffRemains(doom) <target.NextTick(doom) or {TicksRemain(doom) +1 <{target.TicksRemain(doom) + Ticks(doom) } and BuffPresent(dark_soul) } } and target.DeadIn() >=30 Spell(doom)
-	if target.DebuffRemains(corruption) >15 and BuffExpires(dark_soul) and DemonicFury() <=750 and target.DeadIn() >30 cancel.Texture(Spell_shadow_demonform)
+	if target.DebuffRemains(corruption) >15 and BuffExpires(dark_soul) and DemonicFury() <=750 and target.DeadIn() >30 if Stance(1) cancel.Texture(Spell_shadow_demonform)
 	if not InFlightToTarget(hand_of_guldan) and target.DebuffRemains(shadowflame) <1 +CastTime(shadow_bolt) Spell(hand_of_guldan)
 	if BuffPresent(molten_core) and {BuffExpires(metamorphosis) or target.HealthPercent() <25 } Spell(soul_fire)
 	Spell(touch_of_chaos)
 	if ManaPercent() <50 Spell(life_tap)
 	Spell(shadow_bolt)
-	Spell(fel_flame)
 	Spell(life_tap)
 }
 AddIcon mastery=2 help=offgcd
 {
 	Spell(melee)
-	Spell(felguard_felstorm)
+	Spell(felstorm)
 	if Enemies() >5 
 	{
-		if DemonicFury() >=1000 or DemonicFury() >=31 *target.DeadIn() Spell(metamorphosis)
+		if DemonicFury() >=1000 or DemonicFury() >=31 *target.DeadIn() unless Stance(1) Spell(metamorphosis)
 		Spell(immolation_aura)
 	}
-	if BuffPresent(dark_soul) or target.DebuffRemains(corruption) <5 or DemonicFury() >=900 or DemonicFury() >=target.DeadIn() *30 Spell(metamorphosis)
+	if BuffPresent(dark_soul) or target.DebuffRemains(corruption) <5 or DemonicFury() >=900 or DemonicFury() >=target.DeadIn() *30 unless Stance(1) Spell(metamorphosis)
+}
+AddIcon mastery=2 help=moving
+{
+	Spell(fel_flame)
 }
 AddIcon mastery=2 help=cd
 {

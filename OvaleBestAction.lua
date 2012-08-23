@@ -91,6 +91,10 @@ function OvaleBestAction:GetActionInfo(element)
 		
 		local si = OvaleData:GetSpellInfo(spellId)
 		if si then
+			if si.stance and si.stance > 0 and GetShapeshiftForm()~=si.stance then
+				return nil
+			end
+			
 			if si.combo == 0 and OvaleState.state.combo == 0 then
 				return nil
 			end
@@ -99,17 +103,10 @@ function OvaleBestAction:GetActionInfo(element)
 					return nil
 				end
 			end
-			if (si.blood and si.blood > OvaleState.state.blood) or
-				(si.frost and si.frost > OvaleState.state.frost) or
-				(si.unholy and si.unholy > OvaleState.state.unholy) then
-				local lacking = (si.blood or 0) - OvaleState.state.blood +
-					(si.frost or 0) - OvaleState.state.frost +
-					(si.unholy or 0) - OvaleState.state.unholy
-				if lacking > OvaleState.state.death then
-					local runecd = OvaleState:GetRunes(si.blood, si.frost, si.unholy, si.death, false)
-					if runecd > actionCooldownStart + actionCooldownDuration then
-						actionCooldownDuration = runecd - actionCooldownStart
-					end
+			if si.blood or si.frost or si.unholy or si.death then
+				local runecd = OvaleState:GetRunes(si.blood, si.frost, si.unholy, si.death, false)
+				if runecd > actionCooldownStart + actionCooldownDuration then
+					actionCooldownDuration = runecd - actionCooldownStart
 				end
 			end
 		end

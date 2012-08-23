@@ -139,7 +139,8 @@ local function Update(self, element, minAttente, actionTexture, actionInRange, a
 		else
 			self.aPortee:Hide()
 		end
-		if actionTarget=="focus" then
+		if actionTarget and actionTarget~="target" then
+			self.focusText:SetText(actionTarget)
 			self.focusText:Show()
 		else
 			self.focusText:Hide()
@@ -242,7 +243,7 @@ function OvaleIcone_OnLoad(self)
 --</public-properties>	
 	
 	
-	self.focusText:SetFontObject("GameFontNormal");
+	self.focusText:SetFontObject("GameFontNormalSmall");
 	self.focusText:SetAllPoints(self);
 	self.focusText:SetTextColor(1,1,1);
 	self.focusText:SetText(L["Focus"])

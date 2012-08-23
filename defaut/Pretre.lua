@@ -54,6 +54,9 @@ AddIcon mastery=3 help=main
 	if {not target.DebuffPresent(vampiric_touch) or target.DebuffRemains(vampiric_touch) <CastTime(vampiric_touch) +target.NextTick(vampiric_touch) } Spell(vampiric_touch)
 	Spell(halo_damage)
 	Spell(mind_flay)
+}
+AddIcon mastery=3 help=moving
+{
 	if target.HealthPercent(less 20) Spell(shadow_word_death)
 	if BuffPresent(divine_insight_shadow) and SpellCooldown(mind_blast) Spell(mind_blast)
 	Spell(shadow_word_pain)

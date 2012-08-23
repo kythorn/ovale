@@ -121,10 +121,6 @@ AddIcon mastery=1 help=main
 	if TalentPoints(rune_of_power_talent) and BuffStacks(arcane_charge) ==6 and BuffExpires(arcane_missiles_aura) and target.DeadIn() >25 Spell(arcane_barrage)
 	if not TalentPoints(invocation_talent) and not TalentPoints(rune_of_power_talent) and BuffPresent(arcane_charge) and BuffExpires(arcane_power) and BuffExpires(alter_time) and {ManaPercent() <92 or SpellCooldown(mana_gem) >10 or ItemCharges(36799) ==0 } Spell(arcane_barrage)
 	Spell(arcane_blast)
-	Spell(arcane_barrage)
-	if TalentPoints(scorch_talent) Spell(scorch)
-	Spell(fire_blast)
-	Spell(ice_lance)
 }
 AddIcon mastery=1 help=offgcd
 {
@@ -136,6 +132,13 @@ AddIcon mastery=1 help=offgcd
 	if ManaPercent() <84 and BuffExpires(alter_time) Spell(mana_gem)
 	if BuffPresent(arcane_missiles_aura) and {SpellCooldown(alter_time_activate) >4 or target.DeadIn() <10 } Spell(arcane_missiles)
 	if TalentPoints(ice_floes_talent) Spell(ice_floes)
+}
+AddIcon mastery=1 help=moving
+{
+	Spell(arcane_barrage)
+	if TalentPoints(scorch_talent) Spell(scorch)
+	Spell(fire_blast)
+	Spell(ice_lance)
 }
 AddIcon mastery=1 help=cd
 {
@@ -165,9 +168,6 @@ AddIcon mastery=2 help=main
 	if BuffPresent(heating_up) and BuffExpires(pyroblast_aura) Spell(inferno_blast)
 	if not target.DebuffPresent(mage_bomb) Spell(mage_bomb usable=1)
 	Spell(fireball)
-	if TalentPoints(scorch_talent) Spell(scorch)
-	Spell(inferno_blast)
-	Spell(ice_lance)
 }
 AddIcon mastery=2 help=offgcd
 {
@@ -178,6 +178,12 @@ AddIcon mastery=2 help=offgcd
 	if BuffExpires(alter_time) and BuffPresent(pyroblast_aura) and not TalentPoints(invocation_talent) and not TalentPoints(rune_of_power_talent) and not TalentPoints(incanters_ward_talent) Spell(alter_time)
 	if LastSpellDamage(ignite) >12000 and target.DebuffPresent(pyroblast_aura) Spell(combustion)
 	if TalentPoints(ice_floes_talent) Spell(ice_floes)
+}
+AddIcon mastery=2 help=moving
+{
+	if TalentPoints(scorch_talent) Spell(scorch)
+	Spell(inferno_blast)
+	Spell(ice_lance)
 }
 AddIcon mastery=2 help=cd
 {
