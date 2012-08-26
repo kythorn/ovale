@@ -99,6 +99,12 @@ Define(water_elemental_freeze 33395)
   SpellAddBuff(water_elemental_freeze water_elemental_freeze=1)
 AddIcon mastery=1 help=main
 {
+	if not InCombat() 
+	{
+		Spell(arcane_brilliance)
+		Spell(mage_armor)
+		Spell(rune_of_power)
+	}
 	if ItemCharges(36799) <3 and False() Spell(conjure_mana_gem)
 	if BuffPresent(alter_time) and BuffPresent(presence_of_mind) Spell(arcane_blast)
 	if not target.DebuffPresent(nether_tempest) Spell(nether_tempest)
@@ -135,6 +141,11 @@ AddIcon mastery=1 help=cd
 }
 AddIcon mastery=2 help=main
 {
+	if not InCombat() 
+	{
+		Spell(arcane_brilliance)
+		Spell(molten_armor)
+	}
 	if ItemCharges(36799) <3 and False() Spell(conjure_mana_gem)
 	if BuffPresent(pyroblast_aura) and {SpellCooldown(alter_time_activate) >4 or BuffPresent(heating_up) } Spell(pyroblast)
 	if BuffPresent(presence_of_mind) and SpellCooldown(alter_time_activate) >4 Spell(pyroblast)
@@ -159,6 +170,10 @@ AddIcon mastery=2 help=moving
 }
 AddIcon mastery=2 help=cd
 {
+	if not InCombat() 
+	{
+		Spell(evocation)
+	}
 	if BuffRemains(invocation) >10 and BuffExpires(alter_time) and ManaPercent() >28 Spell(berserking)
 	if BuffExpires(invocation) and BuffExpires(alter_time) Spell(evocation)
 	if target.DeadIn() <18 Spell(berserking)
@@ -168,6 +183,11 @@ AddIcon mastery=2 help=cd
 }
 AddIcon mastery=3 help=main
 {
+	if not InCombat() 
+	{
+		Spell(arcane_brilliance)
+		Spell(frost_armor)
+	}
 	if ItemCharges(36799) <3 and False() Spell(conjure_mana_gem)
 	if BuffPresent(alter_time) and BuffPresent(brain_freeze) Spell(frostfire_bolt)
 	if BuffPresent(alter_time) and BuffPresent(fingers_of_frost_aura) Spell(ice_lance)
@@ -183,6 +203,10 @@ AddIcon mastery=3 help=main
 }
 AddIcon mastery=3 help=offgcd
 {
+	if not InCombat() 
+	{
+		Spell(water_elemental)
+	}
 	if target.IsInterruptible() if target.IsInterruptible() Spell(counterspell)
 	if target.HealthPercent() <25 or TimeInCombat() >5 Spell(time_warp)
 	if BuffExpires(alter_time) and BuffStacks(fingers_of_frost_aura) <2 Spell(water_elemental_freeze)
@@ -198,6 +222,10 @@ AddIcon mastery=3 help=moving
 }
 AddIcon mastery=3 help=cd
 {
+	if not InCombat() 
+	{
+		Spell(evocation)
+	}
 	if Health() <30 Spell(cold_snap)
 	if BuffExpires(alter_time) Spell(presence_of_mind)
 	if target.DeadIn() <22 Spell(icy_veins)

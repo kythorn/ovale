@@ -92,6 +92,12 @@ Define(natures_swiftness_talent 4)
 Define(natures_vigil_talent 18)
 AddIcon mastery=1 help=main
 {
+	if not InCombat() 
+	{
+		if not BuffPresent(str_agi_int) Spell(mark_of_the_wild)
+		if not BuffPresent(dream_of_cenarius_damage) and TalentPoints(dream_of_cenarius_talent) Spell(healing_touch)
+		unless Stance(5) Spell(moonkin_form)
+	}
 	if TalentPoints(force_of_nature_talent) Spell(treants)
 	if not BuffPresent(dream_of_cenarius_damage) and TalentPoints(dream_of_cenarius_talent) Spell(healing_touch)
 	if Eclipse() <=0-70 and EclipseDir() <=0 Spell(wrath)
@@ -130,6 +136,14 @@ AddIcon mastery=1 help=cd
 }
 AddIcon mastery=2 help=main
 {
+	if not InCombat() 
+	{
+		if not BuffPresent(str_agi_int) Spell(mark_of_the_wild)
+		if not BuffPresent(dream_of_cenarius_damage) and TalentPoints(dream_of_cenarius_talent) Spell(healing_touch)
+		shaman.Spell(symbiosis)
+		unless Stance(3) Spell(cat_form)
+		Spell(savage_roar)
+	}
 	if target.IsInterruptible() Spell(skull_bash_cat)
 	if BuffPresent(predatory_swiftness) and BuffRemains(predatory_swiftness) <=1 and TalentPoints(dream_of_cenarius_talent) and {BuffExpires(dream_of_cenarius_damage) or {BuffStacks(dream_of_cenarius_damage) ==1 and not BuffPresent(omen_of_clarity) } } Spell(healing_touch)
 	if PreviousSpell(natures_swiftness) Spell(healing_touch)

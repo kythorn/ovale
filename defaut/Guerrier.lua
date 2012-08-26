@@ -72,6 +72,10 @@ Define(shockwave_talent 11)
 Define(storm_bolt_talent 18)
 AddIcon mastery=1 help=main
 {
+	if not InCombat() 
+	{
+		unless Stance(1) Spell(battle_stance)
+	}
 	Spell(mortal_strike)
 	if target.DebuffRemains(colossus_smash) <=1.5 Spell(colossus_smash)
 	if target.HealthPercent(less 20) Spell(execute)
@@ -105,6 +109,10 @@ AddIcon mastery=1 help=cd
 }
 AddIcon mastery=2 help=main
 {
+	if not InCombat() 
+	{
+		unless Stance(1) Spell(battle_stance)
+	}
 	if not {target.HealthPercent() <20 and target.DebuffPresent(colossus_smash) and Rage() >=30 } Spell(bloodthirst)
 	if BuffPresent(bloodsurge) and target.HealthPercent() >=20 and SpellCooldown(bloodthirst) <=1 Spell(wild_strike)
 	if not {target.HealthPercent() <20 and target.DebuffPresent(colossus_smash) and Rage() >=30 } and SpellCooldown(bloodthirst) <=1 Texture(Spell_nature_timestop) 

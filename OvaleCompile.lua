@@ -432,12 +432,13 @@ local function ParseCommands(text)
 	return masterNode
 end
 
-local function ParseAddIcon(params, text)
+local function ParseAddIcon(params, text, secure)
 	-- On convertit le numéro de node en node
 	local masterNode = ParseCommands(text)
 	if not masterNode then return nil end
 	masterNode = node[tonumber(masterNode)]
 	masterNode.params = ParseParameters(params)
+	masterNode.secure = secure
 	if not TestConditions(masterNode.params) then
 		return nil
 	end
@@ -528,6 +529,13 @@ function OvaleCompile:Compile(text)
 	local masterNodes ={}
 	
 	-- On compile les AddIcon
+	for p,t in string.gmatch(text, "AddActionIcon%s*(.-)%s*(%b{})") do
+		local newNode = ParseAddIcon(p,t,true)
+		if newNode then
+			masterNodes[#masterNodes+1] = newNode
+		end
+	end
+	
 	for p,t in string.gmatch(text, "AddIcon%s*(.-)%s*(%b{})") do
 		local newNode = ParseAddIcon(p,t)
 		if newNode then

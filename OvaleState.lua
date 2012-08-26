@@ -51,7 +51,7 @@ function OvaleState:UpdatePowerRates()
 	
 	self.powerRate.energy = 10 * OvaleAura.meleeHaste
 	
-	if OvaleState:GetAura("player", 13750) then
+	if OvaleState:GetAura("player", 13750, true) then
 		self.powerRate.energy = self.powerRate.energy * 2
 	end
 	
@@ -268,52 +268,63 @@ function OvaleState:AddSpellToStack(spellId, startCast, endCast, nextCast, nocd,
 			for target, targetInfo in pairs(newSpellInfo.aura) do
 				for filter, filterInfo in pairs(targetInfo) do
 					for auraSpellId, spellData in pairs(filterInfo) do
-						local newAura
-						if target == "target" then
-							newAura = self:NewAura(targetGUID, auraSpellId)
-						else
-							newAura = self:NewAura(UnitGUID(target), auraSpellId)
-						end
-						newAura.mine = true
+						
 						local duration = spellData
 						local stacks = duration
-						--Optionnellement, on va regarder la durée du buff
-						if auraSpellId and OvaleData.spellInfo[auraSpellId] and OvaleData.spellInfo[auraSpellId].duration then
-							duration = OvaleData.spellInfo[auraSpellId].duration
-						elseif stacks~="refresh" and stacks > 0 then
-							stacks = 1
-						end
-						if stacks=="refresh" then
-							if newAura.ending then
-								newAura.ending = endCast + duration
-							end
-						elseif stacks<0 and newAura.ending then
-							--Buff are immediatly removed when the cast ended, do not need to do it again
-							if filter~="HELPFUL" or target~="player" or endCast>=self.maintenant then
-								newAura.stacks = newAura.stacks + stacks
-								if Ovale.trace then
-									Ovale:Print("removing one stack of "..auraSpellId.." because of ".. spellId.." to ".. newAura.stacks)
-								end
-								--Plus de stacks, on supprime l'aura
-								if newAura.stacks<=0 then
-									Ovale:Log("Aura is completly removed")
-									newAura.stacks = 0
-									newAura.ending = 0
-								end
-							end
-						elseif newAura.ending and newAura.ending >= endCast then
-							newAura.ending = endCast + duration
-							newAura.stacks = newAura.stacks + stacks
+						local previousAura
+						local auraGUID
+						if target == "target" then
+							auraGUID = targetGUID
 						else
-							newAura.start = endCast
-							newAura.ending = endCast + duration
-							newAura.stacks = stacks
+							auraGUID = UnitGUID(target)
 						end
-						if Ovale.trace then
-							if auraSpellId then
-								Ovale:Print(spellId.." adding "..stacks.." aura "..auraSpellId.." to "..target.." "..filter.." "..newAura.start..","..newAura.ending)
-							else 
-								Ovale:Print("adding nil aura")
+						
+						if stacks == "refresh" then
+							previousAura = self:GetAuraByGUID(auraGUID, auraSpellId, true, target)
+						end
+						
+						if stacks ~= "refresh" or previousAura then
+							local newAura = self:NewAura(auraGUID, auraSpellId)
+							
+							newAura.mine = true
+							--Optionnellement, on va regarder la durée du buff
+							if auraSpellId and OvaleData.spellInfo[auraSpellId] and OvaleData.spellInfo[auraSpellId].duration then
+								duration = OvaleData.spellInfo[auraSpellId].duration
+							elseif stacks~="refresh" and stacks > 0 then
+								stacks = 1
+							end
+							if stacks=="refresh" then
+								newAura.start = previousAura.start
+								newAura.stacks = previousAura.stacks
+								newAura.ending = endCast + duration
+							elseif stacks<0 and newAura.ending then
+								--Buff are immediatly removed when the cast ended, do not need to do it again
+								if filter~="HELPFUL" or target~="player" or endCast>=self.maintenant then
+									newAura.stacks = newAura.stacks + stacks
+									if Ovale.trace then
+										Ovale:Print("removing one stack of "..auraSpellId.." because of ".. spellId.." to ".. newAura.stacks)
+									end
+									--Plus de stacks, on supprime l'aura
+									if newAura.stacks<=0 then
+										Ovale:Log("Aura is completly removed")
+										newAura.stacks = 0
+										newAura.ending = 0
+									end
+								end
+							elseif newAura.ending and newAura.ending >= endCast then
+								newAura.ending = endCast + duration
+								newAura.stacks = newAura.stacks + stacks
+							else
+								newAura.start = endCast
+								newAura.ending = endCast + duration
+								newAura.stacks = stacks
+							end
+							if Ovale.trace then
+								if auraSpellId then
+									Ovale:Print(spellId.." adding "..stacks.." aura "..auraSpellId.." to "..target.." "..filter.." "..newAura.start..","..newAura.ending)
+								else 
+									Ovale:Print("adding nil aura")
+								end
 							end
 						end
 					end
@@ -371,14 +382,16 @@ function OvaleState:AddEclipse(endCast, spellId)
 	newAura.ending = nil
 end
 
-function OvaleState:GetAura(target, spellId, mine)
-	local guid = UnitGUID(target)
-	
+function OvaleState:GetAuraByGUID(guid, spellId, mine, target)
 	if self.aura[guid] and self.aura[guid][spellId] and self.aura[guid][spellId].serial == self.serial then
 		return self.aura[guid][spellId]
 	else
 		return OvaleAura:GetAuraByGUID(guid, spellId, mine, target)
 	end
+end
+
+function OvaleState:GetAura(target, spellId, mine)
+	return self:GetAuraByGUID(UnitGUID(target), spellId, mine, target)
 end
 
 function OvaleState:GetExpirationTimeOnAnyTarget(spellId, excludingTarget)

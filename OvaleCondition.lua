@@ -294,7 +294,10 @@ local function GetTargetAura(condition, target)
 	end
 	local spellId = condition[1]
 	
-	local mine = (condition.mine == 1)
+	local mine = true
+	if condition.any then
+		mine = false
+	end
 	
 	local aura
 	if type(spellId) == "number" then
@@ -470,7 +473,7 @@ OvaleCondition.conditions=
 		local spellId = condition[1]
 		if not spellId then Ovale:Error("buffgain parameter spellId is not optional"); return end
 		local target = getTarget(condition.target)
-		local aura = OvaleState:GetAura(target,spellId)
+		local aura = OvaleState:GetAura(target,spellId,true)
 		if not aura then
 			return 0, nil, 0, 0, 1
 		end

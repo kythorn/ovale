@@ -4,7 +4,6 @@
 OvaleData.spellList = {}
 OvaleData.firstInit = false
 OvaleData.className = nil
-OvaleData.spellInfo = {}
 --allows to fill the player talent tables on first use
 OvaleData.listeTalentsRemplie = false
 --key: talentId / value: points in this talent
@@ -27,7 +26,7 @@ OvaleData.power =
 	runicpower = {id=6, mini=0, maxi=100},
 	shards = {id=7, mini=0, maxi=3},
 	eclipse = {id=8, mini=-100, maxi=100},
-	holy = {id=9, mini=0, maxi=3},
+	holy = {id=9, mini=0, maxi=5},
 	chi = {id=12, mini=0, maxi=4 }, 
 	shadoworbs = {id=13, mini=0, maxi=3},
 	burningembers = {id=14, mini=0},

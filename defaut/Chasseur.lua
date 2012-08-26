@@ -58,6 +58,9 @@ Define(master_marksman_fire 82926)
   SpellAddBuff(master_marksman_fire master_marksman_fire=1)
 Define(multi_shot 2643)
   SpellInfo(multi_shot focus=40 )
+Define(pet_frenzy 19615)
+  SpellInfo(pet_frenzy duration=30 )
+  SpellAddBuff(pet_frenzy pet_frenzy=1)
 Define(powershot 109259)
   SpellInfo(powershot focus=20 cd=60 )
 Define(rapid_fire 3045)
@@ -67,7 +70,10 @@ Define(readiness 23989)
   SpellInfo(readiness cd=300 )
 Define(serpent_sting 1978)
   SpellInfo(serpent_sting focus=25 )
-  SpellAddBuff(serpent_sting serpent_sting=1)
+  SpellAddTargetDebuff(serpent_sting serpent_sting_aura=1)
+Define(serpent_sting_aura 118253)
+  SpellInfo(serpent_sting_aura duration=15 tick=3 )
+  SpellAddTargetDebuff(serpent_sting_aura serpent_sting_aura=1)
 Define(stampede 57386)
   SpellInfo(stampede duration=30 cd=15 )
   SpellAddBuff(stampede stampede=1)
@@ -81,9 +87,14 @@ Define(trueshot_aura 19506)
   SpellAddBuff(trueshot_aura trueshot_aura=1)
 AddIcon mastery=1 help=main
 {
+	if not InCombat() 
+	{
+		if target.DeadIn() >=21 and not target.DebuffPresent(ranged_vulnerability any=1) Spell(hunters_mark)
+		Spell(call_pet_1)
+	}
 	unless Stance(1) Spell(aspect_of_the_hawk)
-	Spell(focus_fire)
-	if not target.DebuffPresent(serpent_sting) Spell(serpent_sting)
+	if BuffStacks(pet_frenzy more 4) Spell(focus_fire)
+	if not target.DebuffPresent(serpent_sting_aura) Spell(serpent_sting)
 	if BuffPresent(fervor) and not target.DebuffPresent(fervor) and Focus() <=65 Spell(fervor)
 	if Enemies() >5 Spell(cobra_shot)
 	if target.HealthPercent(less 20) Spell(kill_shot)
@@ -94,11 +105,15 @@ AddIcon mastery=1 help=main
 	if BuffPresent(dire_beast) and Focus() <=80 Spell(dire_beast)
 	if BuffPresent(thrill_of_the_hunt) Spell(arcane_shot)
 	if Focus() >=69 or BuffPresent(beast_within) Spell(arcane_shot)
-	if not target.DebuffPresent(focus_fire) and not BuffPresent(beast_within) Spell(focus_fire)
+	if not target.DebuffPresent(focus_fire) and not BuffPresent(beast_within) if BuffStacks(pet_frenzy more 4) Spell(focus_fire)
 	Spell(cobra_shot)
 }
 AddIcon mastery=1 help=offgcd
 {
+	if not InCombat() 
+	{
+		Spell(trueshot_aura)
+	}
 	if Focus() >60 and not BuffPresent(beast_within) Spell(bestial_wrath)
 	if BuffPresent(a_murder_of_crows) and not target.DebuffPresent(a_murder_of_crows) Spell(a_murder_of_crows)
 	Spell(stampede)
@@ -118,16 +133,21 @@ AddIcon mastery=1 help=cd
 	Spell(blood_fury)
 	if BuffPresent(lynx_rush) and not target.DebuffPresent(lynx_rush) Spell(lynx_rush)
 	if not BuffPresent(bloodlust) and not BuffPresent(beast_within) Spell(rapid_fire)
-	Spell(readiness)
+	if BuffPresent(rapid_fire) Spell(readiness)
 }
 AddIcon mastery=2 help=main
 {
+	if not InCombat() 
+	{
+		if target.DeadIn() >=21 and not target.DebuffPresent(ranged_vulnerability any=1) Spell(hunters_mark)
+		Spell(call_pet_1)
+	}
 	unless Stance(1) Spell(aspect_of_the_hawk)
 	if BuffPresent(powershot) Spell(powershot)
 	if BuffPresent(barrage) Spell(barrage)
 	if BuffPresent(blink_strike) Spell(blink_strike)
 	if Enemies() >5 Spell(steady_shot)
-	if not target.DebuffPresent(serpent_sting) and target.HealthPercent() <=90 Spell(serpent_sting)
+	if not target.DebuffPresent(serpent_sting_aura) and target.HealthPercent() <=90 Spell(serpent_sting)
 	if target.HealthPercent() <=90 Spell(chimera_shot)
 	if BuffPresent(dire_beast) Spell(dire_beast)
 	if PreviousSpell(steady_shot) and BuffRemains(steady_focus) <3 Spell(steady_shot)
@@ -141,6 +161,10 @@ AddIcon mastery=2 help=main
 }
 AddIcon mastery=2 help=offgcd
 {
+	if not InCombat() 
+	{
+		Spell(trueshot_aura)
+	}
 	if BuffPresent(glaive_toss) Spell(glaive_toss)
 	Spell(stampede)
 	if BuffPresent(a_murder_of_crows) and not target.DebuffPresent(a_murder_of_crows) Spell(a_murder_of_crows)
@@ -159,16 +183,21 @@ AddIcon mastery=2 help=cd
 	Spell(blood_fury)
 	if BuffPresent(lynx_rush) and not target.DebuffPresent(lynx_rush) Spell(lynx_rush)
 	if not BuffPresent(bloodlust) or target.DeadIn() <=30 Spell(rapid_fire)
-	Spell(readiness)
+	if BuffPresent(rapid_fire) Spell(readiness)
 }
 AddIcon mastery=3 help=main
 {
+	if not InCombat() 
+	{
+		if target.DeadIn() >=21 and not target.DebuffPresent(ranged_vulnerability any=1) Spell(hunters_mark)
+		Spell(call_pet_1)
+	}
 	unless Stance(1) Spell(aspect_of_the_hawk)
 	if BuffPresent(blink_strike) Spell(blink_strike)
 	if BuffPresent(powershot) Spell(powershot)
 	if BuffPresent(barrage) Spell(barrage)
 	if Enemies() >2 Spell(cobra_shot)
-	if not target.DebuffPresent(serpent_sting) and target.DeadIn() >=10 Spell(serpent_sting)
+	if not target.DebuffPresent(serpent_sting_aura) and target.DeadIn() >=10 Spell(serpent_sting)
 	if {target.DebuffRemains(explosive_shot) <2.0 } Spell(explosive_shot)
 	if target.HealthPercent(less 20) Spell(kill_shot)
 	if not target.DebuffPresent(black_arrow) and target.DeadIn() >=8 Spell(black_arrow)
@@ -179,6 +208,10 @@ AddIcon mastery=3 help=main
 }
 AddIcon mastery=3 help=offgcd
 {
+	if not InCombat() 
+	{
+		Spell(trueshot_aura)
+	}
 	if BuffPresent(a_murder_of_crows) and not target.DebuffPresent(a_murder_of_crows) Spell(a_murder_of_crows)
 	if BuffPresent(glaive_toss) Spell(glaive_toss)
 	Spell(stampede)
@@ -197,6 +230,6 @@ AddIcon mastery=3 help=cd
 	Spell(blood_fury)
 	if BuffPresent(lynx_rush) and not target.DebuffPresent(lynx_rush) Spell(lynx_rush)
 	Spell(rapid_fire)
-	Spell(readiness)
+	if BuffPresent(rapid_fire) Spell(readiness)
 }
 ]]

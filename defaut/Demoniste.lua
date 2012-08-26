@@ -15,7 +15,7 @@ Define(corruption 172)
   SpellAddTargetDebuff(corruption corruption=1)
 Define(curse_of_the_elements 1490)
   SpellInfo(curse_of_the_elements duration=300 )
-  SpellAddBuff(curse_of_the_elements curse_of_the_elements=1)
+  SpellAddTargetDebuff(curse_of_the_elements aura_of_the_elements=1)
 Define(dark_intent 109773)
   SpellInfo(dark_intent duration=3600 )
   SpellAddBuff(dark_intent dark_intent=1)
@@ -25,7 +25,7 @@ Define(doom 603)
   SpellInfo(doom duration=60 demonicfury=60 tick=15 stance=1)
   SpellAddTargetDebuff(doom doom=1)
 Define(drain_soul 1120)
-  SpellInfo(drain_soul duration=12 tick=2 )
+  SpellInfo(drain_soul duration=12 tick=2 canStopChannelling=1 )
   SpellAddTargetDebuff(drain_soul drain_soul=1)
 Define(fel_flame 77799)
 Define(felstorm 89751)
@@ -114,9 +114,14 @@ Define(grimoire_of_service_talent 14)
 Define(harvest_life_talent 3)
 AddIcon mastery=1 help=main
 {
-	if target.DebuffExpires(magic_vulnerability) Spell(curse_of_the_elements)
+	if not InCombat() 
+	{
+		if not BuffPresent(spell_power_multiplier) Spell(dark_intent)
+		unless pet.CreatureFamily(Succubus) Spell(summon_succubus)
+	}
+	if target.DebuffExpires(magic_vulnerability any=1) Spell(curse_of_the_elements)
 	if TalentPoints(grimoire_of_service_talent) Spell(service_succubus)
-	if TalentPoints(grimoire_of_sacrifice_talent) and BuffExpires(grimoire_of_sacrifice) Spell(summon_succubus)
+	if TalentPoints(grimoire_of_sacrifice_talent) and BuffExpires(grimoire_of_sacrifice) unless pet.CreatureFamily(Succubus) Spell(summon_succubus)
 	if Enemies() >3 
 	{
 		if {BuffExpires(soulburn) and not InFlightToTarget(seed_of_corruption) and not target.DebuffPresent(seed_of_corruption) } or {BuffPresent(soulburn) and not target.DebuffPresent(soulburn_seed_of_corruption) and not InFlightToTarget(soulburn_seed_of_corruption) } Spell(seed_of_corruption)
@@ -173,9 +178,14 @@ AddIcon mastery=1 help=cd
 }
 AddIcon mastery=2 help=main
 {
-	if target.DebuffExpires(magic_vulnerability) Spell(curse_of_the_elements)
+	if not InCombat() 
+	{
+		if not BuffPresent(spell_power_multiplier) Spell(dark_intent)
+		unless pet.CreatureFamily(Felguard) Spell(summon_felguard)
+	}
+	if target.DebuffExpires(magic_vulnerability any=1) Spell(curse_of_the_elements)
 	if TalentPoints(grimoire_of_service_talent) Spell(service_felguard)
-	if TalentPoints(grimoire_of_sacrifice_talent) and BuffExpires(grimoire_of_sacrifice) Spell(summon_felguard)
+	if TalentPoints(grimoire_of_sacrifice_talent) and BuffExpires(grimoire_of_sacrifice) unless pet.CreatureFamily(Felguard) Spell(summon_felguard)
 	if Enemies() >5 
 	{
 		if {not target.DebuffPresent(corruption) or target.DebuffRemains(corruption) <target.NextTick(corruption) } and target.DeadIn() >=6 Spell(corruption)
@@ -235,9 +245,14 @@ AddIcon mastery=2 help=cd
 }
 AddIcon mastery=3 help=main
 {
-	if target.DebuffExpires(magic_vulnerability) Spell(curse_of_the_elements)
+	if not InCombat() 
+	{
+		if not BuffPresent(spell_power_multiplier) Spell(dark_intent)
+		unless pet.CreatureFamily(Succubus) Spell(summon_succubus)
+	}
+	if target.DebuffExpires(magic_vulnerability any=1) Spell(curse_of_the_elements)
 	if TalentPoints(grimoire_of_service_talent) Spell(service_succubus)
-	if TalentPoints(grimoire_of_sacrifice_talent) and BuffExpires(grimoire_of_sacrifice) Spell(summon_succubus)
+	if TalentPoints(grimoire_of_sacrifice_talent) and BuffExpires(grimoire_of_sacrifice) unless pet.CreatureFamily(Succubus) Spell(summon_succubus)
 	if Enemies() >2 
 	{
 		if BuffPresent(fire_and_brimstone) and not target.DebuffPresent(immolate) Spell(immolate)
@@ -245,7 +260,7 @@ AddIcon mastery=3 help=main
 		if BuffPresent(fire_and_brimstone) Spell(incinerate)
 		if not target.DebuffPresent(immolate) Spell(immolate)
 	}
-	if Enemies() >1 Spell(havoc)
+	if Enemies() >1 focus.Spell(havoc)
 	if BurningEmbers() if target.HealthPercent(less 20) Spell(shadowburn)
 	if BurningEmbers() and {BuffStacks(backdraft) <3 or Level() <86 } Spell(chaos_bolt)
 	if BuffExpires(backdraft) Spell(conflagrate)

@@ -45,6 +45,10 @@ Define(power_strikes_talent 7)
 Define(rushing_jade_wind_talent 16)
 AddIcon mastery=3 help=main
 {
+	if not InCombat() 
+	{
+		False() 
+	}
 	if not target.DebuffRemains(rising_sun_kick) or target.DebuffRemains(rising_sun_kick) <=3 Spell(rising_sun_kick)
 	if Enemies() >5 
 	{

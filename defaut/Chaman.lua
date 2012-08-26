@@ -76,6 +76,10 @@ Define(elemental_mastery_talent 10)
 Define(unleashed_fury_talent 16)
 AddIcon mastery=1 help=main
 {
+	if not InCombat() 
+	{
+		main.Spell(flametongue_weapon)
+	}
 	
 	{
 		if TalentPoints(elemental_blast_talent) and not BuffPresent(ascendance) Spell(elemental_blast)
@@ -99,6 +103,10 @@ AddIcon mastery=1 help=main
 }
 AddIcon mastery=1 help=offgcd
 {
+	if not InCombat() 
+	{
+		if not BuffPresent(lightning_shield) Spell(lightning_shield)
+	}
 	if target.IsInterruptible() Spell(wind_shear)
 	
 	{
@@ -137,6 +145,11 @@ AddIcon mastery=1 help=cd
 }
 AddIcon mastery=2 help=main
 {
+	if not InCombat() 
+	{
+		main.Spell(windfury_weapon)
+		off.Spell(flametongue_weapon)
+	}
 	
 	{
 		if not TotemPresent(fire) Spell(searing_totem)
@@ -169,6 +182,10 @@ AddIcon mastery=2 help=main
 }
 AddIcon mastery=2 help=offgcd
 {
+	if not InCombat() 
+	{
+		if not BuffPresent(lightning_shield) Spell(lightning_shield)
+	}
 	if target.IsInterruptible() Spell(wind_shear)
 	
 	{

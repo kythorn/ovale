@@ -38,6 +38,12 @@ Define(templars_verdict 85256)
   SpellInfo(templars_verdict holy=3 )
 AddIcon mastery=3 help=main
 {
+	if not InCombat() 
+	{
+		if not BuffPresent(str_agi_int) Spell(blessing_of_kings)
+		if not BuffPresent(mastery) and not BuffPresent(str_agi_int) Spell(blessing_of_might)
+		unless Stance(1) Spell(seal_of_truth)
+	}
 	if ManaPercent() >=90 or Stance(0) unless Stance(1) Spell(seal_of_truth)
 	if ManaPercent() <=20 unless Stance(4) Spell(seal_of_insight)
 	if {BuffExpires(inquisition) or BuffRemains(inquisition) <=2 } and {HolyPower() >=3 } Spell(inquisition)

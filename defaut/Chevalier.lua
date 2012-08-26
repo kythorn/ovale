@@ -65,6 +65,11 @@ Define(blood_tap_talent 13)
 Define(plague_leech_talent 2)
 AddIcon mastery=2 help=main
 {
+	if not InCombat() 
+	{
+		Spell(horn_of_winter)
+		unless Stance(2) Spell(frost_presence)
+	}
 	if target.DebuffRemains(frost_fever) <=0 or target.DebuffRemains(blood_plague) <=0 Spell(outbreak)
 	if not target.DebuffPresent(frost_fever) Spell(howling_blast)
 	if not target.DebuffPresent(blood_plague) Spell(plague_strike)
@@ -85,6 +90,10 @@ AddIcon mastery=2 help=offgcd
 }
 AddIcon mastery=2 help=cd
 {
+	if not InCombat() 
+	{
+		Spell(army_of_the_dead)
+	}
 	if TimeInCombat() >=10 Spell(blood_fury)
 	 { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 
 	Spell(raise_dead)
@@ -93,6 +102,11 @@ AddIcon mastery=2 help=cd
 }
 AddIcon mastery=3 help=main
 {
+	if not InCombat() 
+	{
+		Spell(horn_of_winter)
+		unless Stance(3) Spell(unholy_presence)
+	}
 	if target.DebuffRemains(frost_fever) <3 or target.DebuffRemains(blood_plague) <3 Spell(outbreak)
 	if not target.DebuffPresent(frost_fever) Spell(icy_touch)
 	if not target.DebuffPresent(blood_plague) Spell(plague_strike)
@@ -114,6 +128,11 @@ AddIcon mastery=3 help=offgcd
 }
 AddIcon mastery=3 help=cd
 {
+	if not InCombat() 
+	{
+		Spell(army_of_the_dead)
+		Spell(raise_dead)
+	}
 	if TimeInCombat() >=2 Spell(blood_fury)
 	if TimeInCombat() >=4 Spell(unholy_frenzy)
 	if TimeInCombat() >=4  { Item(Trinket0Slot usable=1) Item(Trinket1Slot usable=1) } 

@@ -70,6 +70,10 @@ Define(vendetta 79140)
 Define(preparation_talent 10)
 AddIcon mastery=1 help=main
 {
+	if not InCombat() 
+	{
+		if WeaponEnchantExpires(mainhand 300) Item(6497) 
+	}
 	Spell(ambush usable=1)
 	if BuffExpires(slice_and_dice) Spell(slice_and_dice)
 	if target.TicksRemain(rupture) <2 and Energy() >90 Spell(dispatch usable=1)
@@ -83,6 +87,10 @@ AddIcon mastery=1 help=main
 }
 AddIcon mastery=1 help=offgcd
 {
+	if not InCombat() 
+	{
+		Spell(stealth)
+	}
 	if target.IsInterruptible() Spell(kick)
 	Spell(tricks_of_the_trade)
 }
@@ -97,6 +105,10 @@ AddIcon mastery=1 help=cd
 }
 AddIcon mastery=2 help=main
 {
+	if not InCombat() 
+	{
+		if WeaponEnchantExpires(mainhand 300) Item(6497) 
+	}
 	Spell(ambush usable=1)
 	if BuffRemains(slice_and_dice) <2 Spell(slice_and_dice)
 	if TicksRemain(rupture) <2 and ComboPoints() ==5 and BuffPresent(deep_insight) and target.DeadIn() >10 Spell(rupture)
@@ -108,6 +120,10 @@ AddIcon mastery=2 help=main
 }
 AddIcon mastery=2 help=offgcd
 {
+	if not InCombat() 
+	{
+		Spell(stealth)
+	}
 	if target.IsInterruptible() Spell(kick)
 	Spell(tricks_of_the_trade)
 }
@@ -123,6 +139,11 @@ AddIcon mastery=2 help=cd
 }
 AddIcon mastery=3 help=main
 {
+	if not InCombat() 
+	{
+		if WeaponEnchantExpires(mainhand 300) Item(6497) 
+		Spell(slice_and_dice)
+	}
 	if ComboPoints() <=5 and BuffStacks(anticipation) ==0 Spell(ambush usable=1)
 	if BuffRemains(slice_and_dice) <3 and ComboPoints() ==5 Spell(slice_and_dice)
 	if ComboPoints() ==5 and target.DebuffRemains(rupture) <5 Spell(rupture)
@@ -135,6 +156,11 @@ AddIcon mastery=3 help=main
 }
 AddIcon mastery=3 help=offgcd
 {
+	if not InCombat() 
+	{
+		Spell(stealth)
+		Spell(premeditation)
+	}
 	if target.IsInterruptible() Spell(kick)
 	if Energy() >=75 and BuffExpires(stealthed) and not target.DebuffPresent(find_weakness) Spell(shadow_dance)
 	if {ComboPoints() <=3 and SpellCooldown(honor_among_thieves) >1.75 } or ComboPoints() <=2 Spell(premeditation)
