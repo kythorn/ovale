@@ -671,6 +671,7 @@ AddFunction FrostDualWieldSingleTargetMainActions
 	if BuffPresent(rime_buff) Spell(howling_blast)
 	#frost_strike,if=set_bonus.tier17_2pc=1&(runic_power>=50&(cooldown.pillar_of_frost.remains<5))
 	if ArmorSetBonus(T17 2) == 1 and RunicPower() >= 50 and SpellCooldown(pillar_of_frost) < 5 Spell(frost_strike)
+	if BuffPresent(dark_succor_buff) Spell(death_strike)	
 	#frost_strike,if=runic_power>76
 	if RunicPower() > 76 Spell(frost_strike)
 	#obliterate,if=unholy>0&!buff.killing_machine.react
