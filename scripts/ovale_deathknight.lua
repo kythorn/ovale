@@ -671,7 +671,6 @@ AddFunction FrostDualWieldSingleTargetMainActions
 	if BuffPresent(rime_buff) Spell(howling_blast)
 	#frost_strike,if=set_bonus.tier17_2pc=1&(runic_power>=50&(cooldown.pillar_of_frost.remains<5))
 	if ArmorSetBonus(T17 2) == 1 and RunicPower() >= 50 and SpellCooldown(pillar_of_frost) < 5 Spell(frost_strike)
-	if BuffPresent(dark_succor_buff) Spell(death_strike)	
 	#frost_strike,if=runic_power>76
 	if RunicPower() > 76 Spell(frost_strike)
 	#obliterate,if=unholy>0&!buff.killing_machine.react
@@ -1077,6 +1076,7 @@ AddFunction FrostTwoHanderSingleTargetMainActions
 	if Talent(necrotic_plague_talent) and not target.DebuffPresent(necrotic_plague_debuff) Spell(howling_blast)
 	#plague_strike,if=!talent.necrotic_plague.enabled&!dot.blood_plague.ticking
 	if not Talent(necrotic_plague_talent) and not target.DebuffPresent(blood_plague_debuff) Spell(plague_strike)
+	if BuffPresent(dark_succor_buff) Spell(death_strike)
 	#frost_strike,if=runic_power>76
 	if RunicPower() > 76 Spell(frost_strike)
 	#howling_blast,if=buff.rime.react&disease.min_remains>5&(blood.frac>=1.8|unholy.frac>=1.8|frost.frac>=1.8)
