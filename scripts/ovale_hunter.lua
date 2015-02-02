@@ -429,6 +429,8 @@ AddFunction SurvivalDefaultMainActions
 {
 	#call_action_list,name=aoe,if=active_enemies>1
 	if Enemies() > 1 SurvivalAoeMainActions()
+	#black_arrow,if=!ticking
+	if not target.DebuffPresent(black_arrow_debuff) Spell(black_arrow)	
 	#explosive_shot
 	Spell(explosive_shot)
 	#arcane_shot,if=buff.thrill_of_the_hunt.react&focus>35&cast_regen<=focus.deficit|dot.serpent_sting.remains<=3|target.time_to_die<4.5
@@ -452,9 +454,7 @@ AddFunction SurvivalDefaultShortCdActions
 	{
 		#a_murder_of_crows
 		Spell(a_murder_of_crows)
-		#black_arrow,if=!ticking
-		if not target.DebuffPresent(black_arrow_debuff) Spell(black_arrow)
-
+		
 		unless Spell(explosive_shot)
 		{
 			#dire_beast
