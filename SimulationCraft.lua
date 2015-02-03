@@ -27,6 +27,7 @@ local format = string.format
 local gmatch = string.gmatch
 local gsub = string.gsub
 local ipairs = ipairs
+local next = next
 local pairs = pairs
 local rawset = rawset
 local strfind = string.find
@@ -1616,6 +1617,17 @@ EmitAction = function(parseNode, nodeList, annotation)
 			annotation[action] = class
 			annotation.interrupt = class
 			isSpellAction = false
+		elseif class == "MONK" and action == "storm_earth_and_fire" then
+			--[[
+				Only suggest SEF if it's toggled on and if there are enough enemies to
+				warrant sending out another SEF clone.
+			--]]
+			conditionCode = [[
+				CheckBoxOn(opt_storm_earth_and_fire) and Enemies() > 1
+					and { Enemies() < 3 and BuffStacks(storm_earth_and_fire_buff) < 1
+						  or Enemies() >= 3 and BuffStacks(storm_earth_and_fire_buff) < 2 }
+			]]
+			annotation[action] = class
 		elseif class == "PALADIN" and action == "blessing_of_kings" then
 			-- Only cast Blessing of Kings if it won't overwrite the player's own Blessing of Might.
 			conditionCode = "BuffExpires(mastery_buff)"
@@ -3225,6 +3237,20 @@ EmitOperandSpecial = function(operand, parseNode, nodeList, annotation, action, 
 		else
 			code = "GetState(pyro_chain)"
 		end
+	elseif class == "MONK" and strsub(operand, 1, 35) == "debuff.storm_earth_and_fire_target." then
+		local property = strsub(operand, 36)
+		if target == "" then
+			target = "target."
+		end
+		local debuffName = "storm_earth_and_fire_target_debuff"
+		AddSymbol(annotation, debuffName)
+		if property == "down" then
+			code = format("%sDebuffExpires(%s)", target, debuffName)
+		elseif property == "up" then
+			code = format("%sDebuffPresent(%s)", target, debuffName)
+		else
+			ok = false
+		end
 	elseif class == "MONK" and operand == "dot.zen_sphere.ticking" then
 		-- Zen Sphere is a helpful DoT.
 		local buffName = "zen_sphere_buff"
@@ -3263,6 +3289,17 @@ EmitOperandSpecial = function(operand, parseNode, nodeList, annotation, action, 
 		-- The cooldown of Honor Among Thieves is implemented as a hidden buff.
 		code = "BuffExpires(honor_among_thieves_cooldown_buff)"
 		annotation.honor_among_thieves = class
+	elseif class == "WARRIOR" and strsub(operand, 1, 23) == "buff.colossus_smash_up." then
+		local property = strsub(operand, 24)
+		local debuffName = "colossus_smash_debuff"
+		AddSymbol(annotation, debuffName)
+		if property == "down" then
+			code = format("DebuffCountOnAny(%s) == 0", debuffName)
+		elseif property == "up" then
+			code = format("DebuffCountOnAny(%s) > 0", debuffName)
+		else
+			ok = false
+		end
 	elseif operand == "buff.enrage.down" then
 		code = "not " .. target .. "IsEnraged()"
 	elseif operand == "buff.enrage.remains" then
@@ -3291,6 +3328,11 @@ EmitOperandSpecial = function(operand, parseNode, nodeList, annotation, action, 
 		else
 			code = "target.TimeToDie()"
 		end
+	elseif strsub(operand, 1, 10) == "using_apl." then
+		local aplName = strmatch(operand, "^using_apl%.([%w_]+)")
+		code = format("List(opt_using_apl %s)", aplName)
+		annotation.using_apl = annotation.using_apl or {}
+		annotation.using_apl[aplName] = true
 	else
 		ok = false
 	end
@@ -4178,6 +4220,27 @@ local function InsertSupportingControls(child, annotation)
 		ifSpecialization = ifSpecialization .. " if_stance=warrior_gladiator_stance"
 	end
 
+	if annotation.using_apl and next(annotation.using_apl) then
+		-- Add non-default list items.
+		for name in pairs(annotation.using_apl) do
+			if name ~= "normal" then
+				local fmt = [[
+					AddListItem(opt_using_apl %s "%s APL")
+				]]
+				local code = format(fmt, name, name)
+				local node = OvaleAST:ParseCode("list_item", code, nodeList, annotation.astAnnotation)
+				tinsert(child, 1, node)
+			end
+		end
+		-- Add default list item.
+		do
+			local code = [[
+				AddListItem(opt_using_apl normal L(normal_apl) default)
+			]]
+			local node = OvaleAST:ParseCode("list_item", code, nodeList, annotation.astAnnotation)
+			tinsert(child, 1, node)
+		end
+	end
 	if annotation.trap_launcher == "HUNTER" then
 		local fmt = [[
 			AddCheckBox(opt_trap_launcher SpellName(trap_launcher) default %s)
@@ -4196,6 +4259,16 @@ local function InsertSupportingControls(child, annotation)
 		local node = OvaleAST:ParseCode("checkbox", code, nodeList, annotation.astAnnotation)
 		tinsert(child, 1, node)
 		AddSymbol(annotation, "time_warp")
+		count = count + 1
+	end
+	if annotation.storm_earth_and_fire == "MONK" then
+		local fmt = [[
+			AddCheckBox(opt_storm_earth_and_fire SpellName(storm_earth_and_fire) %s)
+		]]
+		local code = format(fmt, ifSpecialization)
+		local node = OvaleAST:ParseCode("checkbox", code, nodeList, annotation.astAnnotation)
+		tinsert(child, 1, node)
+		AddSymbol(annotation, "storm_earth_and_fire")
 		count = count + 1
 	end
 	if annotation.chi_burst == "MONK" then
@@ -4335,21 +4408,36 @@ local function GenerateIconBody(tag, profile)
 	local annotation = profile.annotation
 	local precombatName = OvaleFunctionName("precombat", annotation)
 	local defaultName = OvaleFunctionName("_default", annotation)
-
 	local precombatBodyName, precombatConditionName = OvaleTaggedFunctionName(precombatName, tag)
 	local defaultBodyName, defaultConditionName = OvaleTaggedFunctionName(defaultName, tag)
+
+	local mainBodyCode
+	if annotation.using_apl and next(annotation.using_apl) then
+		local output = self_outputPool:Get()
+		output[#output + 1] = format("if List(opt_using_apl normal) %s()", defaultBodyName)
+		for name in pairs(annotation.using_apl) do
+			local aplName = OvaleFunctionName(name, annotation)
+			local aplBodyName, aplConditionName = OvaleTaggedFunctionName(aplName, tag)
+			output[#output + 1] = format("if List(opt_using_apl %s) %s()", name, aplBodyName)
+		end
+		mainBodyCode = tconcat(output, "\n")
+		self_outputPool:Release(output)
+	else
+		mainBodyCode = defaultBodyName .. "()"
+	end
+
 	local code
 	if profile["actions.precombat"] then
 		local fmt = [[
 			if not InCombat() %s()
 			unless not InCombat() and %s()
 			{
-				%s()
+				%s
 			}
 		]]
-		code = format(fmt, precombatBodyName, precombatConditionName, defaultBodyName)
+		code = format(fmt, precombatBodyName, precombatConditionName, mainBodyCode)
 	else
-		code = defaultBodyName .. "()"
+		code = mainBodyCode
 	end
 	return code
 end
