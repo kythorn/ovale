@@ -19,24 +19,24 @@ AddCheckBox(opt_interrupt L(interrupt) default specialization=frost)
 AddCheckBox(opt_melee_range L(not_in_melee_range) specialization=frost)
 AddCheckBox(opt_potion_strength ItemName(draenic_strength_potion) default specialization=frost)
 
-AddFunction FrostUsePotionStrength
+AddFunction FrostTwoHanderUsePotionStrength
 {
 	if CheckBoxOn(opt_potion_strength) and target.Classification(worldboss) Item(draenic_strength_potion usable=1)
 }
 
-AddFunction FrostUseItemActions
+AddFunction FrostTwoHanderUseItemActions
 {
 	Item(HandSlot usable=1)
 	Item(Trinket0Slot usable=1)
 	Item(Trinket1Slot usable=1)
 }
 
-AddFunction FrostGetInMeleeRange
+AddFunction FrostTwoHanderGetInMeleeRange
 {
 	if CheckBoxOn(opt_melee_range) and not target.InRange(plague_strike) Texture(misc_arrowlup help=L(not_in_melee_range))
 }
 
-AddFunction FrostInterruptActions
+AddFunction FrostTwoHanderInterruptActions
 {
 	if CheckBoxOn(opt_interrupt) and not target.IsFriend() and target.IsInterruptible()
 	{
@@ -65,7 +65,7 @@ AddFunction FrostTwoHanderDefaultMainActions
 AddFunction FrostTwoHanderDefaultShortCdActions
 {
 	#auto_attack
-	FrostGetInMeleeRange()
+	FrostTwoHanderGetInMeleeRange()
 	#deaths_advance,if=movement.remains>2
 	if 0 > 2 Spell(deaths_advance)
 	#antimagic_shell,damage=100000
@@ -85,9 +85,9 @@ AddFunction FrostTwoHanderDefaultShortCdActions
 AddFunction FrostTwoHanderDefaultCdActions
 {
 	#mind_freeze
-	FrostInterruptActions()
+	FrostTwoHanderInterruptActions()
 	#potion,name=draenic_strength,if=target.time_to_die<=30|(target.time_to_die<=60&buff.pillar_of_frost.up)
-	if target.TimeToDie() <= 30 or target.TimeToDie() <= 60 and BuffPresent(pillar_of_frost_buff) FrostUsePotionStrength()
+	if target.TimeToDie() <= 30 or target.TimeToDie() <= 60 and BuffPresent(pillar_of_frost_buff) FrostTwoHanderUsePotionStrength()
 	#empower_rune_weapon,if=target.time_to_die<=60&buff.potion.up
 	if target.TimeToDie() <= 60 and BuffPresent(potion_strength_buff) Spell(empower_rune_weapon)
 	#blood_fury
@@ -97,7 +97,7 @@ AddFunction FrostTwoHanderDefaultCdActions
 	#arcane_torrent
 	Spell(arcane_torrent_runicpower)
 	#use_item,slot=trinket2
-	FrostUseItemActions()
+	FrostTwoHanderUseItemActions()
 	#run_action_list,name=aoe,if=active_enemies>=4
 	if Enemies() >= 4 FrostTwoHanderAoeCdActions()
 
@@ -314,7 +314,7 @@ AddFunction FrostTwoHanderPrecombatCdActions
 		#army_of_the_dead
 		Spell(army_of_the_dead)
 		#potion,name=draenic_strength
-		FrostUsePotionStrength()
+		FrostTwoHanderUsePotionStrength()
 	}
 }
 
@@ -330,7 +330,7 @@ AddFunction FrostTwoHanderSingleTargetMainActions
 	#plague_leech,if=disease.min_remains<1
 	if target.DiseasesRemaining() < 1 and target.DiseasesTicking() and { Rune(blood) < 1 or Rune(frost) < 1 or Rune(unholy) < 1 } Spell(plague_leech)
 	#soul_reaper,if=target.health.pct-3*(target.health.pct%target.time_to_die)<=35
-	if target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 Spell(soul_reaper_frost)
+	if target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 Spell(soul_reaper_frost)
 	#howling_blast,if=buff.rime.react&disease.min_remains>5&buff.killing_machine.react
 	if BuffPresent(rime_buff) and target.DiseasesRemaining() > 5 and BuffPresent(killing_machine_buff) Spell(howling_blast)
 	#obliterate,if=buff.killing_machine.react
@@ -375,10 +375,10 @@ AddFunction FrostTwoHanderSingleTargetMainActions
 
 AddFunction FrostTwoHanderSingleTargetShortCdActions
 {
-	unless target.DiseasesRemaining() < 1 and target.DiseasesTicking() and { Rune(blood) < 1 or Rune(frost) < 1 or Rune(unholy) < 1 } and Spell(plague_leech) or target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 and Spell(soul_reaper_frost)
+	unless target.DiseasesRemaining() < 1 and target.DiseasesTicking() and { Rune(blood) < 1 or Rune(frost) < 1 or Rune(unholy) < 1 } and Spell(plague_leech) or target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 and Spell(soul_reaper_frost)
 	{
 		#blood_tap,if=(target.health.pct-3*(target.health.pct%target.time_to_die)<=35&cooldown.soul_reaper.remains=0)
-		if target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 and not SpellCooldown(soul_reaper_frost) > 0 Spell(blood_tap)
+		if target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 and not SpellCooldown(soul_reaper_frost) > 0 Spell(blood_tap)
 		#defile
 		Spell(defile)
 		#blood_tap,if=talent.defile.enabled&cooldown.defile.remains=0
@@ -414,7 +414,7 @@ AddFunction FrostTwoHanderSingleTargetShortCdActions
 
 AddFunction FrostTwoHanderSingleTargetCdActions
 {
-	unless target.DiseasesRemaining() < 1 and target.DiseasesTicking() and { Rune(blood) < 1 or Rune(frost) < 1 or Rune(unholy) < 1 } and Spell(plague_leech) or target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 and Spell(soul_reaper_frost) or Spell(defile) or BuffPresent(rime_buff) and target.DiseasesRemaining() > 5 and BuffPresent(killing_machine_buff) and Spell(howling_blast) or BuffPresent(killing_machine_buff) and Spell(obliterate) or not Talent(necrotic_plague_talent) and not target.DebuffPresent(frost_fever_debuff) and BuffPresent(rime_buff) and Spell(howling_blast) or not target.DiseasesAnyTicking() and Spell(outbreak) or not target.DiseasesTicking() and Spell(unholy_blight)
+	unless target.DiseasesRemaining() < 1 and target.DiseasesTicking() and { Rune(blood) < 1 or Rune(frost) < 1 or Rune(unholy) < 1 } and Spell(plague_leech) or target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 and Spell(soul_reaper_frost) or Spell(defile) or BuffPresent(rime_buff) and target.DiseasesRemaining() > 5 and BuffPresent(killing_machine_buff) and Spell(howling_blast) or BuffPresent(killing_machine_buff) and Spell(obliterate) or not Talent(necrotic_plague_talent) and not target.DebuffPresent(frost_fever_debuff) and BuffPresent(rime_buff) and Spell(howling_blast) or not target.DiseasesAnyTicking() and Spell(outbreak) or not target.DiseasesTicking() and Spell(unholy_blight)
 	{
 		#breath_of_sindragosa,if=runic_power>75
 		if RunicPower() > 75 Spell(breath_of_sindragosa)

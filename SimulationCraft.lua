@@ -154,8 +154,8 @@ local UNARY_OPERATOR = {
 }
 local BINARY_OPERATOR = {
 	-- logical
-	["|"]  = { "logical", 5, "associative" },
-	["^"]  = { "logical", 8, "associative" },
+	["|"]  = { "logical",  5, "associative" },
+	["^"]  = { "logical",  8, "associative" },
 	["&"]  = { "logical", 10, "associative" },
 	-- comparison
 	["!="] = { "compare", 20 },
@@ -432,7 +432,7 @@ local function UnparseExpression(node)
 		if rhsPrecedence and precedence > rhsPrecedence then
 			rhsExpression = "(" .. Unparse(rhsNode) .. ")"
 		elseif rhsPrecedence and precedence == rhsPrecedence then
-			if BINARY_OPERATOR[node.operator][3] == "associative" then
+			if BINARY_OPERATOR[node.operator][3] == "associative" and node.operator == rhsNode.operator then
 				rhsExpression = Unparse(rhsNode)
 			else
 				rhsExpression = "(" .. Unparse(rhsNode) .. ")"
@@ -906,14 +906,6 @@ do
 end
 
 local function CamelSpecialization(annotation)
-	local camelSpecialization = CamelCase(annotation.specialization)
-	if annotation.class == "WARRIOR" and strfind(annotation.name, "_[gG]ladiator_") then
-		camelSpecialization = "ProtectionGladiator"
-	end
-	return camelSpecialization
-end
-
-local function OvaleFunctionName(name, annotation)
 	local output = self_outputPool:Get()
 	local profileName, class, specialization = annotation.name, annotation.class, annotation.specialization
 	if specialization then
@@ -934,11 +926,17 @@ local function OvaleFunctionName(name, annotation)
 	elseif strmatch(profileName, "_[gG]ladiator_") then
 		output[#output + 1] = "gladiator"
 	end
-	output[#output + 1] = name
-	output[#output + 1] = "actions"
 	local outputString = CamelCase(tconcat(output, " "))
 	self_outputPool:Release(output)
 	return outputString
+end
+
+local function OvaleFunctionName(name, annotation)
+	local functionName = CamelCase(name .. " actions")
+	if annotation.specialization then
+		functionName = CamelSpecialization(annotation) .. functionName
+	end
+	return functionName
 end
 
 local function AddSymbol(annotation, symbol)
@@ -2223,7 +2221,6 @@ EmitExpression = function(parseNode, nodeList, annotation, action)
 					node.type = opInfo[1]
 					node.expressionType = "binary"
 					node.operator = operator
-					node.precedence = opInfo[2]
 					node.child[1] = lhsNode
 					node.child[2] = rhsNode
 				elseif lhsNode then
@@ -3256,11 +3253,17 @@ EmitOperandSpecial = function(operand, parseNode, nodeList, annotation, action, 
 		local buffName = "zen_sphere_buff"
 		code = format("BuffPresent(%s)", buffName)
 		AddSymbol(annotation, buffName)
-	elseif class == "MONK" and (operand == "stagger.heavy" or operand == "stagger.light" or operand == "stagger.moderate") then
-		local property = strmatch(operand, "^stagger%.(%w+)")
-		local buffName = format("%s_stagger_debuff", property)
-		code = format("DebuffPresent(%s)", buffName)
-		AddSymbol(annotation, buffName)
+	elseif class == "MONK" and strsub(operand, 1, 8) == "stagger." then
+		local property = strsub(operand, 9)
+		if property == "heavy" or property == "light" or property == "moderate" then
+			local buffName = format("%s_stagger_debuff", property)
+			code = format("DebuffPresent(%s)", buffName)
+			AddSymbol(annotation, buffName)
+		elseif property == "pct" then
+			code = format("%sStaggerRemaining() / %sMaxHealth() * 100", target, target)
+		else
+			ok = false
+		end
 	elseif class == "PALADIN" and operand == "dot.sacred_shield.remains" then
 		--[[
 			Sacred Shield is handled specially because SimulationCraft treats it like
@@ -3277,18 +3280,21 @@ EmitOperandSpecial = function(operand, parseNode, nodeList, annotation, action, 
 	elseif class == "PRIEST" and operand == "primary_target" then
 		-- Ovale has no concept of the "primary", "main" or "boss" target, so "primary_target" should always return 1.
 		code = "1"
-	elseif class == "ROGUE" and specialization == "subtlety" and operand == "cooldown.honor_among_thieves.down" then
+	elseif class == "ROGUE" and specialization == "subtlety" and strsub(operand, 1, 29) == "cooldown.honor_among_thieves." then
 		-- The cooldown of Honor Among Thieves is implemented as a hidden buff.
-		code = "BuffPresent(honor_among_thieves_cooldown_buff)"
+		local property = strsub(operand, 30)
+		local buffName = "honor_among_thieves_cooldown_buff"
+		AddSymbol(annotation, buffName)
 		annotation.honor_among_thieves = class
-	elseif class == "ROGUE" and specialization == "subtlety" and operand == "cooldown.honor_among_thieves.remains" then
-		-- The cooldown of Honor Among Thieves is implemented as a hidden buff.
-		code = "BuffRemaining(honor_among_thieves_cooldown_buff)"
-		annotation.honor_among_thieves = class
-	elseif class == "ROGUE" and specialization == "subtlety" and operand == "cooldown.honor_among_thieves.up" then
-		-- The cooldown of Honor Among Thieves is implemented as a hidden buff.
-		code = "BuffExpires(honor_among_thieves_cooldown_buff)"
-		annotation.honor_among_thieves = class
+		if property == "down" then
+			code = format("BuffPresent(%s)", buffName)
+		elseif property == "remains" then
+			code = format("BuffRemaining(%s)", buffName)
+		elseif property == "up" then
+			code = format("BuffExpires(%s)", buffName)
+		else
+			ok = false
+		end
 	elseif class == "WARRIOR" and strsub(operand, 1, 23) == "buff.colossus_smash_up." then
 		local property = strsub(operand, 24)
 		local debuffName = "colossus_smash_debuff"
@@ -4216,8 +4222,12 @@ local function InsertSupportingControls(child, annotation)
 	local nodeList = annotation.astAnnotation.nodeList
 
 	local ifSpecialization = "specialization=" .. annotation.specialization
-	if annotation.class == "WARRIOR" and strfind(annotation.name, "_[gG]ladiator_") then
-		ifSpecialization = ifSpecialization .. " if_stance=warrior_gladiator_stance"
+	if annotation.class == "WARRIOR" and annotation.specialization == "protection" then
+		if strfind(annotation.name, "_[gG]ladiator_") then
+			ifSpecialization = ifSpecialization .. " if_stance=warrior_gladiator_stance"
+		else
+			ifSpecialization = ifSpecialization .. " if_stance=!warrior_gladiator_stance"
+		end
 	end
 
 	if annotation.using_apl and next(annotation.using_apl) then

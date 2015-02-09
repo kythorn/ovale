@@ -9,7 +9,7 @@ do
 #	class=paladin
 #	spec=retribution
 #	talents=2112333
-#	glyphs=winged_vengeance/templars_verdict/righteous_retreat/fire_from_the_heavens/judgment
+#	glyphs=winged_vengeance/templars_verdict/righteous_retreat/fire_from_the_heavens/judgment/mass_exorcism
 
 Include(ovale_common)
 Include(ovale_trinkets_mop)

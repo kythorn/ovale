@@ -178,6 +178,12 @@ AddFunction BrewmasterAoeShortCdActions
 			{
 				#chi_burst,if=(energy+(energy.regen*gcd))<100
 				if Energy() + EnergyRegenRate() * GCD() < 100 and CheckBoxOn(opt_chi_burst) Spell(chi_burst)
+
+				unless Energy() + EnergyRegenRate() * GCD() < 100 and Spell(chi_wave) or Talent(zen_sphere_talent) and not BuffPresent(zen_sphere_buff) and Energy() + EnergyRegenRate() * GCD() < 100 and Spell(zen_sphere) or Chi() >= 4 and Spell(chi_explosion_tank) or Chi() >= 4 and Spell(blackout_kick) or BuffRemaining(shuffle_buff) <= 3 and SpellCooldown(keg_smash) >= GCD() and Spell(blackout_kick) or BuffPresent(serenity_buff) and Spell(blackout_kick) or MaxChi() - Chi() >= 1 and SpellCooldown(keg_smash) >= GCD() and Energy() + EnergyRegenRate() * SpellCooldown(keg_smash) >= 80 and Spell(expel_harm) or MaxChi() - Chi() >= 1 and SpellCooldown(keg_smash) >= GCD() and SpellCooldown(expel_harm) >= GCD() and Energy() + EnergyRegenRate() * SpellCooldown(keg_smash) >= 80 and Spell(jab)
+				{
+					#purifying_brew,if=!talent.chi_explosion.enabled&stagger.pct>2.2&buff.shuffle.remains>=6
+					if not Talent(chi_explosion_talent) and StaggerRemaining() / MaxHealth() * 100 > 2.2 and BuffRemaining(shuffle_buff) >= 6 Spell(purifying_brew)
+				}
 			}
 		}
 	}
@@ -271,6 +277,12 @@ AddFunction BrewmasterStShortCdActions
 			if target.HealthPercent() < 10 and Glyph(glyph_of_touch_of_death) Spell(touch_of_death)
 			#chi_burst,if=(energy+(energy.regen*gcd))<100
 			if Energy() + EnergyRegenRate() * GCD() < 100 and CheckBoxOn(opt_chi_burst) Spell(chi_burst)
+
+			unless Energy() + EnergyRegenRate() * GCD() < 100 and Spell(chi_wave) or Talent(zen_sphere_talent) and not BuffPresent(zen_sphere_buff) and Energy() + EnergyRegenRate() * GCD() < 100 and Spell(zen_sphere) or Chi() >= 3 and Spell(chi_explosion_tank) or Chi() >= 4 and Spell(blackout_kick) or BuffRemaining(shuffle_buff) <= 3 and SpellCooldown(keg_smash) >= GCD() and Spell(blackout_kick) or BuffPresent(serenity_buff) and Spell(blackout_kick) or MaxChi() - Chi() >= 1 and SpellCooldown(keg_smash) >= GCD() and Energy() + EnergyRegenRate() * SpellCooldown(keg_smash) >= 80 and Spell(expel_harm) or MaxChi() - Chi() >= 1 and SpellCooldown(keg_smash) >= GCD() and SpellCooldown(expel_harm) >= GCD() and Energy() + EnergyRegenRate() * SpellCooldown(keg_smash) >= 80 and Spell(jab)
+			{
+				#purifying_brew,if=!talent.chi_explosion.enabled&stagger.pct>2.2&buff.shuffle.remains>=6
+				if not Talent(chi_explosion_talent) and StaggerRemaining() / MaxHealth() * 100 > 2.2 and BuffRemaining(shuffle_buff) >= 6 Spell(purifying_brew)
+			}
 		}
 	}
 }

@@ -19,24 +19,24 @@ AddCheckBox(opt_interrupt L(interrupt) default specialization=frost)
 AddCheckBox(opt_melee_range L(not_in_melee_range) specialization=frost)
 AddCheckBox(opt_potion_strength ItemName(draenic_strength_potion) default specialization=frost)
 
-AddFunction FrostUsePotionStrength
+AddFunction FrostDualWieldUsePotionStrength
 {
 	if CheckBoxOn(opt_potion_strength) and target.Classification(worldboss) Item(draenic_strength_potion usable=1)
 }
 
-AddFunction FrostUseItemActions
+AddFunction FrostDualWieldUseItemActions
 {
 	Item(HandSlot usable=1)
 	Item(Trinket0Slot usable=1)
 	Item(Trinket1Slot usable=1)
 }
 
-AddFunction FrostGetInMeleeRange
+AddFunction FrostDualWieldGetInMeleeRange
 {
 	if CheckBoxOn(opt_melee_range) and not target.InRange(plague_strike) Texture(misc_arrowlup help=L(not_in_melee_range))
 }
 
-AddFunction FrostInterruptActions
+AddFunction FrostDualWieldInterruptActions
 {
 	if CheckBoxOn(opt_interrupt) and not target.IsFriend() and target.IsInterruptible()
 	{
@@ -65,7 +65,7 @@ AddFunction FrostDualWieldDefaultMainActions
 AddFunction FrostDualWieldDefaultShortCdActions
 {
 	#auto_attack
-	FrostGetInMeleeRange()
+	FrostDualWieldGetInMeleeRange()
 	#deaths_advance,if=movement.remains>2
 	if 0 > 2 Spell(deaths_advance)
 	#antimagic_shell,damage=100000
@@ -85,9 +85,9 @@ AddFunction FrostDualWieldDefaultShortCdActions
 AddFunction FrostDualWieldDefaultCdActions
 {
 	#mind_freeze
-	FrostInterruptActions()
+	FrostDualWieldInterruptActions()
 	#potion,name=draenic_strength,if=target.time_to_die<=30|(target.time_to_die<=60&buff.pillar_of_frost.up)
-	if target.TimeToDie() <= 30 or target.TimeToDie() <= 60 and BuffPresent(pillar_of_frost_buff) FrostUsePotionStrength()
+	if target.TimeToDie() <= 30 or target.TimeToDie() <= 60 and BuffPresent(pillar_of_frost_buff) FrostDualWieldUsePotionStrength()
 	#empower_rune_weapon,if=target.time_to_die<=60&buff.potion.up
 	if target.TimeToDie() <= 60 and BuffPresent(potion_strength_buff) Spell(empower_rune_weapon)
 	#blood_fury
@@ -97,7 +97,7 @@ AddFunction FrostDualWieldDefaultCdActions
 	#arcane_torrent
 	Spell(arcane_torrent_runicpower)
 	#use_item,slot=trinket2
-	FrostUseItemActions()
+	FrostDualWieldUseItemActions()
 	#run_action_list,name=aoe,if=active_enemies>=3
 	if Enemies() >= 3 FrostDualWieldAoeCdActions()
 
@@ -323,7 +323,7 @@ AddFunction FrostDualWieldPrecombatCdActions
 		#army_of_the_dead
 		Spell(army_of_the_dead)
 		#potion,name=draenic_strength
-		FrostUsePotionStrength()
+		FrostDualWieldUsePotionStrength()
 	}
 }
 
@@ -337,7 +337,7 @@ AddFunction FrostDualWieldPrecombatCdPostConditions
 AddFunction FrostDualWieldSingleTargetMainActions
 {
 	#soul_reaper,if=target.health.pct-3*(target.health.pct%target.time_to_die)<=35
-	if target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 Spell(soul_reaper_frost)
+	if target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 Spell(soul_reaper_frost)
 	#run_action_list,name=bos_st,if=dot.breath_of_sindragosa.ticking
 	if BuffPresent(breath_of_sindragosa_buff) FrostDualWieldBosStMainActions()
 	#howling_blast,if=talent.breath_of_sindragosa.enabled&cooldown.breath_of_sindragosa.remains<7&runic_power<88
@@ -365,7 +365,7 @@ AddFunction FrostDualWieldSingleTargetMainActions
 	#obliterate,if=unholy>0&!buff.killing_machine.react
 	if Rune(unholy) >= 1 and not BuffPresent(killing_machine_buff) Spell(obliterate)
 	#howling_blast,if=!(target.health.pct-3*(target.health.pct%target.time_to_die)<=35&cooldown.soul_reaper.remains<3)|death+frost>=2
-	if not { target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 and SpellCooldown(soul_reaper_frost) < 3 } or RuneCount(death) + RuneCount(frost) >= 2 Spell(howling_blast)
+	if not { target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 and SpellCooldown(soul_reaper_frost) < 3 } or RuneCount(death) + RuneCount(frost) >= 2 Spell(howling_blast)
 	#plague_leech
 	if target.DiseasesTicking() and { Rune(blood) < 1 or Rune(frost) < 1 or Rune(unholy) < 1 } Spell(plague_leech)
 }
@@ -375,10 +375,10 @@ AddFunction FrostDualWieldSingleTargetShortCdActions
 	#blood_tap,if=buff.blood_charge.stack>10&(runic_power>76|(runic_power>=20&buff.killing_machine.react))
 	if BuffStacks(blood_charge_buff) > 10 and { RunicPower() > 76 or RunicPower() >= 20 and BuffPresent(killing_machine_buff) } Spell(blood_tap)
 
-	unless target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 and Spell(soul_reaper_frost)
+	unless target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 and Spell(soul_reaper_frost)
 	{
 		#blood_tap,if=(target.health.pct-3*(target.health.pct%target.time_to_die)<=35&cooldown.soul_reaper.remains=0)
-		if target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 and not SpellCooldown(soul_reaper_frost) > 0 Spell(blood_tap)
+		if target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 and not SpellCooldown(soul_reaper_frost) > 0 Spell(blood_tap)
 		#run_action_list,name=bos_st,if=dot.breath_of_sindragosa.ticking
 		if BuffPresent(breath_of_sindragosa_buff) FrostDualWieldBosStShortCdActions()
 
@@ -394,7 +394,7 @@ AddFunction FrostDualWieldSingleTargetShortCdActions
 				#unholy_blight,if=!disease.ticking
 				if not target.DiseasesAnyTicking() Spell(unholy_blight)
 
-				unless not Talent(necrotic_plague_talent) and not target.DebuffPresent(frost_fever_debuff) and Spell(howling_blast) or Talent(necrotic_plague_talent) and not target.DebuffPresent(necrotic_plague_debuff) and Spell(howling_blast) or not Talent(necrotic_plague_talent) and not target.DebuffPresent(blood_plague_debuff) and Rune(unholy) >= 1 and Spell(plague_strike) or BuffPresent(rime_buff) and Spell(howling_blast) or ArmorSetBonus(T17 2) == 1 and RunicPower() >= 50 and SpellCooldown(pillar_of_frost) < 5 and Spell(frost_strike) or RunicPower() > 76 and Spell(frost_strike) or Rune(unholy) >= 1 and not BuffPresent(killing_machine_buff) and Spell(obliterate) or { not { target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 and SpellCooldown(soul_reaper_frost) < 3 } or RuneCount(death) + RuneCount(frost) >= 2 } and Spell(howling_blast)
+				unless not Talent(necrotic_plague_talent) and not target.DebuffPresent(frost_fever_debuff) and Spell(howling_blast) or Talent(necrotic_plague_talent) and not target.DebuffPresent(necrotic_plague_debuff) and Spell(howling_blast) or not Talent(necrotic_plague_talent) and not target.DebuffPresent(blood_plague_debuff) and Rune(unholy) >= 1 and Spell(plague_strike) or BuffPresent(rime_buff) and Spell(howling_blast) or ArmorSetBonus(T17 2) == 1 and RunicPower() >= 50 and SpellCooldown(pillar_of_frost) < 5 and Spell(frost_strike) or RunicPower() > 76 and Spell(frost_strike) or Rune(unholy) >= 1 and not BuffPresent(killing_machine_buff) and Spell(obliterate) or { not { target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 and SpellCooldown(soul_reaper_frost) < 3 } or RuneCount(death) + RuneCount(frost) >= 2 } and Spell(howling_blast)
 				{
 					#blood_tap
 					Spell(blood_tap)
@@ -406,14 +406,14 @@ AddFunction FrostDualWieldSingleTargetShortCdActions
 
 AddFunction FrostDualWieldSingleTargetCdActions
 {
-	unless target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 and Spell(soul_reaper_frost)
+	unless target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 and Spell(soul_reaper_frost)
 	{
 		#breath_of_sindragosa,if=runic_power>75
 		if RunicPower() > 75 Spell(breath_of_sindragosa)
 		#run_action_list,name=bos_st,if=dot.breath_of_sindragosa.ticking
 		if BuffPresent(breath_of_sindragosa_buff) FrostDualWieldBosStCdActions()
 
-		unless BuffPresent(breath_of_sindragosa_buff) and FrostDualWieldBosStCdPostConditions() or Spell(defile) or Talent(breath_of_sindragosa_talent) and SpellCooldown(breath_of_sindragosa) < 7 and RunicPower() < 88 and Spell(howling_blast) or Talent(breath_of_sindragosa_talent) and SpellCooldown(breath_of_sindragosa) < 3 and RunicPower() < 76 and Spell(obliterate) or { BuffPresent(killing_machine_buff) or RunicPower() > 88 } and Spell(frost_strike) or SpellCooldown(antimagic_shell) < 1 and RunicPower() >= 50 and not BuffPresent(antimagic_shell_buff) and Spell(frost_strike) or { Rune(death) >= 2 or Rune(frost) >= 2 } and Spell(howling_blast) or not target.DiseasesAnyTicking() and Spell(unholy_blight) or not Talent(necrotic_plague_talent) and not target.DebuffPresent(frost_fever_debuff) and Spell(howling_blast) or Talent(necrotic_plague_talent) and not target.DebuffPresent(necrotic_plague_debuff) and Spell(howling_blast) or not Talent(necrotic_plague_talent) and not target.DebuffPresent(blood_plague_debuff) and Rune(unholy) >= 1 and Spell(plague_strike) or BuffPresent(rime_buff) and Spell(howling_blast) or ArmorSetBonus(T17 2) == 1 and RunicPower() >= 50 and SpellCooldown(pillar_of_frost) < 5 and Spell(frost_strike) or RunicPower() > 76 and Spell(frost_strike) or Rune(unholy) >= 1 and not BuffPresent(killing_machine_buff) and Spell(obliterate) or { not { target.HealthPercent() - 3 * target.HealthPercent() / target.TimeToDie() <= 35 and SpellCooldown(soul_reaper_frost) < 3 } or RuneCount(death) + RuneCount(frost) >= 2 } and Spell(howling_blast) or target.DiseasesTicking() and { Rune(blood) < 1 or Rune(frost) < 1 or Rune(unholy) < 1 } and Spell(plague_leech)
+		unless BuffPresent(breath_of_sindragosa_buff) and FrostDualWieldBosStCdPostConditions() or Spell(defile) or Talent(breath_of_sindragosa_talent) and SpellCooldown(breath_of_sindragosa) < 7 and RunicPower() < 88 and Spell(howling_blast) or Talent(breath_of_sindragosa_talent) and SpellCooldown(breath_of_sindragosa) < 3 and RunicPower() < 76 and Spell(obliterate) or { BuffPresent(killing_machine_buff) or RunicPower() > 88 } and Spell(frost_strike) or SpellCooldown(antimagic_shell) < 1 and RunicPower() >= 50 and not BuffPresent(antimagic_shell_buff) and Spell(frost_strike) or { Rune(death) >= 2 or Rune(frost) >= 2 } and Spell(howling_blast) or not target.DiseasesAnyTicking() and Spell(unholy_blight) or not Talent(necrotic_plague_talent) and not target.DebuffPresent(frost_fever_debuff) and Spell(howling_blast) or Talent(necrotic_plague_talent) and not target.DebuffPresent(necrotic_plague_debuff) and Spell(howling_blast) or not Talent(necrotic_plague_talent) and not target.DebuffPresent(blood_plague_debuff) and Rune(unholy) >= 1 and Spell(plague_strike) or BuffPresent(rime_buff) and Spell(howling_blast) or ArmorSetBonus(T17 2) == 1 and RunicPower() >= 50 and SpellCooldown(pillar_of_frost) < 5 and Spell(frost_strike) or RunicPower() > 76 and Spell(frost_strike) or Rune(unholy) >= 1 and not BuffPresent(killing_machine_buff) and Spell(obliterate) or { not { target.HealthPercent() - 3 * { target.HealthPercent() / target.TimeToDie() } <= 35 and SpellCooldown(soul_reaper_frost) < 3 } or RuneCount(death) + RuneCount(frost) >= 2 } and Spell(howling_blast) or target.DiseasesTicking() and { Rune(blood) < 1 or Rune(frost) < 1 or Rune(unholy) < 1 } and Spell(plague_leech)
 		{
 			#empower_rune_weapon
 			Spell(empower_rune_weapon)
