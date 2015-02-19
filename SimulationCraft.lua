@@ -1484,7 +1484,7 @@ end
 
 EmitAction = function(parseNode, nodeList, annotation)
 	local node
-	local canonicalizedName = gsub(parseNode.name, ":", "_")
+	local canonicalizedName = strlower(gsub(parseNode.name, ":", "_"))
 	local class = annotation.class
 	local specialization = annotation.specialization
 	local camelSpecialization = CamelSpecialization(annotation)
@@ -1763,6 +1763,13 @@ EmitAction = function(parseNode, nodeList, annotation)
 					isSpellAction = false
 				end
 			end
+		elseif class == "WARRIOR" and action == "heroic_charge" then
+			--[[
+				"Heroic Charge" is moving out of melee range enough to Charge back to the target
+				in order to gain more rage.
+			--]]
+			-- skip
+			isSpellAction = false
 		elseif class == "WARRIOR" and action == "heroic_leap" then
 			-- Use Charge as a range-finder for Heroic Leap.
 			local spellName = "charge"
@@ -1781,6 +1788,11 @@ EmitAction = function(parseNode, nodeList, annotation)
 				local name = Unparse(modifier.name)
 				local functionName = OvaleFunctionName(name, annotation)
 				bodyCode = functionName .. "()"
+				-- Special-case the "burn" action list for arcane mages.
+				if class == "MAGE" and specialization == "arcane" and name == "burn" then
+					conditionCode = "CheckBoxOn(opt_arcane_mage_burn_phase)"
+					annotation.opt_arcane_mage_burn_phase = class
+				end
 			end
 			isSpellAction = false
 		elseif action == "cancel_buff" then
@@ -4269,6 +4281,15 @@ local function InsertSupportingControls(child, annotation)
 		local node = OvaleAST:ParseCode("checkbox", code, nodeList, annotation.astAnnotation)
 		tinsert(child, 1, node)
 		AddSymbol(annotation, "time_warp")
+		count = count + 1
+	end
+	if annotation.opt_arcane_mage_burn_phase == "MAGE" then
+		local fmt = [[
+			AddCheckBox(opt_arcane_mage_burn_phase L(arcane_mage_burn_phase) default %s)
+		]]
+		local code = format(fmt, ifSpecialization)
+		local node = OvaleAST:ParseCode("checkbox", code, nodeList, annotation.astAnnotation)
+		tinsert(child, 1, node)
 		count = count + 1
 	end
 	if annotation.storm_earth_and_fire == "MONK" then
